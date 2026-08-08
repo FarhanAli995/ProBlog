@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Register — ProBlog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="auth-container animate-fade-in">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+                <h2>Create Account</h2>
+                <p>Join ProBlog and start sharing your stories</p>
+            </div>
+
+            <form method="post" novalidate id="registerForm">
+                {% csrf_token %}
+
+                <!-- Username -->
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">
+                        <i class="bi bi-at me-1"></i>Username
+                    </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="errorlist">
+                            {% for error in form.username.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- First & Last name row -->
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label for="id_first_name" class="form-label">
+                            <i class="bi bi-person me-1"></i>First Name
+                        </label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="col-6">
+                        <label for="id_last_name" class="form-label">
+                            <i class="bi bi-person me-1"></i>Last Name
+                        </label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="id_email" class="form-label">
+                        <i class="bi bi-envelope me-1"></i>Email
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="errorlist">
+                            {% for error in form.email.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label for="id_password1" class="form-label">
+                        <i class="bi bi-lock me-1"></i>Password
+                    </label>
+                    <div class="position-relative">
+                        {{ form.password1 }}
+                        <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted pe-3 toggle-password" data-target="id_password1" style="text-decoration:none;">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password1.errors %}
+                        <div class="errorlist">
+                            {% for error in form.password1.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="password-help mt-2">
+                        <ul>
+                            <li>At least 8 characters</li>
+                            <li>Not too similar to your personal info</li>
+                            <li>Not a commonly used password</li>
+                            <li>Not entirely numeric</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-4">
+                    <label for="id_password2" class="form-label">
+                        <i class="bi bi-lock-fill me-1"></i>Confirm Password
+                    </label>
+                    <div class="position-relative">
+                        {{ form.password2 }}
+                        <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-muted pe-3 toggle-password" data-target="id_password2" style="text-decoration:none;">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password2.errors %}
+                        <div class="errorlist">
+                            {% for error in form.password2.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-pb-primary w-100 py-2" id="registerBtn">
+                    <i class="bi bi-person-plus me-2"></i>Create Account
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p class="mb-0" style="color:var(--pb-text-muted);">
+                    Already have an account?
+                    <a href="{% url 'accounts:login' %}">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle password visibility
+        document.querySelectorAll('.toggle-password').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var targetId = this.getAttribute('data-target');
+                var input = document.getElementById(targetId);
+                var icon = this.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                }
+            });
+        });
+
+        // Password strength indicator
+        var pw1 = document.getElementById('id_password1');
+        if (pw1) {
+            var strengthBar = document.createElement('div');
+            strengthBar.style.cssText = 'height:3px;border-radius:2px;margin-top:6px;transition:all 0.3s ease;';
+            pw1.parentElement.appendChild(strengthBar);
+
+            pw1.addEventListener('input', function() {
+                var val = this.value;
+                var score = 0;
+                if (val.length >= 8) score++;
+                if (val.length >= 12) score++;
+                if (/[A-Z]/.test(val)) score++;
+                if (/[0-9]/.test(val)) score++;
+                if (/[^A-Za-z0-9]/.test(val)) score++;
+
+                var colors = ['#e74c3c', '#E0B50F', '#E0B50F', '#34B1AA', '#34B1AA'];
+                var widths = ['20%', '40%', '60%', '80%', '100%'];
+                if (val.length === 0) {
+                    strengthBar.style.width = '0%';
+                    strengthBar.style.background = 'transparent';
+                } else {
+                    strengthBar.style.width = widths[score - 1] || '20%';
+                    strengthBar.style.background = colors[score - 1] || '#e74c3c';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

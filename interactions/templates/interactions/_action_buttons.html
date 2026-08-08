@@ -1,0 +1,105 @@
+{% load static %}
+<div class="interaction-buttons d-flex gap-3 align-items-center">
+    <!-- Like button -->
+    <button class="btn btn-outline-light btn-sm like-btn" data-slug="{{ blog.slug }}"
+            style="border-radius:20px;padding:0.4rem 1rem;">
+        <i class="bi {% if user_liked %}bi-heart-fill text-danger{% else %}bi-heart{% endif %}"></i>
+        <span class="like-count">{{ blog.likes.count }}</span>
+    </button>
+
+    <!-- Bookmark button -->
+    <button class="btn btn-outline-light btn-sm bookmark-btn" data-slug="{{ blog.slug }}"
+            style="border-radius:20px;padding:0.4rem 1rem;">
+        <i class="bi {% if user_bookmarked %}bi-bookmark-fill text-warning{% else %}bi-bookmark{% endif %}"></i>
+    </button>
+
+    <!-- Share button -->
+    <button class="btn btn-outline-light btn-sm share-btn" data-bs-toggle="modal" data-bs-target="#shareModal"
+            style="border-radius:20px;padding:0.4rem 1rem;">
+        <i class="bi bi-share"></i>
+    </button>
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content" style="background:var(--pb-card-bg);backdrop-filter:blur(20px);border:1px solid var(--pb-border);border-radius:16px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Share this post</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-around">
+                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ blog.title }}"
+                       target="_blank" class="btn btn-outline-light rounded-circle p-3" style="width:56px;height:56px;">
+                        <i class="bi bi-twitter-x"></i>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                       target="_blank" class="btn btn-outline-light rounded-circle p-3" style="width:56px;height:56px;">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/sharing/share-offscreen/?url={{ request.build_absolute_uri }}"
+                       target="_blank" class="btn btn-outline-light rounded-circle p-3" style="width:56px;height:56px;">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                </div>
+                <div class="mt-3">
+                    <input type="text" class="form-control" value="{{ request.build_absolute_uri }}" readonly
+                           onclick="this.select();document.execCommand('copy');">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Like button AJAX
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const slug = this.dataset.slug;
+                fetch(`/interactions/like/${slug}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const icon = this.querySelector('i');
+                    const countSpan = this.querySelector('.like-count');
+                    if (data.liked) {
+                        icon.className = 'bi bi-heart-fill text-danger';
+                    } else {
+                        icon.className = 'bi bi-heart';
+                    }
+                    countSpan.textContent = data.count;
+                });
+            });
+        });
+
+        // Bookmark button AJAX
+        document.querySelectorAll('.bookmark-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const slug = this.dataset.slug;
+                fetch(`/interactions/bookmark/${slug}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const icon = this.querySelector('i');
+                    if (data.bookmarked) {
+                        icon.className = 'bi bi-bookmark-fill text-warning';
+                    } else {
+                        icon.className = 'bi bi-bookmark';
+                    }
+                });
+            });
+        });
+    });
+</script>

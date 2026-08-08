@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Author Dashboard — ProBlog{% endblock %}
+{% block content %}
+<div class="container py-5">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-in flex-wrap gap-3">
+    <div>
+      <h1 style="color:#fff;font-weight:800;margin:0;"><i class="bi bi-pencil-square me-2" style="color:var(--pb-primary);"></i>Author Dashboard</h1>
+      {% if target_user != user %}<p style="color:var(--pb-primary);margin:0.25rem 0 0;font-size:0.9rem;">Viewing: {{ target_user.username }}</p>{% endif %}
+    </div>
+    <a href="{% url 'blogs:blog_create' %}" class="btn btn-pb-primary">
+      <i class="bi bi-plus-lg me-2"></i>New Post
+    </a>
+  </div>
+
+  <!-- Stats row -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3 animate-fade-in">
+      <div class="card-glass p-3 text-center" style="border-top:3px solid var(--pb-primary);">
+        <div style="font-size:1.6rem;font-weight:800;color:var(--pb-primary);">{{ stats.total }}</div>
+        <div style="color:var(--pb-text-muted);font-size:0.8rem;">Total Posts</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 animate-fade-in animate-delay-1">
+      <div class="card-glass p-3 text-center" style="border-top:3px solid var(--pb-teal);">
+        <div style="font-size:1.6rem;font-weight:800;color:var(--pb-teal);">{{ stats.published }}</div>
+        <div style="color:var(--pb-text-muted);font-size:0.8rem;">Published</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 animate-fade-in animate-delay-2">
+      <div class="card-glass p-3 text-center" style="border-top:3px solid var(--pb-yellow);">
+        <div style="font-size:1.6rem;font-weight:800;color:var(--pb-yellow);">{{ stats.pending }}</div>
+        <div style="color:var(--pb-text-muted);font-size:0.8rem;">Pending Review</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 animate-fade-in animate-delay-3">
+      <div class="card-glass p-3 text-center" style="border-top:3px solid var(--pb-blue);">
+        <div style="font-size:1.6rem;font-weight:800;color:var(--pb-blue);">{{ stats.total_views }}</div>
+        <div style="color:var(--pb-text-muted);font-size:0.8rem;">Total Views</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="d-flex gap-2 mb-4 flex-wrap animate-fade-in">
+    <a href="{% url 'dashboard:author' %}" class="btn btn-sm px-4"
+       style="border-radius:20px;{% if not status_filter %}background:var(--pb-primary);color:#fff;border:none;{% else %}background:rgba(255,255,255,0.05);color:var(--pb-text-muted);border:1px solid var(--pb-border);{% endif %}">All</a>
+    {% for val, label in status_choices %}
+      <a href="?status={{ val }}" class="btn btn-sm px-4"
+         style="border-radius:20px;{% if status_filter == val %}background:var(--pb-primary);color:#fff;border:none;{% else %}background:rgba(255,255,255,0.05);color:var(--pb-text-muted);border:1px solid var(--pb-border);{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+
+  <!-- Posts Table -->
+  <div class="card-glass animate-fade-in animate-delay-1" style="overflow:hidden;">
+    {% if page_obj.object_list %}
+      <div class="table-responsive">
+        <table class="table mb-0" style="color:var(--pb-text);">
+          <thead style="background:rgba(0,0,0,0.2);border-bottom:1px solid var(--pb-border);">
+            <tr>
+              <th style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;padding:1rem 1.5rem;font-weight:600;">Title</th>
+              <th style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;padding:1rem;">Status</th>
+              <th style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;padding:1rem;">Views</th>
+              <th style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;padding:1rem;">Date</th>
+              <th style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;padding:1rem;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for blog in page_obj %}
+              <tr style="border-bottom:1px solid var(--pb-border);transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                <td style="padding:1rem 1.5rem;vertical-align:middle;">
+                  <div style="font-weight:600;color:#fff;font-size:0.9rem;">
+                    <a href="{{ blog.get_absolute_url }}" style="color:inherit;text-decoration:none;">{{ blog.title|truncatechars:50 }}</a>
+                  </div>
+                  {% if blog.category %}<small style="color:var(--pb-text-muted);">{{ blog.category.name }}</small>{% endif %}
+                </td>
+                <td style="padding:1rem;vertical-align:middle;">
+                  <span class="badge px-2 py-1"
+                    style="border-radius:6px;font-size:0.72rem;
+                    {% if blog.status == 'PUBLISHED' %}background:rgba(52,177,170,0.15);color:var(--pb-teal);
+                    {% elif blog.status == 'PENDING' %}background:rgba(224,181,15,0.15);color:var(--pb-yellow);
+                    {% elif blog.status == 'DRAFT' %}background:rgba(255,255,255,0.08);color:var(--pb-text-muted);
+                    {% elif blog.status == 'REJECTED' or blog.status == 'CHANGES_REQUESTED' %}background:rgba(231,76,60,0.12);color:#e74c3c;
+                    {% else %}background:rgba(255,255,255,0.05);color:var(--pb-text-muted);{% endif %}">
+                    {{ blog.get_status_display }}
+                  </span>
+                </td>
+                <td style="padding:1rem;vertical-align:middle;color:var(--pb-text-muted);font-size:0.85rem;">{{ blog.views }}</td>
+                <td style="padding:1rem;vertical-align:middle;color:var(--pb-text-muted);font-size:0.82rem;white-space:nowrap;">{{ blog.created_at|date:"M d, Y" }}</td>
+                <td style="padding:1rem;vertical-align:middle;">
+                  <div class="d-flex gap-2">
+                    <a href="{{ blog.get_absolute_url }}" class="btn btn-sm" title="View"
+                       style="background:rgba(255,255,255,0.05);border:1px solid var(--pb-border);color:var(--pb-text-muted);border-radius:7px;padding:0.25rem 0.6rem;">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    {% if blog.status in 'DRAFT,REJECTED,CHANGES_REQUESTED' %}
+                      <a href="{% url 'blogs:blog_edit' blog.slug %}" class="btn btn-sm" title="Edit"
+                         style="background:rgba(242,159,103,0.1);border:1px solid rgba(242,159,103,0.2);color:var(--pb-primary);border-radius:7px;padding:0.25rem 0.6rem;">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="{% url 'blogs:blog_submit' blog.slug %}" class="btn btn-sm" title="Submit"
+                         style="background:rgba(52,177,170,0.1);border:1px solid rgba(52,177,170,0.2);color:var(--pb-teal);border-radius:7px;padding:0.25rem 0.6rem;">
+                        <i class="bi bi-send"></i>
+                      </a>
+                    {% endif %}
+                    <a href="{% url 'blogs:blog_delete' blog.slug %}" class="btn btn-sm" title="Delete"
+                       style="background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.15);color:#e74c3c;border-radius:7px;padding:0.25rem 0.6rem;">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if page_obj.has_other_pages %}
+        <div class="p-3 d-flex justify-content-center">
+          <ul class="pagination mb-0">
+            {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);color:var(--pb-text);"><i class="bi bi-chevron-left"></i></a></li>{% endif %}
+            <li class="page-item"><span class="page-link" style="background:var(--pb-primary);border-color:var(--pb-primary);">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);color:var(--pb-text);"><i class="bi bi-chevron-right"></i></a></li>{% endif %}
+          </ul>
+        </div>
+      {% endif %}
+
+    {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-journal-x" style="font-size:3rem;color:var(--pb-text-muted);opacity:0.3;display:block;margin-bottom:1rem;"></i>
+        <p style="color:var(--pb-text-muted);">{% if status_filter %}No posts with status "{{ status_filter }}"{% else %}No posts yet. Write your first one!{% endif %}</p>
+        <a href="{% url 'blogs:blog_create' %}" class="btn btn-pb-primary mt-2"><i class="bi bi-plus-lg me-2"></i>Create Post</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

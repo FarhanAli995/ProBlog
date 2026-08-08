@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Dashboard — ProBlog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+
+    <!-- Sidebar -->
+    <div class="col-lg-3">
+      <div class="card-glass p-3 animate-fade-in">
+        <div class="text-center mb-3 pb-3" style="border-bottom:1px solid var(--pb-border);">
+          {% if user.profile.avatar %}
+            <img src="{{ user.profile.avatar.url }}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--pb-primary);margin-bottom:0.75rem;">
+          {% else %}
+            <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;">
+              <i class="bi bi-person-fill text-white fs-3"></i>
+            </div>
+          {% endif %}
+          <div style="color:#fff;font-weight:700;">{{ user.get_full_name|default:user.username }}</div>
+          <div style="color:var(--pb-primary);font-size:0.75rem;">{{ user.profile.role_display }}</div>
+        </div>
+        <nav class="d-flex flex-column gap-1">
+          <a href="{% url 'dashboard:home' %}" class="btn text-start {% if request.resolver_match.url_name == 'home' %}btn-pb-primary{% endif %}"
+             style="border-radius:8px;{% if request.resolver_match.url_name != 'home' %}color:var(--pb-text-muted);background:transparent;{% endif %}">
+            <i class="bi bi-house me-2"></i>My Dashboard
+          </a>
+          <a href="{% url 'dashboard:bookmarks' %}" class="btn text-start"
+             style="border-radius:8px;color:var(--pb-text-muted);background:transparent;">
+            <i class="bi bi-bookmark me-2"></i>Bookmarks
+          </a>
+          <a href="{% url 'accounts:profile' user.username %}" class="btn text-start"
+             style="border-radius:8px;color:var(--pb-text-muted);background:transparent;">
+            <i class="bi bi-person me-2"></i>Profile
+          </a>
+          {% if user.is_superuser or 'Authors' in user.groups.all|join:', ' or 'Editors' in user.groups.all|join:', ' %}
+            <hr style="border-color:var(--pb-border);margin:0.5rem 0;">
+            <a href="{% url 'dashboard:author' %}" class="btn text-start"
+               style="border-radius:8px;color:var(--pb-text-muted);background:transparent;">
+              <i class="bi bi-pencil-square me-2"></i>My Posts
+            </a>
+            <a href="{% url 'blogs:blog_create' %}" class="btn btn-pb-primary text-start" style="border-radius:8px;">
+              <i class="bi bi-plus-lg me-2"></i>New Post
+            </a>
+          {% endif %}
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-lg-9">
+      <div class="animate-fade-in animate-delay-1">
+        <h2 style="color:#fff;font-weight:700;margin-bottom:1.5rem;">
+          <i class="bi bi-house me-2" style="color:var(--pb-primary);"></i>Welcome back, {{ user.get_full_name|default:user.username }}!
+        </h2>
+
+        <!-- Bookmarks section -->
+        <h5 style="color:var(--pb-text-muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;">
+          <i class="bi bi-bookmark me-1"></i>Recent Bookmarks
+        </h5>
+        {% if bookmarks %}
+          <div class="row g-3 mb-4">
+            {% for bm in bookmarks %}
+              <div class="col-md-6">
+                <div class="card-glass p-3 d-flex gap-3">
+                  {% if bm.blog.featured_image %}
+                    <img src="{{ bm.blog.featured_image.url }}" style="width:60px;height:50px;object-fit:cover;border-radius:8px;flex-shrink:0;">
+                  {% endif %}
+                  <div style="overflow:hidden;">
+                    <a href="{{ bm.blog.get_absolute_url }}" style="color:#fff;text-decoration:none;font-weight:600;font-size:0.9rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ bm.blog.title }}</a>
+                    <div style="color:var(--pb-text-muted);font-size:0.75rem;margin-top:0.25rem;">{{ bm.blog.author.username }} &bull; {{ bm.created_at|date:"M d" }}</div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <a href="{% url 'dashboard:bookmarks' %}" style="color:var(--pb-primary);font-size:0.85rem;text-decoration:none;">View all bookmarks <i class="bi bi-arrow-right ms-1"></i></a>
+        {% else %}
+          <div class="card-glass p-4 text-center mb-4" style="color:var(--pb-text-muted);">
+            <i class="bi bi-bookmark-x" style="font-size:2rem;opacity:0.4;display:block;margin-bottom:0.5rem;"></i>
+            No bookmarks yet. Start <a href="{% url 'blogs:home' %}" style="color:var(--pb-primary);">browsing posts</a> to save them!
+          </div>
+        {% endif %}
+
+        <!-- Following section -->
+        <h5 style="color:var(--pb-text-muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;">
+          <i class="bi bi-people me-1"></i>Following
+        </h5>
+        {% if following %}
+          <div class="d-flex flex-wrap gap-3">
+            {% for f in following %}
+              <a href="{% url 'accounts:profile' f.following.username %}" class="card-glass p-3 d-flex align-items-center gap-2 text-decoration-none" style="min-width:160px;">
+                {% if f.following.profile.avatar %}
+                  <img src="{{ f.following.profile.avatar.url }}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+                {% else %}
+                  <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="bi bi-person-fill text-white" style="font-size:0.75rem;"></i>
+                  </div>
+                {% endif %}
+                <span style="color:#fff;font-size:0.85rem;font-weight:600;">{{ f.following.username }}</span>
+              </a>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="card-glass p-4 text-center" style="color:var(--pb-text-muted);">
+            <i class="bi bi-person-plus" style="font-size:2rem;opacity:0.4;display:block;margin-bottom:0.5rem;"></i>
+            Not following anyone yet. <a href="{% url 'blogs:author_list' %}" style="color:var(--pb-primary);">Browse authors</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

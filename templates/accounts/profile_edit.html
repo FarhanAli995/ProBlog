@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile — ProBlog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card-glass animate-fade-in" style="overflow:hidden;">
+                <!-- Header -->
+                <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--pb-border);">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h2 style="color:#fff;font-weight:700;margin:0;">
+                                <i class="bi bi-pencil-square me-2" style="color:var(--pb-primary);"></i>Edit Profile
+                            </h2>
+                            <p style="color:var(--pb-text-muted);margin:0.3rem 0 0;font-size:0.9rem;">Update your personal information</p>
+                        </div>
+                        <a href="{% url 'accounts:profile' user.username %}" class="btn btn-pb-outline btn-sm">
+                            <i class="bi bi-arrow-left me-1"></i>Back
+                        </a>
+                    </div>
+                </div>
+
+                <div class="p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate id="editProfileForm">
+                        {% csrf_token %}
+
+                        <!-- Avatar Section -->
+                        <div class="text-center mb-4">
+                            <div class="position-relative d-inline-block">
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}" alt="Current avatar" id="avatarPreview"
+                                         style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--pb-primary);">
+                                {% else %}
+                                    <div id="avatarPreview" style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,rgba(242,159,103,0.2),rgba(59,143,243,0.15));border:3px solid var(--pb-primary);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                                        <i class="bi bi-person-fill" style="font-size:2.5rem;color:var(--pb-primary);"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="mt-2">
+                                <label for="id_avatar" class="form-label" style="text-transform:none;font-size:0.85rem;">Change Avatar</label>
+                                {{ p_form.avatar }}
+                            </div>
+                        </div>
+
+                        <div class="divider-text">Account Information</div>
+
+                        <!-- User form fields -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_username" class="form-label">
+                                    <i class="bi bi-at me-1"></i>Username
+                                </label>
+                                {{ u_form.username }}
+                                {% if u_form.username.errors %}
+                                    <div class="errorlist">{% for e in u_form.username.errors %}<li>{{ e }}</li>{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_email" class="form-label">
+                                    <i class="bi bi-envelope me-1"></i>Email
+                                </label>
+                                {{ u_form.email }}
+                                {% if u_form.email.errors %}
+                                    <div class="errorlist">{% for e in u_form.email.errors %}<li>{{ e }}</li>{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_first_name" class="form-label">
+                                    <i class="bi bi-person me-1"></i>First Name
+                                </label>
+                                {{ u_form.first_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_last_name" class="form-label">
+                                    <i class="bi bi-person me-1"></i>Last Name
+                                </label>
+                                {{ u_form.last_name }}
+                            </div>
+                        </div>
+
+                        <div class="divider-text">Profile Details</div>
+
+                        <!-- Profile form fields -->
+                        <div class="mb-3">
+                            <label for="id_bio" class="form-label">
+                                <i class="bi bi-chat-quote me-1"></i>Bio
+                            </label>
+                            {{ p_form.bio }}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_location" class="form-label">
+                                    <i class="bi bi-geo-alt me-1"></i>Location
+                                </label>
+                                {{ p_form.location }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_website" class="form-label">
+                                    <i class="bi bi-globe2 me-1"></i>Website
+                                </label>
+                                {{ p_form.website }}
+                                {% if p_form.website.errors %}
+                                    <div class="errorlist">{% for e in p_form.website.errors %}<li>{{ e }}</li>{% endfor %}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-pb-primary flex-grow-1">
+                                <i class="bi bi-check-lg me-2"></i>Save Changes
+                            </button>
+                            <a href="{% url 'accounts:profile' user.username %}" class="btn btn-pb-outline">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Danger Zone -->
+                    <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(231,76,60,0.2);">
+                        <h6 style="color:#e74c3c;font-weight:600;">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Danger Zone
+                        </h6>
+                        <p style="color:var(--pb-text-muted);font-size:0.85rem;">Once you delete your account, there is no going back.</p>
+                        <a href="{% url 'accounts:delete_account' %}" class="btn btn-pb-danger btn-sm">
+                            <i class="bi bi-trash me-1"></i>Delete Account
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Avatar preview on file select
+        var avatarInput = document.getElementById('id_avatar');
+        if (avatarInput) {
+            avatarInput.addEventListener('change', function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(ev) {
+                        var preview = document.getElementById('avatarPreview');
+                        if (preview.tagName === 'IMG') {
+                            preview.src = ev.target.result;
+                        } else {
+                            var img = document.createElement('img');
+                            img.src = ev.target.result;
+                            img.id = 'avatarPreview';
+                            img.style.cssText = 'width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--pb-primary);';
+                            preview.parentNode.replaceChild(img, preview);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

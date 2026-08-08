@@ -1,0 +1,19 @@
+{% load static %}
+{% if user.is_authenticated and user != target_user %}
+    <form method="post" action="{% url 'interactions:toggle_follow' target_user.username %}" class="d-inline">
+        {% csrf_token %}
+        {% if is_following %}
+            <button type="submit" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-person-check me-1"></i> Following
+            </button>
+        {% else %}
+            <button type="submit" class="btn btn-pb-primary btn-sm">
+                <i class="bi bi-person-plus me-1"></i> Follow
+            </button>
+        {% endif %}
+    </form>
+{% elif not user.is_authenticated %}
+    <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-sm">
+        <i class="bi bi-person-plus me-1"></i> Follow
+    </a>
+{% endif %}

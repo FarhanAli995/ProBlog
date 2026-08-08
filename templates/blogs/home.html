@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<!-- ═══ Hero Section ═══ -->
+{% if featured and not q %}
+<section style="position:relative;overflow:hidden;padding:4rem 0 3rem;background:linear-gradient(135deg,var(--pb-dark) 0%,var(--pb-dark-light) 100%);">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-6">
+        <span class="badge mb-3 px-3 py-2" style="background:rgba(242,159,103,0.15);color:var(--pb-primary);border:1px solid rgba(242,159,103,0.2);border-radius:20px;font-size:0.75rem;font-weight:600;letter-spacing:1px;">
+          <i class="bi bi-star-fill me-1"></i> FEATURED POST
+        </span>
+        <h1 style="font-size:clamp(1.5rem,4vw,2.5rem);font-weight:800;color:#fff;line-height:1.2;">
+          <a href="{{ featured.get_absolute_url }}" style="color:inherit;text-decoration:none;">{{ featured.title }}</a>
+        </h1>
+        <p style="color:var(--pb-text-muted);margin:1rem 0;font-size:1rem;line-height:1.7;">{{ featured.excerpt }}</p>
+        <div class="d-flex align-items-center gap-3 mb-3" style="flex-wrap:wrap;">
+          <div class="d-flex align-items-center gap-2">
+            {% if featured.author.profile.avatar %}
+              <img src="{{ featured.author.profile.avatar.url }}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--pb-primary);">
+            {% else %}
+              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;">
+                <i class="bi bi-person-fill text-white" style="font-size:0.9rem;"></i>
+              </div>
+            {% endif %}
+            <div>
+              <div style="color:#fff;font-size:0.85rem;font-weight:600;">{{ featured.author.get_full_name|default:featured.author.username }}</div>
+              <div style="color:var(--pb-text-muted);font-size:0.75rem;">{{ featured.published_at|date:"M d, Y" }}</div>
+            </div>
+          </div>
+          <span style="color:var(--pb-text-muted);font-size:0.8rem;"><i class="bi bi-clock me-1"></i>{{ featured.reading_time }} min read</span>
+          <span style="color:var(--pb-text-muted);font-size:0.8rem;"><i class="bi bi-eye me-1"></i>{{ featured.views }} views</span>
+        </div>
+        <a href="{{ featured.get_absolute_url }}" class="btn btn-pb-primary">
+          <i class="bi bi-arrow-right me-2"></i>Read Article
+        </a>
+      </div>
+      <div class="col-lg-6 text-center">
+        {% if featured.featured_image %}
+          <img src="{{ featured.featured_image.url }}" alt="{{ featured.title }}"
+               style="width:100%;max-height:350px;object-fit:cover;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+        {% else %}
+          <div style="width:100%;height:300px;background:linear-gradient(135deg,rgba(242,159,103,0.1),rgba(59,143,243,0.1));border-radius:16px;display:flex;align-items:center;justify-content:center;border:1px solid var(--pb-border);">
+            <i class="bi bi-journal-richtext" style="font-size:5rem;color:var(--pb-text-muted);opacity:0.3;"></i>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══ Search + Filter Bar ═══ -->
+<section style="background:var(--pb-dark-light);border-bottom:1px solid var(--pb-border);padding:1.5rem 0;position:sticky;top:60px;z-index:100;">
+  <div class="container">
+    <form method="get" class="row g-2 align-items-center" id="searchFilterForm">
+      <div class="col-lg-4 col-md-6">
+        <div class="input-group">
+          <span class="input-group-text" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);"><i class="bi bi-search" style="color:var(--pb-text-muted);"></i></span>
+          <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search posts, authors, tags…">
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <select name="category" class="form-select" onchange="this.form.submit()">
+          <option value="">All Categories</option>
+          {% for cat in categories %}
+            <option value="{{ cat.slug }}" {% if current_category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-lg-3 col-md-6">
+        <select name="sort" class="form-select" onchange="this.form.submit()">
+          <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+          <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+          <option value="views" {% if current_sort == 'views' %}selected{% endif %}>Most Viewed</option>
+          <option value="featured" {% if current_sort == 'featured' %}selected{% endif %}>Featured</option>
+        </select>
+      </div>
+      <div class="col-lg-2 col-md-6 d-flex gap-2">
+        <button type="submit" class="btn btn-pb-primary flex-grow-1"><i class="bi bi-search me-1"></i>Search</button>
+        {% if q or current_category or current_tag %}
+          <a href="{% url 'blogs:home' %}" class="btn btn-pb-outline"><i class="bi bi-x"></i></a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ═══ Tags Bar ═══ -->
+{% if tags %}
+<div style="background:var(--pb-dark);border-bottom:1px solid var(--pb-border);padding:0.75rem 0;overflow-x:auto;">
+  <div class="container">
+    <div class="d-flex gap-2 flex-nowrap">
+      {% for tag in tags %}
+        <a href="?tag={{ tag.slug }}" class="badge px-3 py-2 text-decoration-none"
+           style="background:{% if current_tag == tag.slug %}var(--pb-primary){% else %}rgba(255,255,255,0.06){% endif %};color:{% if current_tag == tag.slug %}#fff{% else %}var(--pb-text-muted){% endif %};border-radius:20px;white-space:nowrap;transition:all 0.2s;border:1px solid {% if current_tag == tag.slug %}var(--pb-primary){% else %}var(--pb-border){% endif %};">
+          #{{ tag.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ═══ Blog Grid ═══ -->
+<section class="py-5">
+  <div class="container">
+    {% if q %}
+      <p style="color:var(--pb-text-muted);margin-bottom:1.5rem;">
+        <i class="bi bi-search me-2"></i>{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} for "<strong style="color:#fff;">{{ q }}</strong>"
+      </p>
+    {% endif %}
+
+    {% if page_obj.object_list %}
+      <div class="row g-4">
+        {% for blog in page_obj %}
+        <div class="col-lg-4 col-md-6 animate-fade-in">
+          <div class="card-glass h-100 d-flex flex-column" style="overflow:hidden;">
+            <!-- Image -->
+            <div style="position:relative;height:200px;overflow:hidden;">
+              {% if blog.featured_image %}
+                <img src="{{ blog.featured_image.url }}" alt="{{ blog.title }}"
+                     style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;">
+              {% else %}
+                <div style="width:100%;height:100%;background:linear-gradient(135deg,rgba(242,159,103,0.08),rgba(59,143,243,0.08));display:flex;align-items:center;justify-content:center;">
+                  <i class="bi bi-journal-text" style="font-size:3rem;color:var(--pb-text-muted);opacity:0.3;"></i>
+                </div>
+              {% endif %}
+              {% if blog.is_featured %}
+                <span class="badge position-absolute" style="top:10px;left:10px;background:var(--pb-primary);border-radius:6px;">
+                  <i class="bi bi-star-fill me-1"></i>Featured
+                </span>
+              {% endif %}
+              {% if blog.category %}
+                <a href="{% url 'blogs:category_detail' blog.category.slug %}" class="badge position-absolute text-decoration-none"
+                   style="top:10px;right:10px;background:rgba(59,143,243,0.85);border-radius:6px;">
+                  {{ blog.category.name }}
+                </a>
+              {% endif %}
+            </div>
+
+            <!-- Body -->
+            <div class="p-4 d-flex flex-column flex-grow-1">
+              <h5 style="color:#fff;font-weight:700;margin-bottom:0.75rem;line-height:1.4;">
+                <a href="{{ blog.get_absolute_url }}" style="color:inherit;text-decoration:none;">{{ blog.title }}</a>
+              </h5>
+              {% if blog.excerpt %}
+                <p style="color:var(--pb-text-muted);font-size:0.9rem;line-height:1.6;flex-grow:1;">{{ blog.excerpt|truncatechars:120 }}</p>
+              {% endif %}
+
+              <!-- Tags -->
+              {% if blog.tags.all %}
+                <div class="d-flex flex-wrap gap-1 mt-2 mb-3">
+                  {% for tag in blog.tags.all|slice:"3" %}
+                    <a href="?tag={{ tag.slug }}" class="badge text-decoration-none"
+                       style="background:rgba(255,255,255,0.05);color:var(--pb-text-muted);border:1px solid var(--pb-border);border-radius:4px;font-size:0.7rem;">#{{ tag.name }}</a>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              <!-- Footer -->
+              <div class="d-flex align-items-center justify-content-between mt-auto pt-3" style="border-top:1px solid var(--pb-border);">
+                <div class="d-flex align-items-center gap-2">
+                  {% if blog.author.profile.avatar %}
+                    <img src="{{ blog.author.profile.avatar.url }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
+                  {% else %}
+                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;">
+                      <i class="bi bi-person-fill text-white" style="font-size:0.75rem;"></i>
+                    </div>
+                  {% endif %}
+                  <span style="color:var(--pb-text-muted);font-size:0.8rem;">{{ blog.author.get_full_name|default:blog.author.username }}</span>
+                </div>
+                <div class="d-flex gap-3" style="color:var(--pb-text-muted);font-size:0.8rem;">
+                  <span><i class="bi bi-eye me-1"></i>{{ blog.views }}</span>
+                  <span><i class="bi bi-heart me-1"></i>{{ blog.likes.count }}</span>
+                  <span><i class="bi bi-clock me-1"></i>{{ blog.reading_time }}m</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pagination -->
+      {% if page_obj.has_other_pages %}
+        <nav class="mt-5 d-flex justify-content-center" aria-label="Page navigation">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);color:var(--pb-text);">
+                  <i class="bi bi-chevron-left"></i>
+                </a>
+              </li>
+            {% endif %}
+            {% for i in page_obj.paginator.page_range %}
+              {% if page_obj.number == i %}
+                <li class="page-item active">
+                  <span class="page-link" style="background:var(--pb-primary);border-color:var(--pb-primary);">{{ i }}</span>
+                </li>
+              {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ i }}{% if q %}&q={{ q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);color:var(--pb-text);">{{ i }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);color:var(--pb-text);">
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+
+    {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-journal-x" style="font-size:4rem;color:var(--pb-text-muted);opacity:0.3;display:block;margin-bottom:1.5rem;"></i>
+        <h3 style="color:var(--pb-text-muted);">No posts found</h3>
+        <p style="color:var(--pb-text-muted);font-size:0.9rem;">
+          {% if q %}Try a different search term or <a href="{% url 'blogs:home' %}" style="color:var(--pb-primary);">browse all posts</a>.{% else %}No published posts yet.{% endif %}
+        </p>
+        {% if user.is_authenticated %}
+          {% if user.is_superuser or 'Authors' in user.groups.all|join:', ' or 'Editors' in user.groups.all|join:', ' %}
+            <a href="{% url 'blogs:blog_create' %}" class="btn btn-pb-primary mt-3"><i class="bi bi-plus-lg me-2"></i>Write First Post</a>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Hover effect on blog cards
+    document.querySelectorAll('.card-glass img').forEach(function(img) {
+        img.closest('.card-glass').addEventListener('mouseenter', function() {
+            if (img.tagName === 'IMG') img.style.transform = 'scale(1.05)';
+        });
+        img.closest('.card-glass').addEventListener('mouseleave', function() {
+            if (img.tagName === 'IMG') img.style.transform = 'scale(1)';
+        });
+    });
+});
+</script>
+{% endblock %}

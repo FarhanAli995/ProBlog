@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Editor Dashboard — ProBlog{% endblock %}
+{% block content %}
+<div class="container py-5">
+
+  <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-in flex-wrap gap-3">
+    <div>
+      <h1 style="color:#fff;font-weight:800;margin:0;"><i class="bi bi-clipboard-check me-2" style="color:var(--pb-blue);"></i>Editor Dashboard</h1>
+      <p style="color:var(--pb-text-muted);margin:0.25rem 0 0;font-size:0.9rem;">Review and publish submitted posts</p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4 animate-fade-in">
+      <div class="card-glass p-4 text-center" style="border-top:3px solid var(--pb-yellow);">
+        <div style="font-size:2rem;font-weight:800;color:var(--pb-yellow);">{{ stats.pending }}</div>
+        <div style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-hourglass me-1"></i>Awaiting Review</div>
+      </div>
+    </div>
+    <div class="col-md-4 animate-fade-in animate-delay-1">
+      <div class="card-glass p-4 text-center" style="border-top:3px solid var(--pb-teal);">
+        <div style="font-size:2rem;font-weight:800;color:var(--pb-teal);">{{ stats.published_today }}</div>
+        <div style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-calendar-check me-1"></i>Published Today</div>
+      </div>
+    </div>
+    <div class="col-md-4 animate-fade-in animate-delay-2">
+      <div class="card-glass p-4 text-center" style="border-top:3px solid var(--pb-primary);">
+        <div style="font-size:2rem;font-weight:800;color:var(--pb-primary);">{{ stats.total_published }}</div>
+        <div style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-journals me-1"></i>Total Published</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Queue -->
+  <h5 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;">
+    <i class="bi bi-inbox me-1" style="color:var(--pb-yellow);"></i>Review Queue
+  </h5>
+
+  {% if pending %}
+    <div class="row g-4 mb-5 animate-fade-in animate-delay-1">
+      {% for blog in pending %}
+        <div class="col-lg-6">
+          <div class="card-glass h-100" style="overflow:hidden;border-color:rgba(224,181,15,0.15);">
+            <div class="p-4">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <h6 style="color:#fff;font-weight:700;margin:0;flex:1;">
+                  <a href="{{ blog.get_absolute_url }}" target="_blank" style="color:inherit;text-decoration:none;">{{ blog.title }}</a>
+                </h6>
+                <span class="badge px-2 py-1" style="background:rgba(224,181,15,0.15);color:var(--pb-yellow);border-radius:6px;white-space:nowrap;font-size:0.7rem;">Pending</span>
+              </div>
+
+              <div class="d-flex gap-3 mb-3 flex-wrap" style="color:var(--pb-text-muted);font-size:0.78rem;">
+                <span><i class="bi bi-person me-1"></i>{{ blog.author.get_full_name|default:blog.author.username }}</span>
+                <span><i class="bi bi-calendar3 me-1"></i>{{ blog.created_at|date:"M d, Y" }}</span>
+                {% if blog.category %}<span><i class="bi bi-folder me-1"></i>{{ blog.category.name }}</span>{% endif %}
+                <span><i class="bi bi-clock me-1"></i>{{ blog.reading_time }} min</span>
+              </div>
+
+              {% if blog.excerpt %}
+                <p style="color:var(--pb-text-muted);font-size:0.85rem;line-height:1.6;margin-bottom:1rem;">{{ blog.excerpt|truncatechars:120 }}</p>
+              {% endif %}
+
+              <div class="d-flex gap-2">
+                <a href="{% url 'blogs:review_blog' blog.slug %}" class="btn btn-pb-primary btn-sm flex-grow-1">
+                  <i class="bi bi-clipboard-check me-1"></i>Review
+                </a>
+                <a href="{{ blog.get_absolute_url }}" target="_blank" class="btn btn-pb-outline btn-sm">
+                  <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card-glass p-5 text-center mb-5 animate-fade-in animate-delay-1">
+      <i class="bi bi-inbox" style="font-size:3rem;color:var(--pb-teal);opacity:0.5;display:block;margin-bottom:1rem;"></i>
+      <h5 style="color:#fff;">Queue is empty!</h5>
+      <p style="color:var(--pb-text-muted);font-size:0.9rem;">No posts are waiting for review right now.</p>
+    </div>
+  {% endif %}
+
+  <!-- Recently Reviewed -->
+  <h5 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;">
+    <i class="bi bi-clock-history me-1"></i>Recently Reviewed
+  </h5>
+  <div class="card-glass animate-fade-in animate-delay-2" style="overflow:hidden;">
+    {% if recent_reviewed %}
+      <div class="table-responsive">
+        <table class="table mb-0" style="color:var(--pb-text);">
+          <thead style="background:rgba(0,0,0,0.2);border-bottom:1px solid var(--pb-border);">
+            <tr>
+              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;padding:0.75rem 1.25rem;">Title</th>
+              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;padding:0.75rem;">Author</th>
+              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;padding:0.75rem;">Status</th>
+              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;padding:0.75rem;">Updated</th>
+              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;padding:0.75rem;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for blog in recent_reviewed %}
+              <tr style="border-bottom:1px solid var(--pb-border);">
+                <td style="padding:0.85rem 1.25rem;vertical-align:middle;">
+                  <a href="{{ blog.get_absolute_url }}" style="color:#fff;text-decoration:none;font-size:0.88rem;font-weight:600;">{{ blog.title|truncatechars:45 }}</a>
+                </td>
+                <td style="padding:0.85rem;vertical-align:middle;color:var(--pb-text-muted);font-size:0.82rem;">{{ blog.author.username }}</td>
+                <td style="padding:0.85rem;vertical-align:middle;">
+                  <span class="badge px-2 py-1"
+                    style="border-radius:6px;font-size:0.7rem;
+                    {% if blog.status == 'PUBLISHED' %}background:rgba(52,177,170,0.15);color:var(--pb-teal);
+                    {% elif blog.status == 'REJECTED' %}background:rgba(231,76,60,0.12);color:#e74c3c;
+                    {% else %}background:rgba(224,181,15,0.12);color:var(--pb-yellow);{% endif %}">
+                    {{ blog.get_status_display }}
+                  </span>
+                </td>
+                <td style="padding:0.85rem;vertical-align:middle;color:var(--pb-text-muted);font-size:0.8rem;white-space:nowrap;">{{ blog.updated_at|date:"M d, Y" }}</td>
+                <td style="padding:0.85rem;vertical-align:middle;">
+                  <div class="d-flex gap-2">
+                    {% if blog.status == 'PUBLISHED' %}
+                      <a href="{% url 'blogs:archive_blog' blog.slug %}" class="btn btn-sm"
+                         style="background:rgba(255,255,255,0.05);border:1px solid var(--pb-border);color:var(--pb-text-muted);border-radius:7px;font-size:0.75rem;padding:0.25rem 0.6rem;">Archive</a>
+                      <a href="{% url 'blogs:toggle_feature' blog.slug %}" class="btn btn-sm"
+                         style="background:rgba(224,181,15,0.08);border:1px solid rgba(224,181,15,0.15);color:var(--pb-yellow);border-radius:7px;font-size:0.75rem;padding:0.25rem 0.6rem;">
+                         {% if blog.is_featured %}Unfeature{% else %}Feature{% endif %}
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="p-4 text-center" style="color:var(--pb-text-muted);">No recent activity.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

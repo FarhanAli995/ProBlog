@@ -1,0 +1,91 @@
+{% load static %}
+<div class="comments-section mt-5">
+    <h5 class="mb-4">
+        <i class="bi bi-chat-dots me-2"></i>
+        {{ top_comments|length }} Comment{{ top_comments|pluralize }}
+    </h5>
+
+    <!-- Add comment form -->
+    {% if user.is_authenticated %}
+        <div class="card-glass p-4 mb-4">
+            <form method="post" action="{% url 'comments:add_comment' blog.slug %}">
+                {% csrf_token %}
+                <div class="d-flex gap-3">
+                    <div class="flex-shrink-0">
+                        {% if user.profile.avatar %}
+                            <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}"
+                                 class="rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                                 style="width:40px;height:40px;">
+                                <i class="bi bi-person text-white"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="flex-grow-1">
+                        <input type="text" name="content" class="form-control"
+                               placeholder="Write a comment..." required>
+                        <button type="submit" class="btn btn-pb-primary btn-sm mt-2">
+                            <i class="bi bi-send me-1"></i> Post Comment
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    {% else %}
+        <div class="card-glass p-4 mb-4 text-center">
+            <p class="text-muted mb-0">
+                <a href="{% url 'accounts:login' %}" class="text-decoration-none">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Log in
+                </a> to join the discussion.
+            </p>
+        </div>
+    {% endif %}
+
+    <!-- Comment list -->
+    <div class="comments-list">
+        {% for comment in top_comments %}
+            {% include 'comments/_comment.html' with comment=comment %}
+        {% empty %}
+            <div class="text-center py-4">
+                <i class="bi bi-chat-quote text-muted" style="font-size:2rem;"></i>
+                <p class="text-muted mt-2">No comments yet. Be the first!</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle reply forms
+        document.querySelectorAll('.reply-toggle').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const commentId = this.dataset.commentId;
+                const form = document.getElementById(`reply-form-${commentId}`);
+                if (form) {
+                    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                }
+            });
+        });
+
+        // Toggle report forms
+        document.querySelectorAll('.report-toggle').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const commentId = this.dataset.commentId;
+                const form = document.getElementById(`report-form-${commentId}`);
+                if (form) {
+                    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                }
+            });
+        });
+
+        // Cancel report
+        document.querySelectorAll('.cancel-report').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.report-form-container').style.display = 'none';
+            });
+        });
+    });
+</script>

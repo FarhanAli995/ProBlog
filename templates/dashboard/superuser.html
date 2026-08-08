@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% block title %}Superuser Dashboard — ProBlog{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4 px-4">
+
+  <!-- ═══ Header ═══ -->
+  <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-in flex-wrap gap-3">
+    <div>
+      <h1 style="color:#fff;font-weight:800;margin:0;font-size:1.6rem;">
+        <i class="bi bi-lightning-charge-fill me-2" style="color:var(--pb-primary);"></i>Superuser Command Centre
+      </h1>
+      <p style="color:var(--pb-text-muted);margin:0.3rem 0 0;font-size:0.88rem;">Full platform control &amp; analytics</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{% url 'dashboard:manage_users' %}" class="btn btn-pb-primary btn-sm">
+        <i class="bi bi-people me-1"></i>Manage Users
+      </a>
+      <a href="/admin/" class="btn btn-pb-outline btn-sm">
+        <i class="bi bi-grid me-1"></i>Django Admin
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ Top KPI Cards ═══ -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3 animate-fade-in">
+      <div class="card-glass p-4" style="border-top:3px solid var(--pb-primary);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(242,159,103,0.06);">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--pb-text-muted);margin-bottom:0.4rem;">Total Users</div>
+        <div style="font-size:2.2rem;font-weight:800;color:var(--pb-primary);">{{ total_users }}</div>
+        <div style="font-size:0.78rem;color:var(--pb-text-muted);margin-top:0.3rem;">
+          <i class="bi bi-shield-fill me-1" style="color:var(--pb-teal);"></i>{{ groups.editors }} Editors &nbsp;
+          <i class="bi bi-person-fill me-1" style="color:var(--pb-blue);"></i>{{ groups.authors }} Authors
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3 animate-fade-in animate-delay-1">
+      <div class="card-glass p-4" style="border-top:3px solid var(--pb-blue);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(59,143,243,0.06);"><i class="bi bi-journals"></i></div>
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--pb-text-muted);margin-bottom:0.4rem;">Total Posts</div>
+        <div style="font-size:2.2rem;font-weight:800;color:var(--pb-blue);">{{ total_blogs }}</div>
+        <div style="font-size:0.78rem;color:var(--pb-text-muted);margin-top:0.3rem;">
+          <span style="color:var(--pb-teal);">{{ blog_stats.published }} published</span> &nbsp;
+          <span style="color:var(--pb-yellow);">{{ blog_stats.pending }} pending</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3 animate-fade-in animate-delay-2">
+      <div class="card-glass p-4" style="border-top:3px solid var(--pb-teal);position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(52,177,170,0.06);"><i class="bi bi-chat-dots-fill"></i></div>
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--pb-text-muted);margin-bottom:0.4rem;">Comments</div>
+        <div style="font-size:2.2rem;font-weight:800;color:var(--pb-teal);">{{ total_comments }}</div>
+        <div style="font-size:0.78rem;color:var(--pb-text-muted);margin-top:0.3rem;">Across all published posts</div>
+      </div>
+    </div>
+    <div class="col-6 col-xl-3 animate-fade-in animate-delay-3">
+      <div class="card-glass p-4" style="border-top:3px solid {% if total_reports > 0 %}#e74c3c{% else %}var(--pb-teal){% endif %};position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(231,76,60,0.06);"><i class="bi bi-flag-fill"></i></div>
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--pb-text-muted);margin-bottom:0.4rem;">Pending Reports</div>
+        <div style="font-size:2.2rem;font-weight:800;color:{% if total_reports > 0 %}#e74c3c{% else %}var(--pb-teal){% endif %};">{{ total_reports }}</div>
+        {% if total_reports > 0 %}
+          <a href="{% url 'dashboard:moderator' %}" style="font-size:0.78rem;color:#e74c3c;text-decoration:none;"><i class="bi bi-arrow-right me-1"></i>Review reports</a>
+        {% else %}
+          <div style="font-size:0.78rem;color:var(--pb-teal);">All clear!</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- ═══ Left Column ═══ -->
+    <div class="col-xl-8">
+
+      <!-- Post Status Breakdown -->
+      <div class="card-glass p-4 mb-4 animate-fade-in animate-delay-1">
+        <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.25rem;">
+          <i class="bi bi-bar-chart me-1"></i>Post Status Breakdown
+        </h6>
+        {% with total_b=blog_stats.draft|add:blog_stats.pending|add:blog_stats.published|add:blog_stats.rejected|add:blog_stats.archived %}
+        <div class="d-flex flex-column gap-3">
+          {% with p_pct=blog_stats.published|default:0 p_total=total_b|default:1 %}
+          <div>
+            <div class="d-flex justify-content-between mb-1">
+              <small style="color:var(--pb-teal);">Published</small>
+              <small style="color:var(--pb-text-muted);">{{ blog_stats.published }}</small>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:{% widthratio blog_stats.published total_b 100 %}%;background:var(--pb-teal);border-radius:3px;transition:width 0.8s;"></div>
+            </div>
+          </div>
+          {% endwith %}
+          <div>
+            <div class="d-flex justify-content-between mb-1">
+              <small style="color:var(--pb-yellow);">Pending Review</small>
+              <small style="color:var(--pb-text-muted);">{{ blog_stats.pending }}</small>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:{% widthratio blog_stats.pending total_b 100 %}%;background:var(--pb-yellow);border-radius:3px;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="d-flex justify-content-between mb-1">
+              <small style="color:var(--pb-text-muted);">Draft</small>
+              <small style="color:var(--pb-text-muted);">{{ blog_stats.draft }}</small>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:{% widthratio blog_stats.draft total_b 100 %}%;background:rgba(255,255,255,0.15);border-radius:3px;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="d-flex justify-content-between mb-1">
+              <small style="color:#e74c3c;">Rejected / Archived</small>
+              <small style="color:var(--pb-text-muted);">{{ blog_stats.rejected|add:blog_stats.archived }}</small>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+              {% with rej_total=blog_stats.rejected|add:blog_stats.archived %}
+              <div style="height:100%;width:{% widthratio rej_total total_b 100 %}%;background:#e74c3c;border-radius:3px;"></div>
+              {% endwith %}
+            </div>
+          </div>
+          {% endwith %}
+        </div>
+      </div>
+
+      <!-- Recent Users -->
+      <div class="card-glass animate-fade-in animate-delay-2" style="overflow:hidden;">
+        <div class="d-flex align-items-center justify-content-between p-4 pb-2">
+          <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin:0;">
+            <i class="bi bi-person-plus me-1"></i>Recent Users
+          </h6>
+          <a href="{% url 'dashboard:manage_users' %}" style="color:var(--pb-primary);font-size:0.8rem;text-decoration:none;">View all <i class="bi bi-arrow-right ms-1"></i></a>
+        </div>
+        <div class="table-responsive">
+          <table class="table mb-0" style="color:var(--pb-text);">
+            <thead style="background:rgba(0,0,0,0.15);border-bottom:1px solid var(--pb-border);">
+              <tr>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem 1.25rem;">User</th>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem;">Roles</th>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem;">Joined</th>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem;">Status</th>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in recent_users %}
+                <tr style="border-bottom:1px solid var(--pb-border);">
+                  <td style="padding:0.75rem 1.25rem;vertical-align:middle;">
+                    <div class="d-flex align-items-center gap-2">
+                      {% if u.profile.avatar %}
+                        <img src="{{ u.profile.avatar.url }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
+                      {% else %}
+                        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                          <i class="bi bi-person-fill text-white" style="font-size:0.6rem;"></i>
+                        </div>
+                      {% endif %}
+                      <div>
+                        <div style="color:#fff;font-size:0.85rem;font-weight:600;">{{ u.username }}</div>
+                        <div style="color:var(--pb-text-muted);font-size:0.72rem;">{{ u.email }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="padding:0.75rem;vertical-align:middle;">
+                    {% if u.is_superuser %}
+                      <span class="badge" style="background:rgba(242,159,103,0.15);color:var(--pb-primary);border-radius:5px;font-size:0.68rem;">Superuser</span>
+                    {% else %}
+                      {% for g in u.groups.all %}
+                        <span class="badge me-1" style="background:rgba(59,143,243,0.1);color:var(--pb-blue);border-radius:5px;font-size:0.68rem;">{{ g.name }}</span>
+                      {% empty %}
+                        <span style="color:var(--pb-text-muted);font-size:0.78rem;">Reader</span>
+                      {% endfor %}
+                    {% endif %}
+                  </td>
+                  <td style="padding:0.75rem;vertical-align:middle;color:var(--pb-text-muted);font-size:0.78rem;white-space:nowrap;">{{ u.date_joined|date:"M d, Y" }}</td>
+                  <td style="padding:0.75rem;vertical-align:middle;">
+                    {% if u.is_active %}
+                      <span class="badge" style="background:rgba(52,177,170,0.1);color:var(--pb-teal);border-radius:5px;font-size:0.68rem;">Active</span>
+                    {% else %}
+                      <span class="badge" style="background:rgba(231,76,60,0.1);color:#e74c3c;border-radius:5px;font-size:0.68rem;">Inactive</span>
+                    {% endif %}
+                  </td>
+                  <td style="padding:0.75rem;vertical-align:middle;">
+                    {% if not u.is_superuser %}
+                      <div class="d-flex gap-1">
+                        <a href="{% url 'dashboard:manage_users' %}?q={{ u.username }}" class="btn btn-sm"
+                           style="background:rgba(242,159,103,0.1);border:1px solid rgba(242,159,103,0.15);color:var(--pb-primary);border-radius:6px;font-size:0.7rem;padding:0.2rem 0.5rem;">
+                          Manage
+                        </a>
+                        <form method="post" action="{% url 'dashboard:toggle_user_active' u.id %}">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-sm"
+                                  style="background:rgba(255,255,255,0.04);border:1px solid var(--pb-border);color:var(--pb-text-muted);border-radius:6px;font-size:0.7rem;padding:0.2rem 0.5rem;">
+                            {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+                          </button>
+                        </form>
+                      </div>
+                    {% else %}
+                      <span style="color:var(--pb-text-muted);font-size:0.75rem;">You</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Right Column ═══ -->
+    <div class="col-xl-4">
+
+      <!-- Staff Groups -->
+      <div class="card-glass p-4 mb-4 animate-fade-in animate-delay-1">
+        <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.25rem;">
+          <i class="bi bi-people me-1"></i>Staff Groups
+        </h6>
+        <div class="d-flex flex-column gap-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--pb-blue);"></div>
+              <span style="color:var(--pb-text);font-size:0.88rem;">Editors</span>
+            </div>
+            <span class="badge px-3 py-1" style="background:rgba(59,143,243,0.1);color:var(--pb-blue);border-radius:20px;font-size:0.8rem;">{{ groups.editors }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--pb-teal);"></div>
+              <span style="color:var(--pb-text);font-size:0.88rem;">Moderators</span>
+            </div>
+            <span class="badge px-3 py-1" style="background:rgba(52,177,170,0.1);color:var(--pb-teal);border-radius:20px;font-size:0.8rem;">{{ groups.moderators }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--pb-primary);"></div>
+              <span style="color:var(--pb-text);font-size:0.88rem;">Authors</span>
+            </div>
+            <span class="badge px-3 py-1" style="background:rgba(242,159,103,0.1);color:var(--pb-primary);border-radius:20px;font-size:0.8rem;">{{ groups.authors }}</span>
+          </div>
+        </div>
+        <a href="{% url 'dashboard:manage_users' %}" class="btn btn-pb-outline w-100 mt-3 btn-sm">
+          <i class="bi bi-person-gear me-1"></i>Assign Roles
+        </a>
+      </div>
+
+      <!-- Top Categories -->
+      <div class="card-glass p-4 mb-4 animate-fade-in animate-delay-2">
+        <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.25rem;">
+          <i class="bi bi-folder me-1"></i>Top Categories
+        </h6>
+        {% for cat in categories %}
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <a href="{% url 'blogs:category_detail' cat.slug %}" style="color:var(--pb-text);text-decoration:none;font-size:0.85rem;">{{ cat.name }}</a>
+            <span class="badge px-2 py-1" style="background:rgba(255,255,255,0.05);color:var(--pb-text-muted);border-radius:5px;font-size:0.72rem;">{{ cat.post_count }}</span>
+          </div>
+        {% empty %}
+          <p style="color:var(--pb-text-muted);font-size:0.85rem;">No categories yet.</p>
+        {% endfor %}
+      </div>
+
+      <!-- Top Authors -->
+      <div class="card-glass p-4 animate-fade-in animate-delay-3">
+        <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.25rem;">
+          <i class="bi bi-trophy me-1" style="color:var(--pb-yellow);"></i>Top Authors
+        </h6>
+        {% for author in top_authors %}
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div style="width:20px;text-align:center;color:var(--pb-text-muted);font-size:0.8rem;font-weight:700;">{{ forloop.counter }}</div>
+            {% if author.profile.avatar %}
+              <img src="{{ author.profile.avatar.url }}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+            {% else %}
+              <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-person-fill text-white" style="font-size:0.65rem;"></i>
+              </div>
+            {% endif %}
+            <div style="flex:1;">
+              <div style="color:#fff;font-size:0.85rem;font-weight:600;">{{ author.get_full_name|default:author.username }}</div>
+              <div style="color:var(--pb-text-muted);font-size:0.72rem;">{{ author.post_count }} posts &bull; {{ author.total_views|default:0 }} views</div>
+            </div>
+          </div>
+        {% empty %}
+          <p style="color:var(--pb-text-muted);font-size:0.85rem;">No authors yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

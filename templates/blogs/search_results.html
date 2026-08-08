@@ -1,0 +1,60 @@
+{% extends "blogs/home.html" %}
+{% load static %}
+
+{% block title %}Search: {{ q }} — ProBlog{% endblock %}
+
+{% block hero_section %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-5 fw-bold mb-3" style="color:#fff;">
+                <i class="bi bi-search me-2" style="color:var(--pb-primary);"></i>
+                "{{ q }}"
+            </h1>
+            <p class="text-muted">
+                Found {{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }}
+                {% if current_category %}
+                    in category <strong>{{ current_category }}</strong>
+                {% endif %}
+                {% if current_tag %}
+                    with tag <strong>{{ current_tag }}</strong>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block filter_section %}
+<!-- Override to show search-specific filters -->
+<div class="container mb-4">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-6">
+            <form method="get" action="{% url 'blogs:home' %}" class="d-flex gap-2">
+                <input type="text" name="q" class="form-control" placeholder="Search posts..." value="{{ q }}">
+                <button type="submit" class="btn btn-pb-primary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex gap-2 justify-content-md-end flex-wrap">
+                <a href="{% url 'blogs:home' %}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Back to all posts
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block empty_state %}
+<div class="text-center py-5">
+    <i class="bi bi-search" style="font-size:4rem;color:var(--pb-text-muted);opacity:0.3;"></i>
+    <h5 class="mt-4" style="color:var(--pb-text-muted);">No posts found matching "{{ q }}"</h5>
+    <p class="text-muted">Try adjusting your search terms or browse all posts below.</p>
+    <a href="{% url 'blogs:home' %}" class="btn btn-pb-primary mt-3">
+        <i class="bi bi-grid me-1"></i> Browse All Posts
+    </a>
+</div>
+{% endblock %}

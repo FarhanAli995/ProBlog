@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create New Post — ProBlog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <div class="card-glass animate-fade-in" style="overflow:hidden;">
+        <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--pb-border);background:linear-gradient(135deg,rgba(242,159,103,0.05),transparent);">
+          <div class="d-flex align-items-center justify-content-between">
+            <div>
+              <h2 style="color:#fff;font-weight:700;margin:0;">
+                <i class="bi bi-pencil-square me-2" style="color:var(--pb-primary);"></i>Create New Blog Post
+              </h2>
+              <p style="color:var(--pb-text-muted);margin:0.3rem 0 0;font-size:0.9rem;">
+                Admins, staff, and authorized authors can publish blog posts from this page.
+              </p>
+            </div>
+            <a href="{% url 'blogs:home' %}" class="btn btn-pb-outline btn-sm">
+              <i class="bi bi-arrow-left me-1"></i>Cancel
+            </a>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <form method="post" enctype="multipart/form-data" novalidate id="blogForm">
+            {% csrf_token %}
+
+            <div class="mb-4">
+              <label for="id_title" class="form-label"><i class="bi bi-type-h1 me-1"></i>Post Title <span style="color:#e74c3c;">*</span></label>
+              {{ form.title }}
+              {% if form.title.errors %}
+                <div class="errorlist">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</div>
+              {% endif %}
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="id_category" class="form-label"><i class="bi bi-folder me-1"></i>Category</label>
+                {{ form.category }}
+              </div>
+              <div class="col-md-6">
+                <label for="id_featured_image" class="form-label"><i class="bi bi-image me-1"></i>Featured Image <small style="color:var(--pb-text-muted);">(max 5MB)</small></label>
+                {{ form.featured_image }}
+                {% if form.featured_image.errors %}
+                  <div class="errorlist">{% for e in form.featured_image.errors %}<li>{{ e }}</li>{% endfor %}</div>
+                {% endif %}
+                <div id="imagePreviewWrap" style="margin-top:0.75rem;display:none;">
+                  <img id="imagePreview" style="width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--pb-border);">
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="id_excerpt" class="form-label">
+                <i class="bi bi-card-text me-1"></i>Excerpt
+                <small style="color:var(--pb-text-muted);">(short summary shown in listings)</small>
+              </label>
+              {{ form.excerpt }}
+              <div class="d-flex justify-content-end mt-1">
+                <small id="excerptCounter" style="color:var(--pb-text-muted);">0 / 300</small>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="id_content" class="form-label"><i class="bi bi-journal-text me-1"></i>Content <span style="color:#e74c3c;">*</span></label>
+              {{ form.content }}
+              {% if form.content.errors %}
+                <div class="errorlist">{% for e in form.content.errors %}<li>{{ e }}</li>{% endfor %}</div>
+              {% endif %}
+              <div class="d-flex justify-content-between mt-1">
+                <small style="color:var(--pb-text-muted);">Supports plain text. HTML will be escaped.</small>
+                <small id="wordCount" style="color:var(--pb-text-muted);">0 words</small>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label"><i class="bi bi-tags me-1"></i>Tags</label>
+              <div style="background:var(--pb-dark-lighter);border:1px solid var(--pb-border);border-radius:10px;padding:1rem;max-height:160px;overflow-y:auto;">
+                {% if form.tags.field.queryset.exists %}
+                  <div class="row g-2">
+                    {% for choice in form.tags %}
+                      <div class="col-auto">
+                        <label class="d-flex align-items-center gap-2 px-3 py-1 tag-check-label"
+                               style="background:rgba(255,255,255,0.05);border:1px solid var(--pb-border);border-radius:20px;cursor:pointer;transition:all 0.2s;">
+                          {{ choice.tag }} <span style="color:var(--pb-text-muted);font-size:0.85rem;">#{{ choice.choice_label }}</span>
+                        </label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p style="color:var(--pb-text-muted);margin:0;font-size:0.85rem;">No tags yet — add them via the admin panel.</p>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 mt-2">
+              <button type="submit" class="btn btn-pb-primary px-5 py-2" id="submitBtn">
+                <i class="bi bi-floppy me-2"></i>{{ action }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var imgInput = document.getElementById('id_featured_image');
+    if (imgInput) {
+        imgInput.addEventListener('change', function() {
+            var file = this.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var wrap = document.getElementById('imagePreviewWrap');
+                    var img = document.getElementById('imagePreview');
+                    wrap.style.display = 'block';
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    var excerptField = document.getElementById('id_excerpt');
+    var excerptCounter = document.getElementById('excerptCounter');
+    if (excerptField) {
+        function updateExcerpt() {
+            var len = excerptField.value.length;
+            excerptCounter.textContent = len + ' / 300';
+            excerptCounter.style.color = len > 280 ? '#e74c3c' : 'var(--pb-text-muted)';
+        }
+        excerptField.addEventListener('input', updateExcerpt);
+        updateExcerpt();
+    }
+
+    var contentField = document.getElementById('id_content');
+    var wordCount = document.getElementById('wordCount');
+    if (contentField) {
+        function updateWords() {
+            var words = contentField.value.trim().split(/\s+/).filter(Boolean).length;
+            var mins = Math.max(1, Math.round(words / 200));
+            wordCount.textContent = words + ' words (~' + mins + ' min read)';
+        }
+        contentField.addEventListener('input', updateWords);
+        updateWords();
+    }
+
+    document.querySelectorAll('.tag-check-label input[type="checkbox"]').forEach(function(cb) {
+        function syncStyle() {
+            var label = cb.closest('.tag-check-label');
+            if (cb.checked) {
+                label.style.background = 'rgba(242,159,103,0.15)';
+                label.style.borderColor = 'var(--pb-primary)';
+                label.style.color = 'var(--pb-primary)';
+            } else {
+                label.style.background = 'rgba(255,255,255,0.05)';
+                label.style.borderColor = 'var(--pb-border)';
+                label.style.color = '';
+            }
+        }
+        cb.addEventListener('change', syncStyle);
+        syncStyle();
+    });
+});
+</script>
+{% endblock %}

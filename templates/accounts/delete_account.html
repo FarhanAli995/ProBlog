@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Account — ProBlog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="auth-container animate-fade-in">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon" style="background:linear-gradient(135deg,rgba(231,76,60,0.2),rgba(231,76,60,0.05));">
+                    <i class="bi bi-exclamation-triangle-fill" style="color:#e74c3c;"></i>
+                </div>
+                <h2 style="color:#e74c3c;">Delete Account</h2>
+                <p>This action is permanent and cannot be undone</p>
+            </div>
+
+            <div class="alert alert-danger alert-problog mb-4">
+                <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                <strong>Warning:</strong> Deleting your account will:
+                <ul class="mt-2 mb-0" style="padding-left:1.2rem;font-size:0.85rem;">
+                    <li>Remove all your personal data</li>
+                    <li>Delete all your blog posts permanently</li>
+                    <li>Remove all your comments and interactions</li>
+                    <li>Cancel any active sessions</li>
+                </ul>
+            </div>
+
+            <div style="background:rgba(231,76,60,0.05);border:1px solid rgba(231,76,60,0.15);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;">
+                <p style="color:var(--pb-text);font-size:0.9rem;margin-bottom:1rem;">
+                    To confirm deletion, please type <strong style="color:#e74c3c;">DELETE</strong> below:
+                </p>
+                <input type="text" class="form-control" id="confirmDeleteInput" placeholder="Type DELETE to confirm"
+                       style="border-color:rgba(231,76,60,0.3) !important;">
+            </div>
+
+            <form method="post" id="deleteAccountForm">
+                {% csrf_token %}
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-pb-danger flex-grow-1" id="deleteAccountBtn" disabled>
+                        <i class="bi bi-trash me-2"></i>Permanently Delete Account
+                    </button>
+                    <a href="{% url 'accounts:profile_edit' %}" class="btn btn-pb-outline">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var confirmInput = document.getElementById('confirmDeleteInput');
+        var deleteBtn = document.getElementById('deleteAccountBtn');
+        var deleteForm = document.getElementById('deleteAccountForm');
+
+        // Enable/disable button based on confirmation input
+        confirmInput.addEventListener('input', function() {
+            if (this.value.trim() === 'DELETE') {
+                deleteBtn.disabled = false;
+                deleteBtn.style.opacity = '1';
+            } else {
+                deleteBtn.disabled = true;
+                deleteBtn.style.opacity = '0.5';
+            }
+        });
+
+        // Final confirmation dialog
+        deleteForm.addEventListener('submit', function(e) {
+            if (!confirm('Are you absolutely sure? This action CANNOT be undone.')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

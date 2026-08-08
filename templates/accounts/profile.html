@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile_user.get_full_name|default:profile_user.username }} — ProBlog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <!-- Profile Card -->
+        <div class="col-lg-4 col-md-5 mb-4">
+            <div class="card-glass animate-fade-in" style="overflow:hidden;">
+                <!-- Cover gradient -->
+                <div style="height:100px;background:linear-gradient(135deg, var(--pb-primary), var(--pb-blue));position:relative;">
+                    <div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(to top,var(--pb-card-bg),transparent);"></div>
+                </div>
+
+                <div class="profile-header" style="margin-top:-60px;">
+                    {% if profile_user.profile.avatar %}
+                        <img src="{{ profile_user.profile.avatar.url }}" alt="{{ profile_user.username }}" class="profile-avatar">
+                    {% else %}
+                        <div class="profile-avatar-placeholder">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                    {% endif %}
+
+                    <h1 class="profile-name">{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+                    <p class="profile-username">@{{ profile_user.username }}</p>
+                    <span class="profile-role-badge">
+                        <i class="bi bi-shield-check me-1"></i>{{ profile_user.profile.role_display }}
+                    </span>
+                </div>
+
+                <!-- Profile Info -->
+                <div class="px-4 pb-4">
+                    {% if profile_user.profile.bio %}
+                        <div class="profile-bio">
+                            {{ profile_user.profile.bio }}
+                        </div>
+                    {% endif %}
+
+                    <div style="border-top:1px solid var(--pb-border);padding-top:1rem;">
+                        {% if profile_user.profile.location %}
+                            <div class="profile-info-item">
+                                <i class="bi bi-geo-alt-fill"></i>
+                                <span>{{ profile_user.profile.location }}</span>
+                            </div>
+                        {% endif %}
+
+                        {% if profile_user.profile.website %}
+                            <div class="profile-info-item">
+                                <i class="bi bi-globe2"></i>
+                                <a href="{{ profile_user.profile.website }}" target="_blank" rel="noopener" style="color:var(--pb-blue);text-decoration:none;">
+                                    {{ profile_user.profile.website }}
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        <div class="profile-info-item">
+                            <i class="bi bi-envelope-fill"></i>
+                            <span>{{ profile_user.email }}</span>
+                        </div>
+
+                        <div class="profile-info-item">
+                            <i class="bi bi-calendar3"></i>
+                            <span>Joined {{ profile_user.date_joined|date:"F Y" }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    {% if user == profile_user %}
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="{% url 'accounts:profile_edit' %}" class="btn btn-pb-primary">
+                                <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                            </a>
+                            <a href="{% url 'accounts:password_change' %}" class="btn btn-pb-outline">
+                                <i class="bi bi-key me-2"></i>Change Password
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="d-grid gap-2 mt-3">
+                            {% if user.is_authenticated %}
+                                <form method="post" action="{% url 'interactions:toggle_follow' profile_user.username %}" class="d-grid" style="margin:0;">
+                                    {% csrf_token %}
+                                    {% if is_following %}
+                                        <button type="submit" class="btn btn-pb-outline w-100">
+                                            <i class="bi bi-person-check-fill me-2"></i>Following
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-pb-primary w-100">
+                                            <i class="bi bi-person-plus-fill me-2"></i>Follow
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            {% else %}
+                                <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-pb-primary">
+                                    <i class="bi bi-person-plus-fill me-2"></i>Follow
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Content Area -->
+        <div class="col-lg-7 col-md-7">
+            <div class="card-glass animate-fade-in animate-delay-1 p-4 mb-3">
+                <h4 style="color:#fff;font-weight:700;margin-bottom:1.5rem;">
+                    <i class="bi bi-activity me-2" style="color:var(--pb-primary);"></i>Activity
+                </h4>
+
+                {% if blogs %}
+                    <div class="row g-3">
+                        {% for blog in blogs %}
+                            <div class="col-12 col-sm-6 d-flex">
+                                {% include "blogs/_blog_card.html" with blog=blog %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-5" style="color:var(--pb-text-muted);">
+                        <i class="bi bi-journal-text" style="font-size:3rem;opacity:0.3;display:block;margin-bottom:1rem;"></i>
+                        <p class="mb-1">No blog posts yet</p>
+                        <small>This user hasn't published any blog posts yet.</small>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Account Stats -->
+            <div class="row mt-3">
+                <div class="col-4">
+                    <div class="card-glass animate-fade-in animate-delay-2 p-3 text-center">
+                        <div style="font-size:1.5rem;font-weight:700;color:var(--pb-primary);">{{ blogs_count }}</div>
+                        <small style="color:var(--pb-text-muted);">Posts</small>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card-glass animate-fade-in animate-delay-2 p-3 text-center">
+                        <div style="font-size:1.5rem;font-weight:700;color:var(--pb-blue);">{{ followers_count }}</div>
+                        <small style="color:var(--pb-text-muted);">Followers</small>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card-glass animate-fade-in animate-delay-3 p-3 text-center">
+                        <div style="font-size:1.5rem;font-weight:700;color:var(--pb-teal);">{{ following_count }}</div>
+                        <small style="color:var(--pb-text-muted);">Following</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

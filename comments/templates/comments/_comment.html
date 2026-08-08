@@ -1,0 +1,173 @@
+{% load static %}
+<div class="comment-item mb-4" id="comment-{{ comment.id }}">
+    <div class="d-flex gap-3">
+        <!-- Avatar -->
+        <div class="flex-shrink-0">
+            {% if comment.user.profile.avatar %}
+                <img src="{{ comment.user.profile.avatar.url }}" alt="{{ comment.user.username }}"
+                     class="rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+            {% else %}
+                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                     style="width:40px;height:40px;">
+                    <i class="bi bi-person text-white"></i>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Comment content -->
+        <div class="flex-grow-1">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <strong class="text-white">{{ comment.user.username }}</strong>
+                <span class="text-muted small">
+                    <i class="bi bi-clock me-1"></i>{{ comment.created_at|date:"M d, Y • H:i" }}
+                </span>
+                {% if comment.is_approved == False and request.user.is_superuser or request.user.groups.filter.name == 'Moderators' %}
+                    <span class="badge bg-warning text-dark">Hidden</span>
+                {% endif %}
+            </div>
+            <p class="mt-2 mb-2">{{ comment.content }}</p>
+
+            <!-- Action buttons -->
+            <div class="d-flex gap-3 align-items-center">
+                <button class="btn btn-sm btn-link text-muted p-0 reply-toggle"
+                        data-comment-id="{{ comment.id }}"
+                        style="text-decoration:none;">
+                    <i class="bi bi-reply"></i> Reply
+                </button>
+
+                {% if user == comment.user or user.is_superuser or user.groups.filter.name == 'Moderators' %}
+                    <form method="post" action="{% url 'comments:delete_comment' comment.id %}"
+                          onsubmit="return confirm('Delete this comment?');" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-link text-danger p-0" style="text-decoration:none;">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
+                {% endif %}
+
+                {% if user.is_authenticated and user != comment.user %}
+                    <button class="btn btn-sm btn-link text-muted p-0 report-toggle"
+                            data-comment-id="{{ comment.id }}"
+                            style="text-decoration:none;">
+                        <i class="bi bi-flag"></i> Report
+                    </button>
+                {% endif %}
+
+                {% if user.is_superuser or user.groups.filter.name == 'Moderators' %}
+                    {% if comment.is_approved %}
+                        <form method="post" action="{% url 'comments:hide_comment' comment.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-warning p-0 px-2">Hide</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'comments:approve_comment' comment.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-success p-0 px-2">Approve</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <!-- Reply form (hidden by default) -->
+            <div class="reply-form-container mt-3" style="display:none;" id="reply-form-{{ comment.id }}">
+                <form method="post" action="{% url 'comments:add_reply' comment.blog.slug comment.id %}">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <input type="text" name="content" class="form-control form-control-sm"
+                               placeholder="Write your reply..." required>
+                        <button type="submit" class="btn btn-pb-primary btn-sm">
+                            <i class="bi bi-send"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Report form (hidden by default) -->
+            <div class="report-form-container mt-3" style="display:none;" id="report-form-{{ comment.id }}">
+                <form method="post" action="{% url 'comments:report_comment' comment.id %}">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <select name="reason" class="form-select form-select-sm" required>
+                            <option value="">Select reason...</option>
+                            <option value="SPAM">Spam</option>
+                            <option value="OFFENSIVE">Offensive/Abusive</option>
+                            <option value="HARASSMENT">Harassment</option>
+                            <option value="HATE_SPEECH">Hate speech</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                        <button type="submit" class="btn btn-pb-danger btn-sm">
+                            <i class="bi bi-flag"></i> Report
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm cancel-report">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Replies -->
+            {% if comment.replies.all %}
+                <div class="ms-4 mt-3 border-start ps-3" style="border-color:var(--pb-border) !important;">
+                    {% for reply in comment.replies.all %}
+                        {% if reply.is_approved or user.is_superuser or user.groups.filter.name == 'Moderators' %}
+                            <div class="comment-item mb-3" id="comment-{{ reply.id }}">
+                                <div class="d-flex gap-3">
+                                    <div class="flex-shrink-0">
+                                        {% if reply.user.profile.avatar %}
+                                            <img src="{{ reply.user.profile.avatar.url }}" alt="{{ reply.user.username }}"
+                                                 class="rounded-circle" style="width:32px;height:32px;object-fit:cover;">
+                                        {% else %}
+                                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                                                 style="width:32px;height:32px;">
+                                                <i class="bi bi-person text-white small"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                            <strong class="text-white small">{{ reply.user.username }}</strong>
+                                            <span class="text-muted small">
+                                                <i class="bi bi-clock me-1"></i>{{ reply.created_at|date:"M d, Y • H:i" }}
+                                            </span>
+                                            <span class="text-muted small">
+                                                <i class="bi bi-reply-fill"></i>
+                                            </span>
+                                            {% if reply.is_approved == False and request.user.is_superuser or request.user.groups.filter.name == 'Moderators' %}
+                                                <span class="badge bg-warning text-dark">Hidden</span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="mt-1 mb-1 small">{{ reply.content }}</p>
+
+                                        <!-- Reply actions -->
+                                        <div class="d-flex gap-3 align-items-center">
+                                            {% if user == reply.user or user.is_superuser or user.groups.filter.name == 'Moderators' %}
+                                                <form method="post" action="{% url 'comments:delete_comment' reply.id %}"
+                                                      onsubmit="return confirm('Delete this reply?');" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0" style="text-decoration:none;">
+                                                        <i class="bi bi-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                            {% if user.is_superuser or user.groups.filter.name == 'Moderators' %}
+                                                {% if reply.is_approved %}
+                                                    <form method="post" action="{% url 'comments:hide_comment' reply.id %}" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-sm btn-warning p-0 px-2">Hide</button>
+                                                    </form>
+                                                {% else %}
+                                                    <form method="post" action="{% url 'comments:approve_comment' reply.id %}" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-sm btn-success p-0 px-2">Approve</button>
+                                                    </form>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
