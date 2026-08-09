@@ -8,7 +8,7 @@
         <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--pb-border);background:linear-gradient(135deg,rgba(59,143,243,0.05),transparent);">
           <div class="d-flex align-items-center justify-content-between">
             <div>
-              <h2 style="color:#fff;font-weight:700;margin:0;">
+              <h2 style="color:var(--pb-text);font-weight:700;margin:0;">
                 <i class="bi bi-clipboard-check me-2" style="color:var(--pb-blue);"></i>Review Post
               </h2>
               <p style="color:var(--pb-text-muted);margin:0.3rem 0 0;font-size:0.9rem;">Pending editorial review</p>
@@ -27,7 +27,7 @@
                 <img src="{{ blog.featured_image.url }}" style="width:80px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0;">
               {% endif %}
               <div>
-                <h5 style="color:#fff;font-weight:700;margin-bottom:0.3rem;">{{ blog.title }}</h5>
+                <h5 style="color:var(--pb-text);font-weight:700;margin-bottom:0.3rem;">{{ blog.title }}</h5>
                 <div class="d-flex gap-3 flex-wrap" style="color:var(--pb-text-muted);font-size:0.82rem;">
                   <span><i class="bi bi-person me-1"></i>{{ blog.author.get_full_name|default:blog.author.username }}</span>
                   <span><i class="bi bi-calendar3 me-1"></i>{{ blog.created_at|date:"M d, Y" }}</span>
@@ -69,7 +69,7 @@
                     {% elif value == 'CHANGES_REQUESTED' %}<i class="bi bi-arrow-repeat" style="color:var(--pb-yellow);"></i>
                     {% else %}<i class="bi bi-x-circle-fill" style="color:#e74c3c;"></i>{% endif %}
                   </div>
-                  <div style="font-weight:600;font-size:0.85rem;color:#fff;">{{ label }}</div>
+                  <div style="font-weight:600;font-size:0.85rem;color:var(--pb-text);">{{ label }}</div>
                 </label>
               {% endfor %}
             </div>

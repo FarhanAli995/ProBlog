@@ -18,7 +18,7 @@
               <i class="bi bi-person-fill text-white fs-3"></i>
             </div>
           {% endif %}
-          <div style="color:#fff;font-weight:700;">{{ user.get_full_name|default:user.username }}</div>
+          <div style="color:var(--pb-text);font-weight:700;">{{ user.get_full_name|default:user.username }}</div>
           <div style="color:var(--pb-primary);font-size:0.75rem;">{{ user.profile.role_display }}</div>
         </div>
         <nav class="d-flex flex-column gap-1">
@@ -51,7 +51,7 @@
     <!-- Main Content -->
     <div class="col-lg-9">
       <div class="animate-fade-in animate-delay-1">
-        <h2 style="color:#fff;font-weight:700;margin-bottom:1.5rem;">
+        <h2 style="color:var(--pb-text);font-weight:700;margin-bottom:1.5rem;">
           <i class="bi bi-house me-2" style="color:var(--pb-primary);"></i>Welcome back, {{ user.get_full_name|default:user.username }}!
         </h2>
 
@@ -68,7 +68,7 @@
                     <img src="{{ bm.blog.featured_image.url }}" style="width:60px;height:50px;object-fit:cover;border-radius:8px;flex-shrink:0;">
                   {% endif %}
                   <div style="overflow:hidden;">
-                    <a href="{{ bm.blog.get_absolute_url }}" style="color:#fff;text-decoration:none;font-weight:600;font-size:0.9rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ bm.blog.title }}</a>
+                    <a href="{{ bm.blog.get_absolute_url }}" style="color:var(--pb-text);text-decoration:none;font-weight:600;font-size:0.9rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ bm.blog.title }}</a>
                     <div style="color:var(--pb-text-muted);font-size:0.75rem;margin-top:0.25rem;">{{ bm.blog.author.username }} &bull; {{ bm.created_at|date:"M d" }}</div>
                   </div>
                 </div>
@@ -98,7 +98,7 @@
                     <i class="bi bi-person-fill text-white" style="font-size:0.75rem;"></i>
                   </div>
                 {% endif %}
-                <span style="color:#fff;font-size:0.85rem;font-weight:600;">{{ f.following.username }}</span>
+                <span style="color:var(--pb-text);font-size:0.85rem;font-weight:600;">{{ f.following.username }}</span>
               </a>
             {% endfor %}
           </div>

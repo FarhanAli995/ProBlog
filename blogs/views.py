@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden
 from django.utils import timezone
 
-from .models import Blog, Category, Tag, BlogReview
+from .models import Blog, Category, Tag, BlogReview, BlogMedia
 from .forms import BlogForm, CategoryForm, TagForm, ReviewForm
 
 
@@ -76,6 +76,10 @@ def home(request):
         status=Blog.STATUS_PUBLISHED, is_featured=True
     ).select_related('author', 'author__profile').first()
 
+    bookmarked_blog_ids = []
+    if request.user.is_authenticated:
+        bookmarked_blog_ids = list(request.user.bookmarks.values_list('blog_id', flat=True))
+
     context = {
         'page_obj': page_obj,
         'categories': Category.objects.all(),
@@ -85,6 +89,7 @@ def home(request):
         'current_category': category_slug,
         'current_tag': tag_slug,
         'current_sort': sort,
+        'bookmarked_blog_ids': bookmarked_blog_ids,
         'title': 'ProBlog — Latest Articles',
     }
     return render(request, 'blogs/home.html', context)
@@ -179,8 +184,29 @@ def blog_create(request):
             blog = form.save(commit=False)
             blog.author = request.user
             blog.status = Blog.STATUS_DRAFT
+
+            # If user selected one of the uploaded media as featured, assign it
+            featured_index = -1
+            try:
+                featured_index = int(request.POST.get('featured_media_index', -1))
+            except (TypeError, ValueError):
+                featured_index = -1
+
+            media_files = request.FILES.getlist('media') if request.FILES else []
+            if 0 <= featured_index < len(media_files):
+                candidate = media_files[featured_index]
+                if getattr(candidate, 'content_type', '').startswith('image/'):
+                    blog.featured_image = candidate
+
             blog.save()
             form.save_m2m()
+
+            # Save each uploaded media as BlogMedia
+            for f in media_files:
+                ctype = getattr(f, 'content_type', '')
+                mtype = BlogMedia.MEDIA_IMAGE if ctype.startswith('image/') else BlogMedia.MEDIA_VIDEO
+                BlogMedia.objects.create(blog=blog, file=f, media_type=mtype)
+
             messages.success(request, f'Draft "{blog.title}" created successfully!')
             return redirect('blogs:blog_detail', slug=blog.slug)
     else:
@@ -217,8 +243,27 @@ def blog_edit(request, slug):
                 Blog.STATUS_REJECTED, Blog.STATUS_CHANGES
             ):
                 updated.status = Blog.STATUS_DRAFT
+            # Handle featured selection from uploaded media similarly to create
+            featured_index = -1
+            try:
+                featured_index = int(request.POST.get('featured_media_index', -1))
+            except (TypeError, ValueError):
+                featured_index = -1
+
+            media_files = request.FILES.getlist('media') if request.FILES else []
+            if 0 <= featured_index < len(media_files):
+                candidate = media_files[featured_index]
+                if getattr(candidate, 'content_type', '').startswith('image/'):
+                    updated.featured_image = candidate
+
             updated.save()
             form.save_m2m()
+
+            for f in media_files:
+                ctype = getattr(f, 'content_type', '')
+                mtype = BlogMedia.MEDIA_IMAGE if ctype.startswith('image/') else BlogMedia.MEDIA_VIDEO
+                BlogMedia.objects.create(blog=updated, file=f, media_type=mtype)
+
             messages.success(request, f'Post "{blog.title}" updated!')
             return redirect('blogs:blog_detail', slug=blog.slug)
     else:

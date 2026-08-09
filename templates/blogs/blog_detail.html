@@ -45,7 +45,7 @@
       </div>
 
       <!-- Title -->
-      <h1 style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;color:#fff;line-height:1.25;margin-bottom:1rem;">{{ blog.title }}</h1>
+      <h1 style="font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;color:var(--pb-text);line-height:1.25;margin-bottom:1rem;">{{ blog.title }}</h1>
 
       <!-- Author + date + stats -->
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 pb-4" style="border-bottom:1px solid var(--pb-border);">
@@ -59,7 +59,7 @@
               </div>
             {% endif %}
             <div>
-              <div style="color:#fff;font-weight:600;font-size:0.9rem;">{{ blog.author.get_full_name|default:blog.author.username }}</div>
+              <div style="color:var(--pb-text);font-weight:600;font-size:0.9rem;">{{ blog.author.get_full_name|default:blog.author.username }}</div>
               <div style="color:var(--pb-text-muted);font-size:0.78rem;">{{ blog.author.profile.role_display }}</div>
             </div>
           </a>
@@ -80,6 +80,32 @@
       <div style="color:var(--pb-text);line-height:1.9;font-size:1rem;" class="blog-content">
         {{ blog.content|linebreaks }}
       </div>
+
+      <!-- Attached media -->
+      {% if blog.media.exists %}
+      <div class="mt-5">
+        <h3 style="color:var(--pb-text);font-weight:700;margin-bottom:1rem;font-size:1.25rem;">Media</h3>
+        <div class="row g-3">
+          {% for media in blog.media.all %}
+            <div class="col-md-6">
+              <div class="card-glass p-0" style="border-radius:16px;overflow:hidden;">
+                {% if media.media_type == 'image' %}
+                  <img src="{{ media.file.url }}" alt="{{ blog.title }} media" style="width:100%;height:250px;object-fit:cover;">
+                {% elif media.media_type == 'video' %}
+                  <video controls preload="metadata" style="width:100%;height:250px;object-fit:cover;">
+                    <source src="{{ media.file.url }}" type="video/{{ media.file.name|slice:'-3:' }}">
+                    Your browser does not support the video tag.
+                  </video>
+                {% endif %}
+                <div style="padding:0.85rem;border-top:1px solid var(--pb-border);background:rgba(255,255,255,0.02);color:var(--pb-text-muted);font-size:0.9rem;">
+                  {{ media.get_media_type_display }} uploaded {{ media.created_at|date:'M d, Y' }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
 
       <!-- Tags -->
       {% if blog.tags.all %}
@@ -163,7 +189,7 @@
 
       <!-- ═══ Comments Section ═══ -->
       <div class="mt-5" id="comments">
-        <h4 style="color:#fff;font-weight:700;margin-bottom:1.5rem;">
+        <h4 style="color:var(--pb-text);font-weight:700;margin-bottom:1.5rem;">
           <i class="bi bi-chat-dots me-2" style="color:var(--pb-primary);"></i>
           Comments ({{ blog.comments.filter.count|default:top_comments.count }})
         </h4>
@@ -202,7 +228,7 @@
               </div>
               <div style="flex:1;">
                 <div class="d-flex align-items-center gap-2 mb-1">
-                  <strong style="color:#fff;font-size:0.9rem;">{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                  <strong style="color:var(--pb-text);font-size:0.9rem;">{{ comment.user.get_full_name|default:comment.user.username }}</strong>
                   <span style="color:var(--pb-text-muted);font-size:0.75rem;">{{ comment.created_at|timesince }} ago</span>
                 </div>
                 <p style="color:var(--pb-text);font-size:0.9rem;margin-bottom:0.75rem;">{{ comment.content }}</p>
@@ -261,7 +287,7 @@
                       </div>
                       <div>
                         <div class="d-flex align-items-center gap-2 mb-1">
-                          <strong style="color:#fff;font-size:0.85rem;">{{ reply.user.get_full_name|default:reply.user.username }}</strong>
+                          <strong style="color:var(--pb-text);font-size:0.85rem;">{{ reply.user.get_full_name|default:reply.user.username }}</strong>
                           <span style="color:var(--pb-text-muted);font-size:0.72rem;">{{ reply.created_at|timesince }} ago</span>
                         </div>
                         <p style="color:var(--pb-text);font-size:0.85rem;margin:0;">{{ reply.content }}</p>
@@ -295,7 +321,7 @@
             </div>
           {% endif %}
           <div>
-            <div style="color:#fff;font-weight:700;">{{ blog.author.get_full_name|default:blog.author.username }}</div>
+            <div style="color:var(--pb-text);font-weight:700;">{{ blog.author.get_full_name|default:blog.author.username }}</div>
             <div style="color:var(--pb-primary);font-size:0.78rem;">{{ blog.author.profile.role_display }}</div>
             {% if blog.author.profile.bio %}
               <p style="color:var(--pb-text-muted);font-size:0.82rem;margin-top:0.5rem;line-height:1.5;">{{ blog.author.profile.bio|truncatechars:120 }}</p>
@@ -345,23 +371,23 @@
         <div class="d-flex flex-column gap-3">
           <div class="d-flex justify-content-between">
             <span style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-eye me-2"></i>Views</span>
-            <strong style="color:#fff;">{{ blog.views }}</strong>
+            <strong style="color:var(--pb-text);">{{ blog.views }}</strong>
           </div>
           <div class="d-flex justify-content-between">
             <span style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-heart me-2"></i>Likes</span>
-            <strong style="color:#fff;">{{ blog.likes.count }}</strong>
+            <strong style="color:var(--pb-text);">{{ blog.likes.count }}</strong>
           </div>
           <div class="d-flex justify-content-between">
             <span style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-bookmark me-2"></i>Bookmarks</span>
-            <strong style="color:#fff;">{{ blog.bookmarks.count }}</strong>
+            <strong style="color:var(--pb-text);">{{ blog.bookmarks.count }}</strong>
           </div>
           <div class="d-flex justify-content-between">
             <span style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-chat me-2"></i>Comments</span>
-            <strong style="color:#fff;">{{ blog.comments.count }}</strong>
+            <strong style="color:var(--pb-text);">{{ blog.comments.count }}</strong>
           </div>
           <div class="d-flex justify-content-between">
             <span style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-clock me-2"></i>Read time</span>
-            <strong style="color:#fff;">{{ blog.reading_time }} min</strong>
+            <strong style="color:var(--pb-text);">{{ blog.reading_time }} min</strong>
           </div>
         </div>
       </div>

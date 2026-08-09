@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container py-5">
   <div class="mb-4 animate-fade-in">
-    <h1 style="color:#fff;font-weight:800;"><i class="bi bi-people me-2" style="color:var(--pb-primary);"></i>Authors</h1>
+    <h1 style="color:var(--pb-text);font-weight:800;"><i class="bi bi-people me-2" style="color:var(--pb-primary);"></i>Authors</h1>
     <p style="color:var(--pb-text-muted);">Meet the writers behind ProBlog</p>
   </div>
   <div class="row g-4">
@@ -17,7 +17,7 @@
               <i class="bi bi-person-fill text-white" style="font-size:1.6rem;"></i>
             </div>
           {% endif %}
-          <h6 style="color:#fff;font-weight:700;margin-bottom:0.2rem;">{{ author.get_full_name|default:author.username }}</h6>
+          <h6 style="color:var(--pb-text);font-weight:700;margin-bottom:0.2rem;">{{ author.get_full_name|default:author.username }}</h6>
           <div style="color:var(--pb-primary);font-size:0.75rem;margin-bottom:0.5rem;">{{ author.profile.role_display }}</div>
           {% if author.profile.bio %}<p style="color:var(--pb-text-muted);font-size:0.8rem;line-height:1.5;margin-bottom:0.75rem;">{{ author.profile.bio|truncatechars:80 }}</p>{% endif %}
           <span class="badge px-3 py-1" style="background:rgba(242,159,103,0.1);color:var(--pb-primary);border-radius:20px;font-size:0.72rem;">{{ author.blogs.count }} posts</span>

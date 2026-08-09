@@ -13,7 +13,7 @@
                     <i class="bi bi-tag me-2"></i>#{{ tag.name }}
                 </span>
             </div>
-            <h1 class="display-5 fw-bold" style="color:#fff;">{{ tag.name }}</h1>
+            <h1 class="display-5 fw-bold" style="color:var(--pb-text);">{{ tag.name }}</h1>
             <p class="text-muted mt-3">
                 {{ page_obj.paginator.count }} post{{ page_obj.paginator.count|pluralize }} tagged with "{{ tag.name }}"
             </p>
@@ -48,7 +48,7 @@
                         {% endif %}
                     </div>
                     <a href="{% url 'blogs:blog_detail' blog.slug %}" class="text-decoration-none">
-                        <h5 style="color:#fff;font-weight:700;line-height:1.3;transition:color 0.2s;"
+                        <h5 style="color:var(--pb-text);font-weight:700;line-height:1.3;transition:color 0.2s;"
                             onmouseover="this.style.color='var(--pb-primary)'"
                             onmouseout="this.style.color='#fff'">
                             {{ blog.title|truncatechars:60 }}
@@ -97,7 +97,7 @@
             {% for num in page_obj.paginator.page_range %}
                 {% if page_obj.number == num %}
                     <li class="page-item active">
-                        <span class="page-link" style="background:var(--pb-primary);border-color:var(--pb-primary);color:#fff;">
+                        <span class="page-link" style="background:var(--pb-primary);border-color:var(--pb-primary);color:var(--pb-text);">
                             {{ num }}
                         </span>
                     </li>

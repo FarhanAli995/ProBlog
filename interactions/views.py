@@ -25,7 +25,15 @@ def toggle_like(request, slug):
 
 @login_required
 def toggle_bookmark(request, slug):
-    blog = get_object_or_404(Blog, slug=slug, status=Blog.STATUS_PUBLISHED)
+    # Resolve published blog; handle missing/unpublished gracefully
+    blog = Blog.objects.filter(slug=slug, status=Blog.STATUS_PUBLISHED).first()
+    if not blog:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Blog not found'}, status=404)
+        messages.error(request, 'Blog not found or not available.')
+        next_url = request.POST.get('next') or request.GET.get('next') or request.META.get('HTTP_REFERER') or '/'
+        return redirect(next_url)
+
     bookmark, created = Bookmark.objects.get_or_create(user=request.user, blog=blog)
     if not created:
         bookmark.delete()
@@ -36,6 +44,9 @@ def toggle_bookmark(request, slug):
         messages.success(request, f'"{blog.title}" bookmarked!')
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'bookmarked': bookmarked})
+    next_url = request.POST.get('next') or request.GET.get('next') or request.META.get('HTTP_REFERER')
+    if next_url:
+        return redirect(next_url)
     return redirect('blogs:blog_detail', slug=slug)
 
 

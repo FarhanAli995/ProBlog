@@ -5,7 +5,7 @@
 
   <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-in flex-wrap gap-3">
     <div>
-      <h1 style="color:#fff;font-weight:800;margin:0;"><i class="bi bi-people me-2" style="color:var(--pb-primary);"></i>Manage Users</h1>
+      <h1 style="color:var(--pb-text);font-weight:800;margin:0;"><i class="bi bi-people me-2" style="color:var(--pb-primary);"></i>Manage Users</h1>
       <p style="color:var(--pb-text-muted);margin:0.25rem 0 0;font-size:0.9rem;">Assign roles and manage account status</p>
     </div>
     <a href="{% url 'dashboard:superuser' %}" class="btn btn-pb-outline btn-sm">
@@ -51,7 +51,7 @@
                       </div>
                     {% endif %}
                     <div>
-                      <div style="color:#fff;font-weight:600;font-size:0.88rem;">{{ u.username }}</div>
+                      <div style="color:var(--pb-text);font-weight:600;font-size:0.88rem;">{{ u.username }}</div>
                       <div style="color:var(--pb-text-muted);font-size:0.72rem;">{{ u.email }}</div>
                     </div>
                   </div>

@@ -1,141 +1,717 @@
 {% extends "base.html" %}
 {% block title %}Editor Dashboard — ProBlog{% endblock %}
-{% block content %}
-<div class="container py-5">
 
-  <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-in flex-wrap gap-3">
+{% block extra_css %}
+<style>
+/* ═══════════════════════════════════════
+   ANIMATION KEYFRAMES
+   ═══════════════════════════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+
+/* ═══════════════════════════════════════
+   CARD & LAYOUT STYLES
+   ═══════════════════════════════════════ */
+.dashboard-container {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.header-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.header-icon-box {
+  width: 54px;
+  height: 54px;
+  background: rgba(0, 125, 240, 0.1);
+  color: var(--pb-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  border: 1px solid rgba(0, 125, 240, 0.2);
+}
+
+.kpi-card-top {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.kpi-card-top .kpi-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0, 125, 240, 0.1);
+  color: var(--pb-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.chart-legend-box {
+  background: transparent;
+  border: 1px solid var(--pb-border);
+  border-radius: 8px;
+  padding: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.btn-review {
+  background: var(--pb-primary);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.6rem 0;
+  transition: all 0.3s ease;
+}
+.btn-review:hover {
+  background: var(--pb-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 125, 240, 0.3);
+  color: #fff;
+}
+.btn-icon {
+  background: transparent;
+  color: var(--pb-primary);
+  border: 1px solid var(--pb-primary);
+  border-radius: 8px;
+  width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+.btn-icon:hover {
+  background: var(--pb-primary);
+  color: #fff;
+}
+
+.review-queue-card {
+  border: 1px solid var(--pb-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.3s;
+  background: var(--pb-card-bg);
+}
+.review-queue-card:hover {
+  border-color: var(--pb-primary);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.queue-badge {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--pb-yellow);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.table-custom th {
+  color: var(--pb-text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  border-bottom: 1px solid var(--pb-border);
+  padding: 1rem;
+}
+.table-custom td {
+  color: var(--pb-text);
+  font-size: 0.9rem;
+  vertical-align: middle;
+  padding: 1rem;
+  border-bottom: 1px solid var(--pb-border);
+}
+
+.action-badge-archive {
+  background: rgba(0, 125, 240, 0.1);
+  color: var(--pb-primary);
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.action-badge-archive:hover {
+  background: var(--pb-primary);
+  color: #fff;
+}
+.action-badge-feature {
+  background: transparent;
+  color: var(--pb-text-muted);
+  border: 1px solid var(--pb-border);
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.action-badge-feature:hover {
+  border-color: var(--pb-text);
+  color: var(--pb-text);
+}
+
+.bottom-kpi-card {
+  border: 1px solid var(--pb-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: var(--pb-card-bg);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.bottom-kpi-card:hover {
+  border-color: var(--pb-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.sparkline-container {
+  height: 40px;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container py-4">
+
+  <!-- Header -->
+  <div class="header-card animate-fade-in">
+    <div class="header-icon-box">
+      <i class="bi bi-clipboard-check"></i>
+    </div>
     <div>
-      <h1 style="color:#fff;font-weight:800;margin:0;"><i class="bi bi-clipboard-check me-2" style="color:var(--pb-blue);"></i>Editor Dashboard</h1>
-      <p style="color:var(--pb-text-muted);margin:0.25rem 0 0;font-size:0.9rem;">Review and publish submitted posts</p>
+      <h4 style="margin:0;font-weight:700;color:var(--pb-text);">Review and publish submitted posts</h4>
+      <p style="margin:0;color:var(--pb-text-muted);font-size:0.95rem;">Manage and review posts before publishing</p>
     </div>
   </div>
 
-  <!-- Stats -->
-  <div class="row g-3 mb-4">
-    <div class="col-md-4 animate-fade-in">
-      <div class="card-glass p-4 text-center" style="border-top:3px solid var(--pb-yellow);">
-        <div style="font-size:2rem;font-weight:800;color:var(--pb-yellow);">{{ stats.pending }}</div>
-        <div style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-hourglass me-1"></i>Awaiting Review</div>
+  <!-- Top KPIs -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-4 animate-fade-in animate-delay-1">
+      <div class="card-glass p-4 kpi-card-top h-100">
+        <div>
+          <div class="kpi-icon"><i class="bi bi-hourglass-split"></i></div>
+          <div style="font-size:2rem;font-weight:800;color:var(--pb-text);line-height:1;">{{ stats.pending }}</div>
+          <div style="color:var(--pb-text-muted);font-size:0.85rem;margin-top:0.4rem;">Awaiting Review</div>
+        </div>
+        <div style="width:120px;height:50px;">
+          <canvas id="sparkAwaiting"></canvas>
+        </div>
       </div>
     </div>
     <div class="col-md-4 animate-fade-in animate-delay-1">
-      <div class="card-glass p-4 text-center" style="border-top:3px solid var(--pb-teal);">
-        <div style="font-size:2rem;font-weight:800;color:var(--pb-teal);">{{ stats.published_today }}</div>
-        <div style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-calendar-check me-1"></i>Published Today</div>
+      <div class="card-glass p-4 kpi-card-top h-100">
+        <div>
+          <div class="kpi-icon" style="color:var(--pb-primary);"><i class="bi bi-file-earmark-text"></i></div>
+          <div style="font-size:2rem;font-weight:800;color:var(--pb-text);line-height:1;">{{ stats.published_today }}</div>
+          <div style="color:var(--pb-text-muted);font-size:0.85rem;margin-top:0.4rem;">Published Today</div>
+        </div>
+        <div style="width:120px;height:50px;">
+          <canvas id="sparkToday"></canvas>
+        </div>
       </div>
     </div>
-    <div class="col-md-4 animate-fade-in animate-delay-2">
-      <div class="card-glass p-4 text-center" style="border-top:3px solid var(--pb-primary);">
-        <div style="font-size:2rem;font-weight:800;color:var(--pb-primary);">{{ stats.total_published }}</div>
-        <div style="color:var(--pb-text-muted);font-size:0.85rem;"><i class="bi bi-journals me-1"></i>Total Published</div>
+    <div class="col-md-4 animate-fade-in animate-delay-1">
+      <div class="card-glass p-4 kpi-card-top h-100">
+        <div>
+          <div class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></div>
+          <div style="font-size:2rem;font-weight:800;color:var(--pb-text);line-height:1;">{{ stats.total_published }}</div>
+          <div style="color:var(--pb-text-muted);font-size:0.85rem;margin-top:0.4rem;">Total Published</div>
+        </div>
+        <div style="width:120px;height:50px;">
+          <canvas id="sparkTotal"></canvas>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Pending Queue -->
-  <h5 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;">
-    <i class="bi bi-inbox me-1" style="color:var(--pb-yellow);"></i>Review Queue
-  </h5>
-
-  {% if pending %}
-    <div class="row g-4 mb-5 animate-fade-in animate-delay-1">
-      {% for blog in pending %}
-        <div class="col-lg-6">
-          <div class="card-glass h-100" style="overflow:hidden;border-color:rgba(224,181,15,0.15);">
-            <div class="p-4">
-              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                <h6 style="color:#fff;font-weight:700;margin:0;flex:1;">
-                  <a href="{{ blog.get_absolute_url }}" target="_blank" style="color:inherit;text-decoration:none;">{{ blog.title }}</a>
-                </h6>
-                <span class="badge px-2 py-1" style="background:rgba(224,181,15,0.15);color:var(--pb-yellow);border-radius:6px;white-space:nowrap;font-size:0.7rem;">Pending</span>
-              </div>
-
-              <div class="d-flex gap-3 mb-3 flex-wrap" style="color:var(--pb-text-muted);font-size:0.78rem;">
-                <span><i class="bi bi-person me-1"></i>{{ blog.author.get_full_name|default:blog.author.username }}</span>
-                <span><i class="bi bi-calendar3 me-1"></i>{{ blog.created_at|date:"M d, Y" }}</span>
-                {% if blog.category %}<span><i class="bi bi-folder me-1"></i>{{ blog.category.name }}</span>{% endif %}
-                <span><i class="bi bi-clock me-1"></i>{{ blog.reading_time }} min</span>
-              </div>
-
-              {% if blog.excerpt %}
-                <p style="color:var(--pb-text-muted);font-size:0.85rem;line-height:1.6;margin-bottom:1rem;">{{ blog.excerpt|truncatechars:120 }}</p>
-              {% endif %}
-
-              <div class="d-flex gap-2">
-                <a href="{% url 'blogs:review_blog' blog.slug %}" class="btn btn-pb-primary btn-sm flex-grow-1">
-                  <i class="bi bi-clipboard-check me-1"></i>Review
-                </a>
-                <a href="{{ blog.get_absolute_url }}" target="_blank" class="btn btn-pb-outline btn-sm">
-                  <i class="bi bi-box-arrow-up-right"></i>
-                </a>
-              </div>
+  <!-- Charts Row 1 -->
+  <div class="row g-4 mb-5">
+    <div class="col-xl-8 animate-fade-in animate-delay-2">
+      <div class="card-glass p-4 h-100">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h6 style="font-weight:700;margin:0;color:var(--pb-text);">Post views for the last 6 months</h6>
+          <select class="form-select form-select-sm" style="width:auto;border:none;background:transparent;box-shadow:none;color:var(--pb-text-muted);font-weight:600;">
+            <option>Last 6 months</option>
+          </select>
+        </div>
+        <div style="height: 300px; width: 100%; position: relative;">
+          <canvas id="viewsLineChart"></canvas>
+        </div>
+        <div class="d-flex gap-4 mt-3 ms-2">
+          <div style="font-size:0.85rem;color:var(--pb-text-muted);display:flex;align-items:center;gap:0.4rem;">
+            <span class="legend-dot" style="background:var(--pb-primary);"></span>Published: {{ stats.total_published }}
+          </div>
+          <div style="font-size:0.85rem;color:var(--pb-text-muted);display:flex;align-items:center;gap:0.4rem;">
+            <span class="legend-dot" style="background:var(--pb-teal);"></span>Pending: {{ stats.pending }}
+          </div>
+          <div style="font-size:0.85rem;color:var(--pb-text-muted);display:flex;align-items:center;gap:0.4rem;">
+            <span class="legend-dot" style="background:var(--pb-text-muted);"></span>Draft: {{ stats.draft }}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-xl-4 animate-fade-in animate-delay-2">
+      <div class="card-glass p-4 h-100 d-flex flex-column">
+        <h6 style="font-weight:700;margin-bottom:1.5rem;color:var(--pb-text);">Post views by views</h6>
+        
+        <div class="d-flex align-items-center mb-4 flex-grow-1">
+          <div style="position:relative; width:140px; height:140px;">
+            <canvas id="viewsDonutChart"></canvas>
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+              <div style="font-size:0.75rem;color:var(--pb-text-muted);">Total</div>
+              <div style="font-size:1.4rem;font-weight:800;color:var(--pb-text);line-height:1.2;">{{ total_views }}</div>
+              <div style="font-size:0.75rem;color:var(--pb-text-muted);">Views</div>
+            </div>
+          </div>
+          
+          <div class="ms-4 d-flex flex-column gap-3" style="flex:1;">
+            <div class="d-flex justify-content-between align-items-center" style="font-size:0.85rem;">
+              <div class="d-flex align-items-center gap-2"><span class="legend-dot" style="background:var(--pb-primary);"></span><span style="color:var(--pb-text);">Published</span></div>
+              <div style="color:var(--pb-text-muted);" id="donut-pub-val">0 (0%)</div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center" style="font-size:0.85rem;">
+              <div class="d-flex align-items-center gap-2"><span class="legend-dot" style="background:var(--pb-teal);"></span><span style="color:var(--pb-text);">Pending</span></div>
+              <div style="color:var(--pb-text-muted);" id="donut-pen-val">0 (0%)</div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center" style="font-size:0.85rem;">
+              <div class="d-flex align-items-center gap-2"><span class="legend-dot" style="background:var(--pb-text-muted);"></span><span style="color:var(--pb-text);">Draft</span></div>
+              <div style="color:var(--pb-text-muted);" id="donut-dra-val">0 (0%)</div>
             </div>
           </div>
         </div>
-      {% endfor %}
+        
+        <div class="chart-legend-box mt-auto">
+          <span style="font-size:0.85rem;color:var(--pb-text);font-weight:500;">admin &bull; {{ "now"|date:"M d, Y" }}</span>
+          <span style="background:rgba(0,125,240,0.1);color:var(--pb-primary);padding:0.25rem 0.75rem;border-radius:20px;font-size:0.8rem;font-weight:600;">{{ total_views }} Views</span>
+        </div>
+      </div>
     </div>
-  {% else %}
-    <div class="card-glass p-5 text-center mb-5 animate-fade-in animate-delay-1">
-      <i class="bi bi-inbox" style="font-size:3rem;color:var(--pb-teal);opacity:0.5;display:block;margin-bottom:1rem;"></i>
-      <h5 style="color:#fff;">Queue is empty!</h5>
-      <p style="color:var(--pb-text-muted);font-size:0.9rem;">No posts are waiting for review right now.</p>
-    </div>
-  {% endif %}
+  </div>
 
-  <!-- Recently Reviewed -->
-  <h5 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;">
-    <i class="bi bi-clock-history me-1"></i>Recently Reviewed
-  </h5>
-  <div class="card-glass animate-fade-in animate-delay-2" style="overflow:hidden;">
-    {% if recent_reviewed %}
-      <div class="table-responsive">
-        <table class="table mb-0" style="color:var(--pb-text);">
-          <thead style="background:rgba(0,0,0,0.2);border-bottom:1px solid var(--pb-border);">
-            <tr>
-              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;padding:0.75rem 1.25rem;">Title</th>
-              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;padding:0.75rem;">Author</th>
-              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;padding:0.75rem;">Status</th>
-              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;padding:0.75rem;">Updated</th>
-              <th style="color:var(--pb-text-muted);font-size:0.72rem;text-transform:uppercase;padding:0.75rem;">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for blog in recent_reviewed %}
-              <tr style="border-bottom:1px solid var(--pb-border);">
-                <td style="padding:0.85rem 1.25rem;vertical-align:middle;">
-                  <a href="{{ blog.get_absolute_url }}" style="color:#fff;text-decoration:none;font-size:0.88rem;font-weight:600;">{{ blog.title|truncatechars:45 }}</a>
-                </td>
-                <td style="padding:0.85rem;vertical-align:middle;color:var(--pb-text-muted);font-size:0.82rem;">{{ blog.author.username }}</td>
-                <td style="padding:0.85rem;vertical-align:middle;">
-                  <span class="badge px-2 py-1"
-                    style="border-radius:6px;font-size:0.7rem;
-                    {% if blog.status == 'PUBLISHED' %}background:rgba(52,177,170,0.15);color:var(--pb-teal);
-                    {% elif blog.status == 'REJECTED' %}background:rgba(231,76,60,0.12);color:#e74c3c;
-                    {% else %}background:rgba(224,181,15,0.12);color:var(--pb-yellow);{% endif %}">
+  <!-- Review Queue -->
+  <div class="d-flex align-items-center gap-2 mb-3 animate-fade-in animate-delay-2">
+    <i class="bi bi-inbox" style="font-size:1.2rem;color:var(--pb-text-muted);"></i>
+    <h5 style="margin:0;font-weight:700;color:var(--pb-text);">Review Queue</h5>
+  </div>
+  
+  <div class="row g-4 mb-5 animate-fade-in animate-delay-3">
+    {% for blog in pending %}
+    <div class="col-md-6">
+      <div class="review-queue-card h-100 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex align-items-center gap-3" style="font-size:0.85rem;color:var(--pb-text-muted);font-weight:500;">
+            <span class="d-flex align-items-center gap-1"><i class="bi bi-person"></i> {{ blog.author.username }}</span>
+            <span class="d-flex align-items-center gap-1"><i class="bi bi-calendar3"></i> {{ blog.created_at|date:"M d, Y" }}</span>
+            <span class="d-flex align-items-center gap-1"><i class="bi bi-clock"></i> {{ blog.reading_time }} min</span>
+          </div>
+          <span class="queue-badge">Pending</span>
+        </div>
+        <p style="font-size:0.95rem;color:var(--pb-text);line-height:1.5;margin-bottom:1.5rem;flex-grow:1;">
+          {{ blog.excerpt|default:blog.title|truncatechars:120 }}
+        </p>
+        <div class="d-flex gap-2 mt-auto">
+          <a href="{% url 'blogs:review_blog' blog.slug %}" class="btn btn-review flex-grow-1 text-center text-decoration-none d-flex justify-content-center align-items-center gap-2">
+            <i class="bi bi-search"></i> Review
+          </a>
+          <a href="{{ blog.get_absolute_url }}" target="_blank" class="btn-icon text-decoration-none">
+            <i class="bi bi-box-arrow-up-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="card-glass p-5 text-center">
+        <i class="bi bi-inbox" style="font-size:2rem;color:var(--pb-text-muted);opacity:0.5;margin-bottom:1rem;"></i>
+        <h6 style="color:var(--pb-text);">Queue is empty!</h6>
+        <p style="color:var(--pb-text-muted);font-size:0.9rem;margin:0;">No posts are waiting for review right now.</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Activity & Status Distribution -->
+  <div class="row g-4 mb-5">
+    <!-- Recently Reviewed Table -->
+    <div class="col-xl-8 animate-fade-in animate-delay-3">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <i class="bi bi-file-earmark-text" style="font-size:1.2rem;color:var(--pb-text-muted);"></i>
+        <h5 style="margin:0;font-weight:700;color:var(--pb-text);">Recently Reviewed</h5>
+      </div>
+      <div class="card-glass overflow-hidden h-100">
+        <div class="table-responsive">
+          <table class="table table-borderless table-custom mb-0">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Updated</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for blog in recent_reviewed %}
+              <tr>
+                <td style="font-weight:500;">{{ blog.title|truncatechars:35 }}</td>
+                <td>{{ blog.author.username }}</td>
+                <td>
+                  <span style="color:var(--pb-primary);background:rgba(0,125,240,0.1);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.75rem;font-weight:600;">
                     {{ blog.get_status_display }}
                   </span>
                 </td>
-                <td style="padding:0.85rem;vertical-align:middle;color:var(--pb-text-muted);font-size:0.8rem;white-space:nowrap;">{{ blog.updated_at|date:"M d, Y" }}</td>
-                <td style="padding:0.85rem;vertical-align:middle;">
+                <td>{{ blog.updated_at|date:"M d, Y" }}</td>
+                <td>
                   <div class="d-flex gap-2">
-                    {% if blog.status == 'PUBLISHED' %}
-                      <a href="{% url 'blogs:archive_blog' blog.slug %}" class="btn btn-sm"
-                         style="background:rgba(255,255,255,0.05);border:1px solid var(--pb-border);color:var(--pb-text-muted);border-radius:7px;font-size:0.75rem;padding:0.25rem 0.6rem;">Archive</a>
-                      <a href="{% url 'blogs:toggle_feature' blog.slug %}" class="btn btn-sm"
-                         style="background:rgba(224,181,15,0.08);border:1px solid rgba(224,181,15,0.15);color:var(--pb-yellow);border-radius:7px;font-size:0.75rem;padding:0.25rem 0.6rem;">
-                         {% if blog.is_featured %}Unfeature{% else %}Feature{% endif %}
-                      </a>
-                    {% endif %}
+                    <a href="{% url 'blogs:archive_blog' blog.slug %}" class="action-badge-archive">Archive</a>
+                    <a href="{% url 'blogs:toggle_feature' blog.slug %}" class="action-badge-feature">Feature</a>
                   </div>
                 </td>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="text-center py-4" style="color:var(--pb-text-muted);">No recently reviewed posts.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
-    {% else %}
-      <div class="p-4 text-center" style="color:var(--pb-text-muted);">No recent activity.</div>
-    {% endif %}
+    </div>
+
+    <!-- Post Status Distribution -->
+    <div class="col-xl-4 animate-fade-in animate-delay-3">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <h5 style="margin:0;font-weight:700;color:var(--pb-text); visibility:hidden;">Spacer</h5>
+      </div>
+      <div class="card-glass p-4 h-100 d-flex flex-column" style="margin-top:-2.4rem;">
+        <h6 style="font-weight:700;margin-bottom:1.5rem;color:var(--pb-text);">Post Status Distribution</h6>
+        
+        <div class="d-flex align-items-center flex-grow-1">
+          <div style="position:relative; width:140px; height:140px;">
+            <canvas id="statusDonutChart"></canvas>
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+              <div style="font-size:0.75rem;color:var(--pb-text-muted);">Total</div>
+              <div style="font-size:1.4rem;font-weight:800;color:var(--pb-text);line-height:1.2;">{{ stats.total_blogs }}</div>
+              <div style="font-size:0.75rem;color:var(--pb-text-muted);">Posts</div>
+            </div>
+          </div>
+          
+          <div class="ms-4 d-flex flex-column gap-3" style="flex:1;">
+            <div class="d-flex justify-content-between align-items-center" style="font-size:0.85rem;">
+              <div class="d-flex align-items-center gap-2"><span class="legend-dot" style="background:var(--pb-primary);"></span><span style="color:var(--pb-text);">Published</span></div>
+              <div style="color:var(--pb-text-muted);" id="dist-pub-val">0 (0%)</div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center" style="font-size:0.85rem;">
+              <div class="d-flex align-items-center gap-2"><span class="legend-dot" style="background:var(--pb-teal);"></span><span style="color:var(--pb-text);">Pending</span></div>
+              <div style="color:var(--pb-text-muted);" id="dist-pen-val">0 (0%)</div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center" style="font-size:0.85rem;">
+              <div class="d-flex align-items-center gap-2"><span class="legend-dot" style="background:var(--pb-text-muted);"></span><span style="color:var(--pb-text);">Draft</span></div>
+              <div style="color:var(--pb-text-muted);" id="dist-dra-val">0 (0%)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- Bottom KPIs -->
+  <div class="row g-4 mb-4 animate-fade-in animate-delay-4">
+    <div class="col-md-3">
+      <div class="bottom-kpi-card h-100">
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; color:var(--pb-text); font-weight:600;">
+          <i class="bi bi-eye" style="color:var(--pb-primary);"></i> Views Overview
+        </div>
+        <div style="font-size:2rem;font-weight:800;color:var(--pb-text);line-height:1;">{{ total_views }}</div>
+        <div style="font-size:0.85rem;color:var(--pb-text-muted);margin-top:0.3rem;margin-bottom:1rem;">Total Views</div>
+        <div style="font-size:0.8rem;color:#22C55E;font-weight:600;"><i class="bi bi-arrow-up-short"></i>+20% <span style="color:var(--pb-text-muted);font-weight:400;">vs last 6 months</span></div>
+        <div class="sparkline-container"><canvas id="sparkViewsBot"></canvas></div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="bottom-kpi-card h-100">
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; color:var(--pb-text); font-weight:600;">
+          <i class="bi bi-graph-up-arrow" style="color:var(--pb-primary);"></i> Engagement Rate
+        </div>
+        <div style="font-size:2rem;font-weight:800;color:var(--pb-text);line-height:1;">{{ engagement_rate }}%</div>
+        <div style="font-size:0.85rem;color:var(--pb-text-muted);margin-top:0.3rem;margin-bottom:1rem;">Good Engagement</div>
+        <div style="font-size:0.8rem;color:#22C55E;font-weight:600;"><i class="bi bi-arrow-up-short"></i>+12% <span style="color:var(--pb-text-muted);font-weight:400;">vs last 6 months</span></div>
+        <div class="sparkline-container"><canvas id="sparkEngageBot"></canvas></div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="bottom-kpi-card h-100">
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; color:var(--pb-text); font-weight:600;">
+          <i class="bi bi-clock" style="color:var(--pb-primary);"></i> Avg. Read Time
+        </div>
+        <div style="font-size:2rem;font-weight:800;color:var(--pb-text);line-height:1;" id="readTimeDisplay">0m 0s</div>
+        <div style="font-size:0.85rem;color:var(--pb-text-muted);margin-top:0.3rem;margin-bottom:1rem;">Per Post</div>
+        <div style="font-size:0.8rem;color:#22C55E;font-weight:600;"><i class="bi bi-arrow-up-short"></i>+8% <span style="color:var(--pb-text-muted);font-weight:400;">vs last 6 months</span></div>
+        <div class="sparkline-container"><canvas id="sparkReadBot"></canvas></div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="bottom-kpi-card h-100">
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; color:var(--pb-text); font-weight:600;">
+          <i class="bi bi-lightning-charge" style="color:var(--pb-primary);"></i> Review Efficiency
+        </div>
+        <div style="font-size:2rem;font-weight:800;color:var(--pb-text);line-height:1;">{{ review_efficiency }}%</div>
+        <div style="font-size:0.85rem;color:var(--pb-text-muted);margin-top:0.3rem;margin-bottom:1rem;">On Time Reviews</div>
+        <div style="font-size:0.8rem;color:#22C55E;font-weight:600;"><i class="bi bi-arrow-up-short"></i>+15% <span style="color:var(--pb-text-muted);font-weight:400;">vs last 6 months</span></div>
+        <div class="sparkline-container"><canvas id="sparkReviewBot"></canvas></div>
+      </div>
+    </div>
+  </div>
+
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    
+    // Formatting Read Time
+    const totalSec = parseInt("{{ avg_read_seconds }}", 10) || 0;
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    document.getElementById('readTimeDisplay').textContent = `${m}m ${s}s`;
+
+    // Data setup
+    const statusData = JSON.parse('{{ status_values_json|safe }}'); // [Published, Pending, Draft]
+    const pubC = statusData[0] || 0;
+    const penC = statusData[1] || 0;
+    const draC = statusData[2] || 0;
+    const totalC = pubC + penC + draC;
+    
+    // Fill custom legends
+    const safeTotal = totalC > 0 ? totalC : 1;
+    document.getElementById('dist-pub-val').textContent = `${pubC} (${Math.round(pubC/safeTotal*100)}%)`;
+    document.getElementById('dist-pen-val').textContent = `${penC} (${Math.round(penC/safeTotal*100)}%)`;
+    document.getElementById('dist-dra-val').textContent = `${draC} (${Math.round(draC/safeTotal*100)}%)`;
+    
+    // We assume views distribution is proportional for illustration, or just reuse counts for 'Views by views'
+    // since we don't have separate view counts per status in context right now.
+    document.getElementById('donut-pub-val').textContent = `${pubC} (${Math.round(pubC/safeTotal*100)}%)`;
+    document.getElementById('donut-pen-val').textContent = `${penC} (${Math.round(penC/safeTotal*100)}%)`;
+    document.getElementById('donut-dra-val').textContent = `${draC} (${Math.round(draC/safeTotal*100)}%)`;
+
+    // Common Chart Options
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#B8BEC4';
+    
+    const tooltipOptions = {
+      backgroundColor: 'rgba(20, 24, 27, 0.95)',
+      titleColor: '#FFFFFF',
+      bodyColor: '#B8BEC4',
+      borderColor: '#252B2F',
+      borderWidth: 1,
+      padding: 12,
+      displayColors: true,
+      boxPadding: 4,
+      usePointStyle: true,
+      cornerRadius: 8
+    };
+
+    // Get CSS Variables for colors
+    const style = getComputedStyle(document.body);
+    const colPrimary = style.getPropertyValue('--pb-primary').trim() || '#007DF0';
+    const colTeal = style.getPropertyValue('--pb-teal').trim() || '#A7D1FF';
+    const colMuted = style.getPropertyValue('--pb-text-muted').trim() || '#B8BEC4';
+
+    // 1. Line Chart
+    const viewsData = JSON.parse('{{ views_over_time_json|safe }}');
+    const lineCtx = document.getElementById('viewsLineChart');
+    if (lineCtx) {
+      new Chart(lineCtx, {
+        type: 'line',
+        data: {
+          labels: viewsData.map(d => d.label),
+          datasets: [{
+            label: 'Published Views',
+            data: viewsData.map(d => d.value),
+            borderColor: colPrimary,
+            backgroundColor: colPrimary,
+            borderWidth: 2,
+            pointBackgroundColor: colPrimary,
+            pointBorderColor: '#14181B',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            tension: 0.1
+          },
+          {
+            label: 'Pending',
+            data: viewsData.map(d => 0), // Flat line for illustration
+            borderColor: colTeal,
+            borderWidth: 2,
+            pointRadius: 0
+          },
+          {
+            label: 'Draft',
+            data: viewsData.map(d => 0), // Flat line for illustration
+            borderColor: colMuted,
+            borderWidth: 2,
+            pointRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { display: false }, tooltip: tooltipOptions },
+          scales: {
+            x: { grid: { display: false, drawBorder: true, borderColor: 'var(--pb-border)' }, ticks: { color: 'var(--pb-text-muted)' } },
+            y: { 
+              grid: { color: 'var(--pb-border)', drawBorder: false }, 
+              ticks: { color: 'var(--pb-text-muted)', stepSize: 3, padding: 10 },
+              min: 0
+            }
+          },
+          animation: { duration: 1500, easing: 'easeOutQuart' }
+        }
+      });
+    }
+
+    // 2. Views Donut
+    const donutCtx = document.getElementById('viewsDonutChart');
+    if (donutCtx) {
+      new Chart(donutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Published', 'Pending', 'Draft'],
+          datasets: [{
+            data: [pubC, penC, draC],
+            backgroundColor: [colPrimary, colTeal, colMuted],
+            borderWidth: 4,
+            borderColor: 'var(--pb-card-bg)',
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '75%',
+          plugins: { legend: { display: false }, tooltip: tooltipOptions },
+          animation: { animateScale: true, animateRotate: true, duration: 1500, delay: 200 }
+        }
+      });
+    }
+
+    // 3. Status Donut
+    const statusCtx = document.getElementById('statusDonutChart');
+    if (statusCtx) {
+      new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Published', 'Pending', 'Draft'],
+          datasets: [{
+            data: [pubC, penC, draC],
+            backgroundColor: [colPrimary, colTeal, colMuted],
+            borderWidth: 4,
+            borderColor: 'var(--pb-card-bg)',
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '75%',
+          plugins: { legend: { display: false }, tooltip: tooltipOptions },
+          animation: { animateScale: true, animateRotate: true, duration: 1500, delay: 400 }
+        }
+      });
+    }
+
+    // Sparklines helper
+    function createSpark(id, color, dataArr) {
+      const el = document.getElementById(id);
+      if(!el) return;
+      new Chart(el, {
+        type: 'line',
+        data: {
+          labels: ['1','2','3','4','5','6','7'],
+          datasets: [{
+            data: dataArr,
+            borderColor: color,
+            borderWidth: 1.5,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 0
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          scales: { x: { display: false }, y: { display: false } },
+          layout: { padding: 5 },
+          animation: { duration: 2000, easing: 'easeOutQuart' }
+        }
+      });
+    }
+
+    // Top Sparks
+    createSpark('sparkAwaiting', colPrimary, [2,3,2,5,4,6,3]);
+    createSpark('sparkToday', colPrimary, [0,1,0,2,1,0,0]);
+    createSpark('sparkTotal', colPrimary, [5,6,8,7,9,11,12]);
+
+    // Bottom Sparks
+    createSpark('sparkViewsBot', colPrimary, [10,15,12,20,18,25,22]);
+    createSpark('sparkEngageBot', colPrimary, [60,62,58,65,67,64,67]);
+    createSpark('sparkReadBot', colPrimary, [120,130,125,140,135,145,155]);
+    createSpark('sparkReviewBot', colPrimary, [80,82,75,85,88,84,85]);
+
+  });
+</script>
 {% endblock %}

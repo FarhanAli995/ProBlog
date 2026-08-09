@@ -1,14 +1,470 @@
 {% extends "base.html" %}
 {% block title %}Superuser Dashboard — ProBlog{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ═══════════════════════════════════════
+   ANIMATION KEYFRAMES
+   ═══════════════════════════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slideInBlur {
+  from { opacity: 0; transform: translateY(20px); filter: blur(8px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.85; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes borderGlow {
+  0%, 100% { box-shadow: 0 0 5px rgba(0,106,204,0.2); }
+  50% { box-shadow: 0 0 20px rgba(0,106,204,0.4); }
+}
+
+/* ═══════════════════════════════════════
+   ENTRANCE ANIMATIONS
+   ═══════════════════════════════════════ */
+.animate-fade-in {
+  animation: fadeInUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+.animate-fade-in-down {
+  animation: fadeInDown 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+.animate-scale-in {
+  animation: scaleIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+.animate-slide-blur {
+  animation: slideInBlur 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+.animate-delay-5 { animation-delay: 0.5s; }
+.animate-delay-6 { animation-delay: 0.6s; }
+
+/* Stagger children */
+.stagger-children > * {
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* ═══════════════════════════════════════
+   LIGHT THEME VARIABLES
+   ═══════════════════════════════════════ */
+.light-dashboard {
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.12);
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.light-dashboard,
+.light-dashboard h1, .light-dashboard h2, .light-dashboard h3,
+.light-dashboard h4, .light-dashboard h5, .light-dashboard h6,
+.light-dashboard p, .light-dashboard a, .light-dashboard span,
+.light-dashboard td, .light-dashboard th, .light-dashboard div {
+  color: var(--pb-text);
+}
+
+.light-dashboard a { color: var(--pb-primary); }
+
+/* ═══════════════════════════════════════
+   CARD GLASS & HOVER EFFECTS
+   ═══════════════════════════════════════ */
+.card-glass {
+  background: var(--pb-card-bg);
+  border: 1px solid var(--pb-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+.card-glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(0,106,204,0.03) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+  border-radius: 16px;
+}
+.card-glass:hover {
+  transform: translateY(-4px) scale(1.005);
+  box-shadow: var(--shadow-xl);
+  border-color: rgba(0,106,204,0.15);
+}
+.card-glass:hover::before {
+  opacity: 1;
+}
+
+/* KPI Cards special hover */
+.kpi-card {
+  transition: all var(--transition-slow);
+}
+.kpi-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-xl);
+}
+.kpi-card:hover .kpi-icon-bg {
+  animation: float 2s ease-in-out infinite;
+  transform: scale(1.1);
+}
+.kpi-card:hover .kpi-value {
+  color: var(--pb-primary-hover);
+  transform: scale(1.05);
+}
+.kpi-value {
+  transition: all var(--transition-base);
+  display: inline-block;
+}
+.kpi-icon-bg {
+  transition: all var(--transition-base);
+}
+
+/* ═══════════════════════════════════════
+   BUTTON HOVER EFFECTS
+   ═══════════════════════════════════════ */
+.btn-pb-primary {
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+  z-index: 1;
+}
+.btn-pb-primary::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  /* subtle highlight, keep behind button and low opacity to avoid washing text */
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  z-index: -1;
+}
+.btn-pb-primary:hover::after {
+  width: 300px; height: 300px;
+}
+.btn-pb-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,106,204,0.3);
+}
+
+.btn-pb-primary,
+.btn-pb-outline {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.btn-pb-primary > i,
+.btn-pb-primary > svg,
+.btn-pb-primary > .bi {
+  vertical-align: middle;
+}
+
+.btn-pb-outline {
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-base);
+}
+.btn-pb-outline:hover {
+  background: var(--pb-primary);
+  color:var(--pb-text) !important;
+  border-color: var(--pb-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,106,204,0.2);
+}
+
+/* ═══════════════════════════════════════
+   CHART CONTAINER HOVER
+   ═══════════════════════════════════════ */
+.chart-container {
+  position: relative;
+  transition: all var(--transition-base);
+  border-radius: 12px;
+}
+.chart-container:hover {
+  transform: scale(1.01);
+}
+.chart-container canvas {
+  transition: all var(--transition-base);
+  cursor: crosshair;
+}
+
+/* ═══════════════════════════════════════
+   TABLE ROW ANIMATIONS
+   ═══════════════════════════════════════ */
+.table-row-animated {
+  transition: all var(--transition-fast);
+  position: relative;
+}
+.table-row-animated::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--pb-primary);
+  transform: scaleY(0);
+  transition: transform var(--transition-base);
+  border-radius: 0 2px 2px 0;
+}
+.table-row-animated:hover {
+  background: rgba(0,106,204,0.03) !important;
+  transform: translateX(4px);
+}
+.table-row-animated:hover::after {
+  transform: scaleY(1);
+}
+.table-row-animated:hover .user-avatar {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 4px 12px rgba(0,106,204,0.2);
+}
+.user-avatar {
+  transition: all var(--transition-base);
+}
+
+/* ═══════════════════════════════════════
+   LIST ITEM HOVER EFFECTS
+   ═══════════════════════════════════════ */
+.list-item-hover {
+  transition: all var(--transition-fast);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  margin: 0 -0.4rem;
+}
+.list-item-hover:hover {
+  background: rgba(0,106,204,0.04);
+  transform: translateX(6px);
+}
+.list-item-hover:hover .list-badge {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.list-badge {
+  transition: all var(--transition-fast);
+}
+
+/* Top post item hover */
+.top-post-item {
+  transition: all var(--transition-base);
+  border-radius: 14px;
+  border: 1px solid transparent;
+}
+.top-post-item:hover {
+  background: rgba(0,106,204,0.04);
+  border-color: rgba(0,106,204,0.1);
+  transform: translateX(8px) scale(1.01);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+.top-post-item:hover .post-title-link {
+  color: var(--pb-primary-hover);
+}
+.post-title-link {
+  transition: color var(--transition-fast);
+}
+
+/* Category item hover */
+.cat-item {
+  transition: all var(--transition-fast);
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  margin: 0 -0.4rem;
+}
+.cat-item:hover {
+  background: rgba(0,106,204,0.05);
+  transform: translateX(6px);
+}
+.cat-item:hover .cat-count {
+  background: var(--pb-primary) !important;
+  color:var(--pb-text) !important;
+}
+.cat-count {
+  transition: all var(--transition-fast);
+}
+
+/* Author item hover */
+.author-item {
+  transition: all var(--transition-base);
+  padding: 0.5rem;
+  border-radius: 12px;
+  margin: 0 -0.4rem;
+}
+.author-item:hover {
+  background: rgba(0,106,204,0.04);
+  transform: translateX(6px) scale(1.02);
+}
+.author-item:hover .author-rank {
+  color: var(--pb-primary);
+  transform: scale(1.2);
+}
+.author-rank {
+  transition: all var(--transition-fast);
+}
+.author-item:hover .author-avatar {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(0,106,204,0.15);
+}
+.author-avatar {
+  transition: all var(--transition-base);
+}
+
+/* Progress bar animation */
+.progress-bar-animated {
+  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+.progress-bar-animated::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+/* Staff group item hover */
+.staff-item {
+  transition: all var(--transition-fast);
+  padding: 0.5rem;
+  border-radius: 10px;
+  margin: 0 -0.4rem;
+}
+.staff-item:hover {
+  background: rgba(0,106,204,0.04);
+  transform: translateX(6px);
+}
+.staff-item:hover .staff-dot {
+  transform: scale(1.5);
+  box-shadow: 0 0 8px currentColor;
+}
+.staff-dot {
+  transition: all var(--transition-fast);
+}
+
+/* Badge hover */
+.badge-hover {
+  transition: all var(--transition-fast);
+}
+.badge-hover:hover {
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Header icon animation */
+.header-icon {
+  display: inline-block;
+  transition: transform var(--transition-base);
+}
+h1:hover .header-icon {
+  animation: pulse-soft 1s ease-in-out infinite;
+  transform: rotate(-10deg);
+}
+
+/* Form controls */
+.light-dashboard .form-control,
+.light-dashboard .form-select {
+  background: var(--pb-card-bg) !important;
+  color:var(--pb-text) !important;
+  border-color: var(--pb-border) !important;
+  transition: all var(--transition-base);
+}
+.light-dashboard .form-control:focus,
+.light-dashboard .form-select:focus {
+  border-color: var(--pb-primary) !important;
+  box-shadow: 0 0 0 3px rgba(0,106,204,0.1) !important;
+  transform: translateY(-1px);
+}
+
+/* Report alert pulse */
+.report-alert {
+  animation: borderGlow 2s ease-in-out infinite;
+}
+
+/* Smooth scroll for the page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE TWEAKS
+   ═══════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid py-4 px-4">
+<div class="container-fluid py-4 px-4 light-dashboard" style="background:var(--pb-dark-light); min-height:100vh;">
 
   <!-- ═══ Header ═══ -->
-  <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-in flex-wrap gap-3">
+  <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-in-down flex-wrap gap-3">
     <div>
-      <h1 style="color:#fff;font-weight:800;margin:0;font-size:1.6rem;">
-        <i class="bi bi-lightning-charge-fill me-2" style="color:var(--pb-primary);"></i>Superuser Command Centre
+      <h1 style="color:var(--pb-text);font-weight:800;margin:0;font-size:1.6rem;">
+        <i class="bi bi-lightning-charge-fill me-2 header-icon" style="color:var(--pb-primary);"></i>Superuser Command Centre
       </h1>
       <p style="color:var(--pb-text-muted);margin:0.3rem 0 0;font-size:0.88rem;">Full platform control &amp; analytics</p>
     </div>
@@ -23,49 +479,172 @@
   </div>
 
   <!-- ═══ Top KPI Cards ═══ -->
-  <div class="row g-3 mb-4">
-    <div class="col-6 col-xl-3 animate-fade-in">
-      <div class="card-glass p-4" style="border-top:3px solid var(--pb-primary);position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(242,159,103,0.06);">
+  <div class="row g-3 mb-4 stagger-children">
+    <div class="col-6 col-xl-3">
+      <div class="card-glass p-4 kpi-card" style="border-top:3px solid var(--pb-primary);position:relative;overflow:hidden;">
+        <div class="kpi-icon-bg" style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(0,106,204,0.16);filter:drop-shadow(0 4px 12px rgba(0,0,0,0.06));">
           <i class="bi bi-people-fill"></i>
         </div>
         <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--pb-text-muted);margin-bottom:0.4rem;">Total Users</div>
-        <div style="font-size:2.2rem;font-weight:800;color:var(--pb-primary);">{{ total_users }}</div>
+        <div class="kpi-value" style="font-size:2.2rem;font-weight:800;color:var(--pb-primary);">{{ total_users }}</div>
         <div style="font-size:0.78rem;color:var(--pb-text-muted);margin-top:0.3rem;">
           <i class="bi bi-shield-fill me-1" style="color:var(--pb-teal);"></i>{{ groups.editors }} Editors &nbsp;
           <i class="bi bi-person-fill me-1" style="color:var(--pb-blue);"></i>{{ groups.authors }} Authors
         </div>
       </div>
     </div>
-    <div class="col-6 col-xl-3 animate-fade-in animate-delay-1">
-      <div class="card-glass p-4" style="border-top:3px solid var(--pb-blue);position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(59,143,243,0.06);"><i class="bi bi-journals"></i></div>
+    <div class="col-6 col-xl-3">
+      <div class="card-glass p-4 kpi-card" style="border-top:3px solid var(--pb-blue);position:relative;overflow:hidden;">
+        <div class="kpi-icon-bg" style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(0,106,204,0.16);filter:drop-shadow(0 4px 12px rgba(0,0,0,0.06));"><i class="bi bi-journals"></i></div>
         <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--pb-text-muted);margin-bottom:0.4rem;">Total Posts</div>
-        <div style="font-size:2.2rem;font-weight:800;color:var(--pb-blue);">{{ total_blogs }}</div>
+        <div class="kpi-value" style="font-size:2.2rem;font-weight:800;color:var(--pb-blue);">{{ total_blogs }}</div>
         <div style="font-size:0.78rem;color:var(--pb-text-muted);margin-top:0.3rem;">
           <span style="color:var(--pb-teal);">{{ blog_stats.published }} published</span> &nbsp;
           <span style="color:var(--pb-yellow);">{{ blog_stats.pending }} pending</span>
         </div>
       </div>
     </div>
-    <div class="col-6 col-xl-3 animate-fade-in animate-delay-2">
-      <div class="card-glass p-4" style="border-top:3px solid var(--pb-teal);position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(52,177,170,0.06);"><i class="bi bi-chat-dots-fill"></i></div>
+    <div class="col-6 col-xl-3">
+      <div class="card-glass p-4 kpi-card" style="border-top:3px solid var(--pb-teal);position:relative;overflow:hidden;">
+        <div class="kpi-icon-bg" style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(0,184,148,0.16);filter:drop-shadow(0 4px 12px rgba(0,0,0,0.06));"><i class="bi bi-chat-dots-fill"></i></div>
         <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--pb-text-muted);margin-bottom:0.4rem;">Comments</div>
-        <div style="font-size:2.2rem;font-weight:800;color:var(--pb-teal);">{{ total_comments }}</div>
+        <div class="kpi-value" style="font-size:2.2rem;font-weight:800;color:var(--pb-teal);">{{ total_comments }}</div>
         <div style="font-size:0.78rem;color:var(--pb-text-muted);margin-top:0.3rem;">Across all published posts</div>
       </div>
     </div>
-    <div class="col-6 col-xl-3 animate-fade-in animate-delay-3">
-      <div class="card-glass p-4" style="border-top:3px solid {% if total_reports > 0 %}#e74c3c{% else %}var(--pb-teal){% endif %};position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(231,76,60,0.06);"><i class="bi bi-flag-fill"></i></div>
+    <div class="col-6 col-xl-3">
+      <div class="card-glass p-4 kpi-card {% if total_reports > 0 %}report-alert{% endif %}" style="border-top:3px solid {% if total_reports > 0 %}#e74c3c{% else %}var(--pb-teal){% endif %};position:relative;overflow:hidden;">
+        <div class="kpi-icon-bg" style="position:absolute;top:-10px;right:-10px;font-size:5rem;color:rgba(231,76,60,0.16);filter:drop-shadow(0 4px 12px rgba(0,0,0,0.06));"><i class="bi bi-flag-fill"></i></div>
         <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--pb-text-muted);margin-bottom:0.4rem;">Pending Reports</div>
-        <div style="font-size:2.2rem;font-weight:800;color:{% if total_reports > 0 %}#e74c3c{% else %}var(--pb-teal){% endif %};">{{ total_reports }}</div>
+        <div class="kpi-value" style="font-size:2.2rem;font-weight:800;color:{% if total_reports > 0 %}#e74c3c{% else %}var(--pb-teal){% endif %};">{{ total_reports }}</div>
         {% if total_reports > 0 %}
-          <a href="{% url 'dashboard:moderator' %}" style="font-size:0.78rem;color:#e74c3c;text-decoration:none;"><i class="bi bi-arrow-right me-1"></i>Review reports</a>
+          <a href="{% url 'dashboard:moderator' %}" style="font-size:0.78rem;color:#e74c3c;text-decoration:none;font-weight:600;" class="d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-right me-1"></i>Review reports
+          </a>
         {% else %}
-          <div style="font-size:0.78rem;color:var(--pb-teal);">All clear!</div>
+          <div style="font-size:0.78rem;color:var(--pb-teal);"><i class="bi bi-check-circle-fill me-1"></i>All clear!</div>
         {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <!-- Views Chart -->
+    <div class="col-xl-8 animate-slide-blur">
+      <div class="card-glass p-4 h-100" style="min-height:360px;">
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+          <div>
+            <h5 style="color:var(--pb-text);font-weight:700;margin-bottom:0.35rem;">Views Overview</h5>
+            <p style="color:var(--pb-text-muted);margin:0;font-size:0.9rem;">Monthly blog views for the last 6 months</p>
+          </div>
+          <span class="badge badge-hover" style="background:rgba(0,106,204,0.08);color:var(--pb-primary);font-size:0.85rem;padding:0.4rem 0.8rem;border-radius:20px;">
+            <i class="bi bi-clock-history me-1"></i>Last 6 months
+          </span>
+        </div>
+        <div class="chart-container position-relative" style="min-height:280px;">
+          <canvas id="superuserViewsChart" style="width:100%;height:280px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Posts -->
+    <div class="col-xl-4 animate-slide-blur animate-delay-1">
+      <div class="card-glass p-4 h-100" style="min-height:360px;">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h5 style="color:var(--pb-text);font-weight:700;margin:0;">Top Posts</h5>
+            <p style="color:var(--pb-text-muted);margin:0;font-size:0.9rem;">Most viewed content</p>
+          </div>
+          <i class="bi bi-fire" style="font-size:1.4rem;color:var(--pb-yellow);"></i>
+        </div>
+        <div class="d-flex flex-column gap-3 stagger-children">
+          {% for blog in top_posts %}
+            <div class="top-post-item p-3">
+              <div class="d-flex justify-content-between align-items-start gap-3">
+                <div style="flex:1;min-width:0;">
+                  <a href="{{ blog.get_absolute_url }}" target="_blank" class="post-title-link" style="color:var(--pb-text);font-size:0.95rem;font-weight:600;text-decoration:none;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{ blog.title|truncatechars:50 }}</a>
+                  <div style="color:var(--pb-text-muted);font-size:0.82rem;margin-top:0.35rem;">
+                    <i class="bi bi-person-circle me-1"></i>{{ blog.author.username }} · {{ blog.published_at|date:'M d, Y' }}
+                  </div>
+                </div>
+                <span class="badge px-3 py-1 list-badge" style="background:rgba(0,106,204,0.1);color:var(--pb-primary);border-radius:999px;font-size:0.78rem;white-space:nowrap;">
+                  <i class="bi bi-eye me-1"></i>{{ blog.views }}
+                </span>
+              </div>
+            </div>
+          {% empty %}
+            <div style="color:var(--pb-text-muted);font-size:0.9rem;text-align:center;padding:2rem;">
+              <i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:0.5rem;opacity:0.3;"></i>
+              No published posts available yet.
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <!-- Status Pie -->
+    <div class="col-xl-4 animate-fade-in">
+      <div class="card-glass p-4 h-100" style="min-height:280px;">
+        <div class="d-flex align-items-start justify-content-between mb-4">
+          <div>
+            <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin:0;">Post Status Distribution</h6>
+            <p style="color:var(--pb-text-muted);margin:0;font-size:0.83rem;">Current blog status share</p>
+          </div>
+          <span class="badge badge-hover" style="background:rgba(0,184,148,0.1);color:var(--pb-teal);font-size:0.78rem;">
+            <i class="bi bi-circle-fill me-1" style="font-size:0.4rem;vertical-align:middle;"></i>Live
+          </span>
+        </div>
+        <div class="chart-container position-relative" style="min-height:260px;">
+          <canvas id="statusPieChart" style="width:100%;height:260px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group Pie -->
+    <div class="col-xl-4 animate-fade-in animate-delay-1">
+      <div class="card-glass p-4 h-100" style="min-height:280px;">
+        <div class="d-flex align-items-start justify-content-between mb-4">
+          <div>
+            <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin:0;">Staff Group Split</h6>
+            <p style="color:var(--pb-text-muted);margin:0;font-size:0.83rem;">Team composition</p>
+          </div>
+          <span class="badge badge-hover" style="background:rgba(0,106,204,0.08);color:var(--pb-primary);font-size:0.78rem;">
+            <i class="bi bi-check-circle me-1"></i>Updated now
+          </span>
+        </div>
+        <div class="chart-container position-relative" style="min-height:260px;">
+          <canvas id="groupPieChart" style="width:100%;height:260px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Categories -->
+    <div class="col-xl-4 animate-fade-in animate-delay-2">
+      <div class="card-glass p-4 h-100" style="min-height:280px;">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin:0;">Top Categories</h6>
+            <p style="color:var(--pb-text-muted);margin:0;font-size:0.83rem;">Most popular topics</p>
+          </div>
+          <i class="bi bi-folder2-open" style="font-size:1.2rem;color:var(--pb-yellow);"></i>
+        </div>
+        <div class="d-flex flex-column gap-1 stagger-children">
+          {% for cat in categories %}
+            <div class="cat-item d-flex justify-content-between align-items-center">
+              <span style="color:var(--pb-text);font-size:0.88rem;font-weight:500;">
+                <i class="bi bi-folder me-2" style="color:var(--pb-primary);opacity:0.6;"></i>{{ cat.name }}
+              </span>
+              <span class="cat-count badge px-2 py-1" style="background:rgba(0,0,0,0.05);color:var(--pb-text-muted);border-radius:5px;font-size:0.72rem;">{{ cat.post_count }}</span>
+            </div>
+          {% empty %}
+            <p style="color:var(--pb-text-muted);font-size:0.9rem;margin:0;text-align:center;padding:2rem;">
+              <i class="bi bi-folder-x" style="font-size:2rem;display:block;margin-bottom:0.5rem;opacity:0.3;"></i>
+              No categories yet.
+            </p>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </div>
@@ -81,49 +660,57 @@
           <i class="bi bi-bar-chart me-1"></i>Post Status Breakdown
         </h6>
         {% with total_b=blog_stats.draft|add:blog_stats.pending|add:blog_stats.published|add:blog_stats.rejected|add:blog_stats.archived %}
-        <div class="d-flex flex-column gap-3">
-          {% with p_pct=blog_stats.published|default:0 p_total=total_b|default:1 %}
-          <div>
-            <div class="d-flex justify-content-between mb-1">
-              <small style="color:var(--pb-teal);">Published</small>
-              <small style="color:var(--pb-text-muted);">{{ blog_stats.published }}</small>
+        <div class="d-flex flex-column gap-4">
+          {% with p_total=total_b|default:1 %}
+          <div class="status-progress-group">
+            <div class="d-flex justify-content-between mb-2">
+              <small style="color:var(--pb-teal);font-weight:600;">
+                <i class="bi bi-check-circle-fill me-1"></i>Published
+              </small>
+              <small style="color:var(--pb-text-muted);font-weight:700;">{{ blog_stats.published }}</small>
             </div>
-            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
-              <div style="height:100%;width:{% widthratio blog_stats.published total_b 100 %}%;background:var(--pb-teal);border-radius:3px;transition:width 0.8s;"></div>
-            </div>
-          </div>
-          {% endwith %}
-          <div>
-            <div class="d-flex justify-content-between mb-1">
-              <small style="color:var(--pb-yellow);">Pending Review</small>
-              <small style="color:var(--pb-text-muted);">{{ blog_stats.pending }}</small>
-            </div>
-            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
-              <div style="height:100%;width:{% widthratio blog_stats.pending total_b 100 %}%;background:var(--pb-yellow);border-radius:3px;"></div>
+            <div style="height:8px;background:rgba(0,0,0,0.04);border-radius:4px;overflow:hidden;">
+              <div class="progress-bar-animated" style="height:100%;width:0%;background:linear-gradient(90deg,var(--pb-teal),#00d2a0);border-radius:4px;" data-width="{% widthratio blog_stats.published total_b 100 %}%"></div>
             </div>
           </div>
-          <div>
-            <div class="d-flex justify-content-between mb-1">
-              <small style="color:var(--pb-text-muted);">Draft</small>
-              <small style="color:var(--pb-text-muted);">{{ blog_stats.draft }}</small>
+          <div class="status-progress-group">
+            <div class="d-flex justify-content-between mb-2">
+              <small style="color:var(--pb-yellow);font-weight:600;">
+                <i class="bi bi-hourglass-split me-1"></i>Pending Review
+              </small>
+              <small style="color:var(--pb-text-muted);font-weight:700;">{{ blog_stats.pending }}</small>
             </div>
-            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
-              <div style="height:100%;width:{% widthratio blog_stats.draft total_b 100 %}%;background:rgba(255,255,255,0.15);border-radius:3px;"></div>
+            <div style="height:8px;background:rgba(0,0,0,0.04);border-radius:4px;overflow:hidden;">
+              <div class="progress-bar-animated" style="height:100%;width:0%;background:linear-gradient(90deg,var(--pb-yellow),#f1c40f);border-radius:4px;" data-width="{% widthratio blog_stats.pending total_b 100 %}%"></div>
             </div>
           </div>
-          <div>
-            <div class="d-flex justify-content-between mb-1">
-              <small style="color:#e74c3c;">Rejected / Archived</small>
-              <small style="color:var(--pb-text-muted);">{{ blog_stats.rejected|add:blog_stats.archived }}</small>
+          <div class="status-progress-group">
+            <div class="d-flex justify-content-between mb-2">
+              <small style="color:var(--pb-text-muted);font-weight:600;">
+                <i class="bi bi-pencil-square me-1"></i>Draft
+              </small>
+              <small style="color:var(--pb-text-muted);font-weight:700;">{{ blog_stats.draft }}</small>
             </div>
-            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;">
+            <div style="height:8px;background:rgba(0,0,0,0.04);border-radius:4px;overflow:hidden;">
+              <div class="progress-bar-animated" style="height:100%;width:0%;background:linear-gradient(90deg,#95a5a6,#bdc3c7);border-radius:4px;" data-width="{% widthratio blog_stats.draft total_b 100 %}%"></div>
+            </div>
+          </div>
+          <div class="status-progress-group">
+            <div class="d-flex justify-content-between mb-2">
+              <small style="color:#e74c3c;font-weight:600;">
+                <i class="bi bi-x-octagon-fill me-1"></i>Rejected / Archived
+              </small>
+              <small style="color:var(--pb-text-muted);font-weight:700;">{{ blog_stats.rejected|add:blog_stats.archived }}</small>
+            </div>
+            <div style="height:8px;background:rgba(0,0,0,0.04);border-radius:4px;overflow:hidden;">
               {% with rej_total=blog_stats.rejected|add:blog_stats.archived %}
-              <div style="height:100%;width:{% widthratio rej_total total_b 100 %}%;background:#e74c3c;border-radius:3px;"></div>
+              <div class="progress-bar-animated" style="height:100%;width:0%;background:linear-gradient(90deg,#e74c3c,#ff6b6b);border-radius:4px;" data-width="{% widthratio rej_total total_b 100 %}%"></div>
               {% endwith %}
             </div>
           </div>
           {% endwith %}
         </div>
+        {% endwith %}
       </div>
 
       <!-- Recent Users -->
@@ -132,73 +719,83 @@
           <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin:0;">
             <i class="bi bi-person-plus me-1"></i>Recent Users
           </h6>
-          <a href="{% url 'dashboard:manage_users' %}" style="color:var(--pb-primary);font-size:0.8rem;text-decoration:none;">View all <i class="bi bi-arrow-right ms-1"></i></a>
+          <a href="{% url 'dashboard:manage_users' %}" style="color:var(--pb-primary);font-size:0.8rem;text-decoration:none;font-weight:600;" class="d-inline-flex align-items-center gap-1 hover-link">
+            View all <i class="bi bi-arrow-right ms-1"></i>
+          </a>
         </div>
         <div class="table-responsive">
           <table class="table mb-0" style="color:var(--pb-text);">
-            <thead style="background:rgba(0,0,0,0.15);border-bottom:1px solid var(--pb-border);">
+            <thead style="background:rgba(0,0,0,0.03);border-bottom:1px solid var(--pb-border);">
               <tr>
-                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem 1.25rem;">User</th>
-                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem;">Roles</th>
-                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem;">Joined</th>
-                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem;">Status</th>
-                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.6rem;">Action</th>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.8rem 1.25rem;font-weight:700;">User</th>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.8rem;font-weight:700;">Roles</th>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.8rem;font-weight:700;">Joined</th>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.8rem;font-weight:700;">Status</th>
+                <th style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;padding:0.8rem;font-weight:700;">Action</th>
               </tr>
             </thead>
             <tbody>
               {% for u in recent_users %}
-                <tr style="border-bottom:1px solid var(--pb-border);">
-                  <td style="padding:0.75rem 1.25rem;vertical-align:middle;">
-                    <div class="d-flex align-items-center gap-2">
+                <tr class="table-row-animated" style="border-bottom:1px solid var(--pb-border);">
+                  <td style="padding:0.85rem 1.25rem;vertical-align:middle;">
+                    <div class="d-flex align-items-center gap-3">
                       {% if u.profile.avatar %}
-                        <img src="{{ u.profile.avatar.url }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
+                        <img src="{{ u.profile.avatar.url }}" class="user-avatar" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid transparent;">
                       {% else %}
-                        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                          <i class="bi bi-person-fill text-white" style="font-size:0.6rem;"></i>
+                        <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                          <i class="bi bi-person-fill text-white" style="font-size:0.7rem;"></i>
                         </div>
                       {% endif %}
                       <div>
-                        <div style="color:#fff;font-size:0.85rem;font-weight:600;">{{ u.username }}</div>
+                        <div style="color:var(--pb-text);font-size:0.85rem;font-weight:600;">{{ u.username }}</div>
                         <div style="color:var(--pb-text-muted);font-size:0.72rem;">{{ u.email }}</div>
                       </div>
                     </div>
                   </td>
-                  <td style="padding:0.75rem;vertical-align:middle;">
+                  <td style="padding:0.85rem;vertical-align:middle;">
                     {% if u.is_superuser %}
-                      <span class="badge" style="background:rgba(242,159,103,0.15);color:var(--pb-primary);border-radius:5px;font-size:0.68rem;">Superuser</span>
+                      <span class="badge badge-hover" style="background:rgba(0,106,204,0.1);color:var(--pb-primary);border-radius:5px;font-size:0.68rem;padding:0.35rem 0.6rem;">
+                        <i class="bi bi-star-fill me-1"></i>Superuser
+                      </span>
                     {% else %}
                       {% for g in u.groups.all %}
-                        <span class="badge me-1" style="background:rgba(59,143,243,0.1);color:var(--pb-blue);border-radius:5px;font-size:0.68rem;">{{ g.name }}</span>
+                        <span class="badge badge-hover me-1" style="background:rgba(0,106,204,0.08);color:var(--pb-blue);border-radius:5px;font-size:0.68rem;padding:0.35rem 0.6rem;">{{ g.name }}</span>
                       {% empty %}
-                        <span style="color:var(--pb-text-muted);font-size:0.78rem;">Reader</span>
+                        <span style="color:var(--pb-text-muted);font-size:0.78rem;"><i class="bi bi-book me-1"></i>Reader</span>
                       {% endfor %}
                     {% endif %}
                   </td>
-                  <td style="padding:0.75rem;vertical-align:middle;color:var(--pb-text-muted);font-size:0.78rem;white-space:nowrap;">{{ u.date_joined|date:"M d, Y" }}</td>
-                  <td style="padding:0.75rem;vertical-align:middle;">
+                  <td style="padding:0.85rem;vertical-align:middle;color:var(--pb-text-muted);font-size:0.78rem;white-space:nowrap;">
+                    <i class="bi bi-calendar3 me-1"></i>{{ u.date_joined|date:"M d, Y" }}
+                  </td>
+                  <td style="padding:0.85rem;vertical-align:middle;">
                     {% if u.is_active %}
-                      <span class="badge" style="background:rgba(52,177,170,0.1);color:var(--pb-teal);border-radius:5px;font-size:0.68rem;">Active</span>
+                      <span class="badge badge-hover" style="background:rgba(0,184,148,0.1);color:var(--pb-teal);border-radius:5px;font-size:0.68rem;padding:0.35rem 0.6rem;">
+                        <i class="bi bi-check-circle-fill me-1"></i>Active
+                      </span>
                     {% else %}
-                      <span class="badge" style="background:rgba(231,76,60,0.1);color:#e74c3c;border-radius:5px;font-size:0.68rem;">Inactive</span>
+                      <span class="badge badge-hover" style="background:rgba(231,76,60,0.1);color:#e74c3c;border-radius:5px;font-size:0.68rem;padding:0.35rem 0.6rem;">
+                        <i class="bi bi-x-circle-fill me-1"></i>Inactive
+                      </span>
                     {% endif %}
                   </td>
-                  <td style="padding:0.75rem;vertical-align:middle;">
+                  <td style="padding:0.85rem;vertical-align:middle;">
                     {% if not u.is_superuser %}
-                      <div class="d-flex gap-1">
-                        <a href="{% url 'dashboard:manage_users' %}?q={{ u.username }}" class="btn btn-sm"
-                           style="background:rgba(242,159,103,0.1);border:1px solid rgba(242,159,103,0.15);color:var(--pb-primary);border-radius:6px;font-size:0.7rem;padding:0.2rem 0.5rem;">
-                          Manage
+                      <div class="d-flex gap-2">
+                        <a href="{% url 'dashboard:manage_users' %}?q={{ u.username }}" class="btn btn-sm badge-hover"
+                           style="background:rgba(0,106,204,0.08);border:1px solid rgba(0,106,204,0.15);color:var(--pb-primary);border-radius:8px;font-size:0.72rem;padding:0.35rem 0.7rem;font-weight:600;">
+                          <i class="bi bi-gear-fill me-1"></i>Manage
                         </a>
-                        <form method="post" action="{% url 'dashboard:toggle_user_active' u.id %}">
+                        <form method="post" action="{% url 'dashboard:toggle_user_active' u.id %}" style="display:inline;">
                           {% csrf_token %}
-                          <button type="submit" class="btn btn-sm"
-                                  style="background:rgba(255,255,255,0.04);border:1px solid var(--pb-border);color:var(--pb-text-muted);border-radius:6px;font-size:0.7rem;padding:0.2rem 0.5rem;">
-                            {% if u.is_active %}Deactivate{% else %}Activate{% endif %}
+                          <button type="submit" class="btn btn-sm badge-hover"
+                                  style="background:rgba(0,0,0,0.03);border:1px solid var(--pb-border);color:var(--pb-text-muted);border-radius:8px;font-size:0.72rem;padding:0.35rem 0.7rem;font-weight:600;">
+                            {% if u.is_active %}<i class="bi bi-pause-fill me-1"></i>Deactivate{% else %}<i class="bi bi-play-fill me-1"></i>Activate{% endif %}
                           </button>
                         </form>
                       </div>
                     {% else %}
-                      <span style="color:var(--pb-text-muted);font-size:0.75rem;">You</span>
+                      <span style="color:var(--pb-text-muted);font-size:0.75rem;font-weight:600;"><i class="bi bi-person-check me-1"></i>You</span>
                     {% endif %}
                   </td>
                 </tr>
@@ -217,47 +814,54 @@
         <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.25rem;">
           <i class="bi bi-people me-1"></i>Staff Groups
         </h6>
-        <div class="d-flex flex-column gap-3">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-2">
-              <div style="width:8px;height:8px;border-radius:50%;background:var(--pb-blue);"></div>
-              <span style="color:var(--pb-text);font-size:0.88rem;">Editors</span>
+        <div class="d-flex flex-column gap-2 stagger-children">
+          <div class="staff-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+              <div class="staff-dot" style="width:10px;height:10px;border-radius:50%;background:var(--pb-blue);"></div>
+              <span style="color:var(--pb-text);font-size:0.88rem;font-weight:500;">Editors</span>
             </div>
-            <span class="badge px-3 py-1" style="background:rgba(59,143,243,0.1);color:var(--pb-blue);border-radius:20px;font-size:0.8rem;">{{ groups.editors }}</span>
+            <span class="badge px-3 py-1 list-badge" style="background:rgba(0,106,204,0.08);color:var(--pb-blue);border-radius:20px;font-size:0.8rem;font-weight:600;">{{ groups.editors }}</span>
           </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-2">
-              <div style="width:8px;height:8px;border-radius:50%;background:var(--pb-teal);"></div>
-              <span style="color:var(--pb-text);font-size:0.88rem;">Moderators</span>
+          <div class="staff-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+              <div class="staff-dot" style="width:10px;height:10px;border-radius:50%;background:var(--pb-teal);"></div>
+              <span style="color:var(--pb-text);font-size:0.88rem;font-weight:500;">Moderators</span>
             </div>
-            <span class="badge px-3 py-1" style="background:rgba(52,177,170,0.1);color:var(--pb-teal);border-radius:20px;font-size:0.8rem;">{{ groups.moderators }}</span>
+            <span class="badge px-3 py-1 list-badge" style="background:rgba(0,184,148,0.08);color:var(--pb-teal);border-radius:20px;font-size:0.8rem;font-weight:600;">{{ groups.moderators }}</span>
           </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-2">
-              <div style="width:8px;height:8px;border-radius:50%;background:var(--pb-primary);"></div>
-              <span style="color:var(--pb-text);font-size:0.88rem;">Authors</span>
+          <div class="staff-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+              <div class="staff-dot" style="width:10px;height:10px;border-radius:50%;background:var(--pb-primary);"></div>
+              <span style="color:var(--pb-text);font-size:0.88rem;font-weight:500;">Authors</span>
             </div>
-            <span class="badge px-3 py-1" style="background:rgba(242,159,103,0.1);color:var(--pb-primary);border-radius:20px;font-size:0.8rem;">{{ groups.authors }}</span>
+            <span class="badge px-3 py-1 list-badge" style="background:rgba(0,106,204,0.08);color:var(--pb-primary);border-radius:20px;font-size:0.8rem;font-weight:600;">{{ groups.authors }}</span>
           </div>
         </div>
-        <a href="{% url 'dashboard:manage_users' %}" class="btn btn-pb-outline w-100 mt-3 btn-sm">
+        <a href="{% url 'dashboard:manage_users' %}" class="btn btn-pb-outline w-100 mt-3 btn-sm" style="border-radius:10px;">
           <i class="bi bi-person-gear me-1"></i>Assign Roles
         </a>
       </div>
 
-      <!-- Top Categories -->
+      <!-- Top Categories (Sidebar) -->
       <div class="card-glass p-4 mb-4 animate-fade-in animate-delay-2">
         <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.25rem;">
           <i class="bi bi-folder me-1"></i>Top Categories
         </h6>
-        {% for cat in categories %}
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <a href="{% url 'blogs:category_detail' cat.slug %}" style="color:var(--pb-text);text-decoration:none;font-size:0.85rem;">{{ cat.name }}</a>
-            <span class="badge px-2 py-1" style="background:rgba(255,255,255,0.05);color:var(--pb-text-muted);border-radius:5px;font-size:0.72rem;">{{ cat.post_count }}</span>
-          </div>
-        {% empty %}
-          <p style="color:var(--pb-text-muted);font-size:0.85rem;">No categories yet.</p>
-        {% endfor %}
+        <div class="d-flex flex-column gap-1 stagger-children">
+          {% for cat in categories %}
+            <div class="cat-item d-flex justify-content-between align-items-center">
+              <a href="{% url 'blogs:category_detail' cat.slug %}" style="color:var(--pb-text);text-decoration:none;font-size:0.85rem;font-weight:500;">
+                <i class="bi bi-chevron-right me-1" style="font-size:0.6rem;color:var(--pb-primary);"></i>{{ cat.name }}
+              </a>
+              <span class="cat-count badge px-2 py-1" style="background:rgba(0,0,0,0.04);color:var(--pb-text-muted);border-radius:5px;font-size:0.72rem;">{{ cat.post_count }}</span>
+            </div>
+          {% empty %}
+            <p style="color:var(--pb-text-muted);font-size:0.85rem;text-align:center;padding:1rem;">
+              <i class="bi bi-folder-x" style="font-size:1.5rem;display:block;margin-bottom:0.3rem;opacity:0.3;"></i>
+              No categories yet.
+            </p>
+          {% endfor %}
+        </div>
       </div>
 
       <!-- Top Authors -->
@@ -265,27 +869,708 @@
         <h6 style="color:var(--pb-text-muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:1.25rem;">
           <i class="bi bi-trophy me-1" style="color:var(--pb-yellow);"></i>Top Authors
         </h6>
-        {% for author in top_authors %}
-          <div class="d-flex align-items-center gap-3 mb-3">
-            <div style="width:20px;text-align:center;color:var(--pb-text-muted);font-size:0.8rem;font-weight:700;">{{ forloop.counter }}</div>
-            {% if author.profile.avatar %}
-              <img src="{{ author.profile.avatar.url }}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
-            {% else %}
-              <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <i class="bi bi-person-fill text-white" style="font-size:0.65rem;"></i>
+        <div class="d-flex flex-column gap-2 stagger-children">
+          {% for author in top_authors %}
+            <div class="author-item d-flex align-items-center gap-3">
+              <div class="author-rank" style="width:24px;text-align:center;color:var(--pb-text-muted);font-size:0.85rem;font-weight:800;">{{ forloop.counter }}</div>
+              {% if author.profile.avatar %}
+                <img src="{{ author.profile.avatar.url }}" class="author-avatar" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(0,106,204,0.1);">
+              {% else %}
+                <div class="author-avatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                  <i class="bi bi-person-fill text-white" style="font-size:0.75rem;"></i>
+                </div>
+              {% endif %}
+              <div style="flex:1;min-width:0;">
+                <div style="color:var(--pb-text);font-size:0.85rem;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{ author.get_full_name|default:author.username }}</div>
+                <div style="color:var(--pb-text-muted);font-size:0.72rem;">
+                  <span class="badge-hover" style="display:inline-block;">{{ author.post_count }} posts</span> &bull; 
+                  <span class="badge-hover" style="display:inline-block;">{{ author.total_views|default:0 }} views</span>
+                </div>
               </div>
-            {% endif %}
-            <div style="flex:1;">
-              <div style="color:#fff;font-size:0.85rem;font-weight:600;">{{ author.get_full_name|default:author.username }}</div>
-              <div style="color:var(--pb-text-muted);font-size:0.72rem;">{{ author.post_count }} posts &bull; {{ author.total_views|default:0 }} views</div>
             </div>
-          </div>
-        {% empty %}
-          <p style="color:var(--pb-text-muted);font-size:0.85rem;">No authors yet.</p>
-        {% endfor %}
+          {% empty %}
+            <p style="color:var(--pb-text-muted);font-size:0.85rem;text-align:center;padding:1rem;">
+              <i class="bi bi-person-x" style="font-size:1.5rem;display:block;margin-bottom:0.3rem;opacity:0.3;"></i>
+              No authors yet.
+            </p>
+          {% endfor %}
+        </div>
       </div>
     </div>
 
   </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- RISK OVERVIEW SECTION -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="row g-4 mt-1 mb-4">
+    <!-- Platform Overview Cards -->
+    <div class="col-xl-5">
+      <div class="card-glass p-4 h-100 animate-fade-in animate-delay-1">
+        <h6 style="color:var(--pb-text);font-size:0.9rem;font-weight:600;margin-bottom:1rem;">Platform Overview</h6>
+        <div class="row g-3 h-100">
+          <div class="col-sm-6">
+            <div class="card-glass p-3 h-100 d-flex flex-column justify-content-center hover-lift" style="box-shadow:none;border:1px solid rgba(0,0,0,0.05);border-radius:12px;transition:all 0.3s ease;">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;">Total Views</span>
+                <div style="background:#e6f0fa;color:var(--pb-blue);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease;" class="icon-circle"><i class="bi bi-eye"></i></div>
+              </div>
+              <h4 style="font-weight:700;margin-bottom:0.5rem;font-size:1.3rem;">{{ total_exposure|default:"0" }}</h4>
+              <div style="font-size:0.75rem;color:var(--pb-teal);font-weight:600;">Across all posts</div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card-glass p-3 h-100 d-flex flex-column justify-content-center hover-lift" style="box-shadow:none;border:1px solid rgba(0,0,0,0.05);border-radius:12px;transition:all 0.3s ease;">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;">Pending Posts</span>
+                <div style="background:#e6f0fa;color:var(--pb-blue);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease;" class="icon-circle"><i class="bi bi-hourglass-split"></i></div>
+              </div>
+              <h4 style="font-weight:700;margin-bottom:0.5rem;font-size:1.3rem;">{{ open_positions|default:"0" }}</h4>
+              <div style="font-size:0.75rem;color:var(--pb-teal);font-weight:600;">Awaiting review</div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card-glass p-3 h-100 d-flex flex-column justify-content-center hover-lift" style="box-shadow:none;border:1px solid rgba(0,0,0,0.05);border-radius:12px;transition:all 0.3s ease;">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;">System Status</span>
+                <div style="background:#e6f0fa;color:var(--pb-blue);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease;" class="icon-circle"><i class="bi bi-shield-check"></i></div>
+              </div>
+              <h4 style="font-weight:700;margin-bottom:0.2rem;font-size:1.3rem;">{{ risk_level|default:"Stable" }}</h4>
+              <div style="height:25px;width:100%;position:relative;"><canvas id="riskLevelSparkline"></canvas></div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card-glass p-3 h-100 d-flex flex-column justify-content-center hover-lift" style="box-shadow:none;border:1px solid rgba(0,0,0,0.05);border-radius:12px;transition:all 0.3s ease;">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <span style="color:var(--pb-text-muted);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;">Active Reports</span>
+                <div style="background:#e6f0fa;color:var(--pb-blue);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease;" class="icon-circle"><i class="bi bi-flag"></i></div>
+              </div>
+              <h4 style="font-weight:700;margin-bottom:0.5rem;font-size:1.3rem;">{{ active_alerts|default:"0" }}</h4>
+              <div style="font-size:0.75rem;color:#e74c3c;font-weight:600;">Needs attention</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Posts by Category -->
+    <div class="col-xl-3">
+      <div class="card-glass p-4 h-100 animate-fade-in animate-delay-2 d-flex flex-column">
+        <h6 style="color:var(--pb-text);font-size:0.9rem;font-weight:600;margin-bottom:1rem;">Posts by Category</h6>
+        <div class="d-flex align-items-center h-100 mt-2">
+          <div style="flex:1;position:relative;height:140px;min-width:120px;">
+            <canvas id="assetClassChart"></canvas>
+          </div>
+          <div class="custom-legend ms-3 d-flex flex-column gap-2" style="font-size:0.75rem;min-width:100px;">
+            {% for cat in categories|slice:":5" %}
+            <div class="d-flex justify-content-between align-items-center"><div class="d-flex align-items-center"><span class="cat-legend-color" style="width:8px;height:8px;border-radius:50%;margin-right:8px;" data-index="{{ forloop.counter0 }}"></span><span style="color:var(--pb-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;">{{ cat.name }}</span></div><strong style="color:var(--pb-text);">{{ cat.post_count }}</strong></div>
+            {% empty %}
+            <span style="color:var(--pb-text-muted);">No categories</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Trend -->
+    <div class="col-xl-4">
+      <div class="card-glass p-4 h-100 animate-fade-in animate-delay-3 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 style="color:var(--pb-text);font-size:0.9rem;font-weight:600;margin:0;">Pending Posts Trend</h6>
+          <select class="form-select form-select-sm" style="width:auto;border:none;background:transparent;font-size:0.8rem;color:var(--pb-text-muted);padding:0 1.2rem 0 0.5rem;cursor:pointer;font-weight:500;box-shadow:none;">
+            <option>7 Days</option>
+            <option>30 Days</option>
+          </select>
+        </div>
+        <div class="chart-container flex-grow-1" style="position:relative;min-height:140px;width:100%;">
+          <canvas id="riskTrendChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    
+    // ═══════════════════════════════════════
+    // ANIMATE PROGRESS BARS ON SCROLL
+    // ═══════════════════════════════════════
+    const progressBars = document.querySelectorAll('.progress-bar-animated');
+    const animateProgressBars = () => {
+      progressBars.forEach(bar => {
+        const rect = bar.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 50) {
+          bar.style.width = bar.dataset.width;
+        }
+      });
+    };
+    window.addEventListener('scroll', animateProgressBars);
+    animateProgressBars(); // trigger on load
+
+    // ═══════════════════════════════════════
+    // CHART DATA
+    // ═══════════════════════════════════════
+    const chartData = {{ views_over_time_json|safe }};
+    const ctx = document.getElementById('superuserViewsChart');
+    const statusCtx = document.getElementById('statusPieChart');
+    const groupCtx = document.getElementById('groupPieChart');
+
+    // Common chart defaults for hover effects
+    Chart.defaults.font.family = "'Inter', 'Segoe UI', system-ui, sans-serif";
+    Chart.defaults.color = '#6c757d';
+
+    // ═══════════════════════════════════════
+    // VIEWS LINE CHART
+    // ═══════════════════════════════════════
+    if (ctx) {
+      const labels = chartData.map(item => item.label);
+      const values = chartData.map(item => item.value);
+      const maxValue = Math.max(...values, 1);
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Views',
+            data: values,
+            borderColor: 'rgba(0, 106, 204, 0.95)',
+            backgroundColor: (context) => {
+              const ctx = context.chart.ctx;
+              const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+              gradient.addColorStop(0, 'rgba(0, 106, 204, 0.25)');
+              gradient.addColorStop(1, 'rgba(0, 106, 204, 0.01)');
+              return gradient;
+            },
+            fill: true,
+            tension: 0.4,
+            pointRadius: 5,
+            pointHoverRadius: 10,
+            pointBackgroundColor: '#fff',
+            pointBorderColor: 'rgba(0, 106, 204, 1)',
+            pointBorderWidth: 3,
+            pointHoverBackgroundColor: 'rgba(0, 106, 204, 1)',
+            pointHoverBorderColor: '#fff',
+            pointHoverBorderWidth: 3,
+            borderWidth: 3,
+            hoverBorderWidth: 4,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          animation: {
+            duration: 2000,
+            easing: 'easeOutQuart',
+            delay: (context) => {
+              let delay = 0;
+              if (context.type === 'data' && context.mode === 'default') {
+                delay = context.dataIndex * 150;
+              }
+              return delay;
+            },
+          },
+          transitions: {
+            show: {
+              animation: {
+                duration: 400,
+                easing: 'easeOutQuart'
+              }
+            },
+            hide: {
+              animation: {
+                duration: 400,
+                easing: 'easeInQuart'
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { 
+                color: '#6c757d',
+                font: { size: 11 }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: maxValue + Math.ceil(maxValue * 0.2),
+              ticks: { 
+                color: '#6c757d', 
+                stepSize: Math.max(1, Math.ceil(maxValue / 4)),
+                font: { size: 11 }
+              },
+              grid: { 
+                color: 'rgba(0,0,0,0.04)',
+                drawBorder: false
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(26, 26, 46, 0.95)',
+              titleColor: '#fff',
+              bodyColor: '#e0e0e0',
+              borderColor: 'rgba(0,106,204,0.3)',
+              borderWidth: 1,
+              cornerRadius: 12,
+              padding: 14,
+              displayColors: false,
+              titleFont: { size: 13, weight: 'bold' },
+              bodyFont: { size: 12 },
+              callbacks: {
+                label: function(context) {
+                  return '👁 ' + context.parsed.y.toLocaleString() + ' views';
+                }
+              },
+              animation: {
+                duration: 200,
+                easing: 'easeOutQuart'
+              }
+            }
+          },
+          onHover: (event, elements) => {
+            event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'crosshair';
+            if (elements.length > 0) {
+              const dataset = elements[0].element;
+              dataset.options.pointRadius = 8;
+            }
+          }
+        }
+      });
+    }
+
+    // ═══════════════════════════════════════
+    // STATUS DOUGHNUT CHART
+    // ═══════════════════════════════════════
+    if (statusCtx) {
+      const labels = {{ status_labels|safe }};
+      const values = {{ status_values|safe }};
+      new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: [
+              'rgba(0, 184, 148, 0.85)',
+              'rgba(243, 156, 18, 0.85)',
+              'rgba(149, 165, 166, 0.75)',
+              'rgba(231, 76, 60, 0.85)',
+              'rgba(189, 195, 199, 0.7)'
+            ],
+            hoverBackgroundColor: [
+              'rgba(0, 184, 148, 1)',
+              'rgba(243, 156, 18, 1)',
+              'rgba(149, 165, 166, 0.9)',
+              'rgba(231, 76, 60, 1)',
+              'rgba(189, 195, 199, 0.85)'
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff',
+            hoverBorderWidth: 4,
+            hoverBorderColor: '#ffffff',
+            hoverOffset: 12,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 1500,
+            easing: 'easeOutQuart',
+            delay: (context) => context.dataIndex * 100
+          },
+          transitions: {
+            active: {
+              animation: {
+                duration: 300,
+                easing: 'easeOutQuart'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { 
+                color: '#6c757d', 
+                boxWidth: 12, 
+                padding: 20,
+                font: { size: 11 },
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(26, 26, 46, 0.95)',
+              titleColor: '#fff',
+              bodyColor: '#e0e0e0',
+              borderColor: 'rgba(0,106,204,0.3)',
+              borderWidth: 1,
+              cornerRadius: 12,
+              padding: 14,
+              displayColors: true,
+              boxWidth: 10,
+              boxHeight: 10,
+              boxPadding: 4,
+              usePointStyle: true,
+              callbacks: {
+                label: function(context) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const pct = total > 0 ? Math.round((context.parsed / total) * 100) : 0;
+                  return ` ${context.label}: ${context.parsed} (${pct}%)`;
+                }
+              }
+            }
+          },
+          onHover: (event, elements) => {
+            event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+            // Scale the hovered segment
+            if (elements.length > 0) {
+              const chart = elements[0].element.$context.chart;
+              chart.data.datasets[0].hoverOffset = 15;
+            }
+          }
+        }
+      });
+    }
+
+    // ═══════════════════════════════════════
+    // GROUP DOUGHNUT CHART
+    // ═══════════════════════════════════════
+    if (groupCtx) {
+      const labels = {{ group_labels|safe }};
+      const values = {{ group_values|safe }};
+      new Chart(groupCtx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: [
+              'rgba(0, 106, 204, 0.85)',
+              'rgba(0, 184, 148, 0.85)',
+              'rgba(243, 156, 18, 0.85)'
+            ],
+            hoverBackgroundColor: [
+              'rgba(0, 106, 204, 1)',
+              'rgba(0, 184, 148, 1)',
+              'rgba(243, 156, 18, 1)'
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff',
+            hoverBorderWidth: 4,
+            hoverBorderColor: '#ffffff',
+            hoverOffset: 12,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 1500,
+            easing: 'easeOutQuart',
+            delay: (context) => context.dataIndex * 120
+          },
+          transitions: {
+            active: {
+              animation: {
+                duration: 300,
+                easing: 'easeOutQuart'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { 
+                color: '#6c757d', 
+                boxWidth: 12, 
+                padding: 20,
+                font: { size: 11 },
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(26, 26, 46, 0.95)',
+              titleColor: '#fff',
+              bodyColor: '#e0e0e0',
+              borderColor: 'rgba(0,106,204,0.3)',
+              borderWidth: 1,
+              cornerRadius: 12,
+              padding: 14,
+              displayColors: true,
+              boxWidth: 10,
+              boxHeight: 10,
+              boxPadding: 4,
+              usePointStyle: true,
+              callbacks: {
+                label: function(context) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const pct = total > 0 ? Math.round((context.parsed / total) * 100) : 0;
+                  return ` ${context.label}: ${context.parsed} members (${pct}%)`;
+                }
+              }
+            }
+          },
+          onHover: (event, elements) => {
+            event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+          }
+        }
+      });
+    }
+
+    // ═══════════════════════════════════════
+    // INTERSECTION OBSERVER FOR SCROLL ANIMATIONS
+    // ═══════════════════════════════════════
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-fade-in, .animate-slide-blur').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.7s cubic-bezier(0.22, 1, 0.36, 1)';
+      observer.observe(el);
+    });
+
+    // ═══════════════════════════════════════
+    // CARD ENTRANCE STAGGER
+    // ═══════════════════════════════════════
+    const kpiCards = document.querySelectorAll('.kpi-card');
+    kpiCards.forEach((card, index) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(30px) scale(0.95)';
+      setTimeout(() => {
+        card.style.transition = 'all 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0) scale(1)';
+      }, 100 + (index * 120));
+    });
+
+    // ═══════════════════════════════════════
+    // RISK OVERVIEW CHARTS
+    // ═══════════════════════════════════════
+
+    // 1. Risk Level Sparkline
+    const riskLevelCtx = document.getElementById('riskLevelSparkline');
+    if (riskLevelCtx) {
+      new Chart(riskLevelCtx, {
+        type: 'line',
+        data: {
+          labels: ['1','2','3','4','5','6','7'],
+          datasets: [{
+            data: [10, 15, 12, 18, 14, 20, 19],
+            borderColor: '#0d6efd',
+            borderWidth: 2,
+            tension: 0.4,
+            pointRadius: 0,
+            fill: true,
+            backgroundColor: (context) => {
+              const ctx = context.chart.ctx;
+              const gradient = ctx.createLinearGradient(0, 0, 0, 25);
+              gradient.addColorStop(0, 'rgba(13, 110, 253, 0.3)');
+              gradient.addColorStop(1, 'rgba(13, 110, 253, 0)');
+              return gradient;
+            }
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          scales: { x: { display: false }, y: { display: false, min: 0 } },
+          animation: {
+            duration: 2000,
+            easing: 'easeInOutQuart'
+          }
+        }
+      });
+    }
+
+    // 2. Posts by Category Doughnut
+    const colors = ['#0d6efd', '#0a58ca', '#20c997', '#fd7e14', '#6f42c1'];
+    document.querySelectorAll('.cat-legend-color').forEach(el => {
+      el.style.background = colors[el.dataset.index % colors.length];
+    });
+
+    const assetClassCtx = document.getElementById('assetClassChart');
+    if (assetClassCtx) {
+      new Chart(assetClassCtx, {
+        type: 'doughnut',
+        data: {
+          labels: {{ asset_labels|safe|default:"[]" }},
+          datasets: [{
+            data: {{ asset_values|safe|default:"[]" }},
+            backgroundColor: colors,
+            borderWidth: 2,
+            borderColor: 'var(--pb-card-bg)',
+            hoverBorderWidth: 2,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(26, 26, 46, 0.95)',
+              titleColor: '#fff',
+              bodyColor: '#e0e0e0',
+              padding: 12,
+              displayColors: true,
+              usePointStyle: true,
+              cornerRadius: 10,
+              boxWidth: 8,
+              boxHeight: 8,
+              callbacks: {
+                label: function(context) {
+                  return ` ${context.label}: ${context.parsed}`;
+                }
+              }
+            }
+          },
+          animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 1500,
+            easing: 'easeOutQuart',
+            delay: 400
+          },
+          onHover: (event, elements) => {
+            event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+          }
+        }
+      });
+    }
+
+    // 3. Pending Posts Trend Line Chart
+    const riskTrendData = {{ risk_trend_json|safe|default:"[]" }};
+    const trendLabels = riskTrendData.map(item => item.label);
+    const trendValues = riskTrendData.map(item => item.value);
+
+    const riskTrendCtx = document.getElementById('riskTrendChart');
+    if (riskTrendCtx) {
+      new Chart(riskTrendCtx, {
+        type: 'line',
+        data: {
+          labels: trendLabels,
+          datasets: [{
+            data: trendValues,
+            borderColor: '#0d6efd',
+            borderWidth: 2,
+            tension: 0.4,
+            pointBackgroundColor: '#0d6efd',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            fill: true,
+            backgroundColor: (context) => {
+              const ctx = context.chart.ctx;
+              const gradient = ctx.createLinearGradient(0, 0, 0, 160);
+              gradient.addColorStop(0, 'rgba(13, 110, 253, 0.15)');
+              gradient.addColorStop(1, 'rgba(13, 110, 253, 0)');
+              return gradient;
+            }
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(26, 26, 46, 0.95)',
+              titleColor: '#fff',
+              bodyColor: '#e0e0e0',
+              padding: 12,
+              displayColors: false,
+              cornerRadius: 10
+            }
+          },
+          scales: { 
+            x: { 
+              grid: { display: false, drawBorder: false },
+              ticks: { color: '#adb5bd', font: { size: 10, family: "'Inter', sans-serif" } }
+            }, 
+            y: { 
+              grid: { display: false, drawBorder: false },
+              ticks: { 
+                color: '#adb5bd', 
+                font: { size: 10, family: "'Inter', sans-serif" },
+                stepSize: 1,
+                min: 0,
+                padding: 10
+              },
+              border: { display: false }
+            } 
+          },
+          animation: {
+            duration: 2000,
+            easing: 'easeOutQuart',
+            delay: 600
+          },
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          hover: {
+            mode: 'nearest',
+            intersect: true
+          }
+        }
+      });
+    }
+
+    // Hover effect for small cards
+    document.querySelectorAll('.hover-lift').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        el.style.transform = 'translateY(-3px)';
+        el.style.boxShadow = '0 6px 15px rgba(0,0,0,0.05)';
+        el.style.borderColor = 'rgba(0,106,204,0.15)';
+        const icon = el.querySelector('.icon-circle');
+        if (icon) icon.style.transform = 'scale(1.1)';
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'translateY(0)';
+        el.style.boxShadow = 'none';
+        el.style.borderColor = 'rgba(0,0,0,0.05)';
+        const icon = el.querySelector('.icon-circle');
+        if (icon) icon.style.transform = 'scale(1)';
+      });
+    });
+
+  });
+</script>
 {% endblock %}

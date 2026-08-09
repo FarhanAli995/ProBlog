@@ -1,5 +1,32 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.forms.widgets import ClearableFileInput
 from .models import Blog, Category, Tag
+
+
+class MultiFileInput(ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultiFileField(forms.FileField):
+    widget = MultiFileInput
+
+    def to_python(self, data):
+        if data in self.empty_values:
+            return []
+        if isinstance(data, list):
+            return [super().to_python(item) for item in data]
+        return [super().to_python(data)]
+
+    def validate(self, data):
+        if self.required and not data:
+            raise ValidationError(self.error_messages['required'], code='required')
+        for uploaded in data:
+            super(forms.FileField, self).validate(uploaded)
+
+    def run_validators(self, value):
+        for uploaded in value:
+            super(forms.FileField, self).run_validators(uploaded)
 
 
 class BlogForm(forms.ModelForm):
@@ -32,6 +59,16 @@ class BlogForm(forms.ModelForm):
             'featured_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
+    # Allow multiple images/videos to be uploaded alongside the post
+    media = MultiFileField(
+        required=False,
+        widget=MultiFileInput(attrs={
+            'multiple': True,
+            'accept': 'image/*,video/*',
+            'class': 'form-control',
+        })
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['category'].empty_label = '— No Category —'
@@ -44,6 +81,23 @@ class BlogForm(forms.ModelForm):
             if image.size > 5 * 1024 * 1024:
                 raise forms.ValidationError('Image must be smaller than 5 MB.')
         return image
+
+    def clean_media(self):
+        files = self.cleaned_data.get('media', [])
+        cleaned = []
+        for f in files:
+            content_type = getattr(f, 'content_type', '')
+            size = getattr(f, 'size', 0)
+            if content_type.startswith('image/'):
+                if size > 5 * 1024 * 1024:
+                    raise forms.ValidationError('Each image must be smaller than 5 MB.')
+            elif content_type.startswith('video/'):
+                if size > 50 * 1024 * 1024:
+                    raise forms.ValidationError('Each video must be smaller than 50 MB.')
+            else:
+                raise forms.ValidationError('Only image and video files are allowed.')
+            cleaned.append(f)
+        return cleaned
 
 
 class CategoryForm(forms.ModelForm):

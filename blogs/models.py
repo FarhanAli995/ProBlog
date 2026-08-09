@@ -126,6 +126,25 @@ class Blog(models.Model):
         Blog.objects.filter(pk=self.pk).update(views=models.F('views') + 1)
 
 
+class BlogMedia(models.Model):
+    MEDIA_IMAGE = 'image'
+    MEDIA_VIDEO = 'video'
+    MEDIA_CHOICES = [
+        (MEDIA_IMAGE, 'Image'),
+        (MEDIA_VIDEO, 'Video'),
+    ]
+
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='media')
+    file = models.FileField(upload_to='blogs/media/')
+    media_type = models.CharField(max_length=10, choices=MEDIA_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.blog.title} — {self.media_type} ({self.file.name})'
+
 class BlogReview(models.Model):
     DECISION_APPROVED = 'APPROVED'
     DECISION_REJECTED = 'REJECTED'

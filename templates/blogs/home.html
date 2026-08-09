@@ -3,250 +3,636 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Theme variables are inherited from base.html */
+
+    body {
+        background-color: var(--pb-card-bg) !important;
+        color: var(--pb-text) !important;
+        background-image: radial-gradient(circle at top right, rgba(167, 209, 255, 0.25), transparent 60%) !important;
+    }
+
+    /* Navbar overrides */
+    .navbar-problog {
+        background: var(--pb-glass) !important;
+        border-bottom: 1px solid var(--pb-border) !important;
+    }
+    .navbar-brand .brand-pro {
+        color: var(--pb-text) !important;
+    }
+    .navbar-brand .brand-blog {
+        color: #006acc !important;
+    }
+    .navbar .nav-link {
+        color: var(--pb-text-muted) !important;
+        font-weight: 500;
+    }
+    .navbar .nav-link:hover {
+        color: #006acc !important;
+        background: rgba(167, 209, 255, 0.15) !important;
+    }
+    .navbar .nav-link.active {
+        color: #006acc !important;
+        background: transparent !important;
+    }
+    .navbar .nav-link.active::after {
+        background: #006acc !important;
+    }
+
+    /* Dropdown overrides */
+    .dropdown-menu {
+        background: var(--pb-card-bg) !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+    }
+    .dropdown-item {
+        color: var(--pb-text) !important;
+    }
+    .dropdown-item:hover {
+        background: rgba(167, 209, 255, 0.15) !important;
+        color: #006acc !important;
+    }
+    .dropdown-divider {
+        border-color: rgba(0, 0, 0, 0.06) !important;
+    }
+
+    /* Buttons overrides */
+    .btn-pb-primary {
+        background: #006acc !important;
+        box-shadow: 0 4px 14px rgba(0, 106, 204, 0.2) !important;
+        color:var(--pb-text) !important;
+        border-radius: 10px !important;
+        border: none !important;
+    }
+    .btn-pb-primary:hover {
+        background: #005bb5 !important;
+        box-shadow: 0 6px 20px rgba(0, 106, 204, 0.3) !important;
+    }
+    .btn-pb-outline {
+        border-color: #006acc !important;
+        color: #006acc !important;
+    }
+    .btn-pb-outline:hover {
+        background: #006acc !important;
+        color:var(--pb-text) !important;
+    }
+
+    /* Hide default base.html footer */
+    .footer-problog {
+        display: none !important;
+    }
+
+    /* Hero section styles */
+    .hero-title {
+        font-size: clamp(2.25rem, 5vw, 3.25rem);
+        font-weight: 800;
+        color: var(--pb-text);
+        line-height: 1.15;
+        max-width: 850px;
+        margin: 0 auto 1.5rem;
+    }
+    .hero-subtitle {
+        color: #808080;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto 2.5rem;
+        font-weight: 400;
+    }
+
+    /* Category card styles */
+    .category-card {
+        background: var(--pb-card-bg);
+        border: 1px solid var(--pb-border);
+        border-radius: 12px;
+        padding: 1.5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        height: 100%;
+    }
+    .category-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 106, 204, 0.08);
+        border-color: #006acc;
+    }
+    .category-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(167, 209, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.75rem;
+        font-size: 1.25rem;
+        color: #006acc;
+        transition: all 0.3s ease;
+    }
+    .category-card:hover .category-icon {
+        background: #006acc;
+        color:var(--pb-text);
+    }
+    .category-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--pb-text);
+    }
+
+    /* Card overrides */
+    .card-glass {
+        background: var(--pb-card-bg) !important;
+        border: 1px solid var(--pb-border) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+        transition: all 0.3s ease !important;
+    }
+    .card-glass:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+        border-color: rgba(0, 106, 204, 0.2) !important;
+    }
+    .card-glass h5 a {
+        color: var(--pb-text) !important;
+        font-weight: 700 !important;
+    }
+    .card-glass h5 a:hover {
+        color: #006acc !important;
+    }
+    .card-glass p {
+        color: #808080 !important;
+    }
+    .card-glass span, .card-glass a {
+        color: #808080 !important;
+    }
+
+    /* Custom footer styles */
+    .social-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--pb-card-bg);
+        border: 1px solid var(--pb-border);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--pb-text-muted);
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+    .social-btn:hover {
+        background: #006acc;
+        color:var(--pb-text);
+        border-color: #006acc;
+    }
+    .footer-link {
+        color: #808080;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    .footer-link:hover {
+        color: #006acc;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
-<!-- ═══ Hero Section ═══ -->
-{% if featured and not q %}
-<section style="position:relative;overflow:hidden;padding:4rem 0 3rem;background:linear-gradient(135deg,var(--pb-dark) 0%,var(--pb-dark-light) 100%);">
-  <div class="container">
-    <div class="row align-items-center g-4">
-      <div class="col-lg-6">
-        <span class="badge mb-3 px-3 py-2" style="background:rgba(242,159,103,0.15);color:var(--pb-primary);border:1px solid rgba(242,159,103,0.2);border-radius:20px;font-size:0.75rem;font-weight:600;letter-spacing:1px;">
-          <i class="bi bi-star-fill me-1"></i> FEATURED POST
-        </span>
-        <h1 style="font-size:clamp(1.5rem,4vw,2.5rem);font-weight:800;color:#fff;line-height:1.2;">
-          <a href="{{ featured.get_absolute_url }}" style="color:inherit;text-decoration:none;">{{ featured.title }}</a>
-        </h1>
-        <p style="color:var(--pb-text-muted);margin:1rem 0;font-size:1rem;line-height:1.7;">{{ featured.excerpt }}</p>
-        <div class="d-flex align-items-center gap-3 mb-3" style="flex-wrap:wrap;">
-          <div class="d-flex align-items-center gap-2">
-            {% if featured.author.profile.avatar %}
-              <img src="{{ featured.author.profile.avatar.url }}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--pb-primary);">
-            {% else %}
-              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;">
-                <i class="bi bi-person-fill text-white" style="font-size:0.9rem;"></i>
-              </div>
-            {% endif %}
-            <div>
-              <div style="color:#fff;font-size:0.85rem;font-weight:600;">{{ featured.author.get_full_name|default:featured.author.username }}</div>
-              <div style="color:var(--pb-text-muted);font-size:0.75rem;">{{ featured.published_at|date:"M d, Y" }}</div>
-            </div>
-          </div>
-          <span style="color:var(--pb-text-muted);font-size:0.8rem;"><i class="bi bi-clock me-1"></i>{{ featured.reading_time }} min read</span>
-          <span style="color:var(--pb-text-muted);font-size:0.8rem;"><i class="bi bi-eye me-1"></i>{{ featured.views }} views</span>
-        </div>
-        <a href="{{ featured.get_absolute_url }}" class="btn btn-pb-primary">
-          <i class="bi bi-arrow-right me-2"></i>Read Article
+
+{% if q or current_category or current_tag or request.GET.all %}
+  <!-- ═══ Search & Filters View ═══ -->
+  <section class="py-5">
+    <div class="container">
+      <div class="mb-4">
+        <a href="{% url 'blogs:home' %}" style="color: var(--pb-primary); font-weight: 600; text-decoration: none; font-size: 0.95rem;">
+          <i class="bi bi-arrow-left me-1"></i> Back to Homepage
         </a>
       </div>
-      <div class="col-lg-6 text-center">
-        {% if featured.featured_image %}
-          <img src="{{ featured.featured_image.url }}" alt="{{ featured.title }}"
-               style="width:100%;max-height:350px;object-fit:cover;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-        {% else %}
-          <div style="width:100%;height:300px;background:linear-gradient(135deg,rgba(242,159,103,0.1),rgba(59,143,243,0.1));border-radius:16px;display:flex;align-items:center;justify-content:center;border:1px solid var(--pb-border);">
-            <i class="bi bi-journal-richtext" style="font-size:5rem;color:var(--pb-text-muted);opacity:0.3;"></i>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<!-- ═══ Search + Filter Bar ═══ -->
-<section style="background:var(--pb-dark-light);border-bottom:1px solid var(--pb-border);padding:1.5rem 0;position:sticky;top:60px;z-index:100;">
-  <div class="container">
-    <form method="get" class="row g-2 align-items-center" id="searchFilterForm">
-      <div class="col-lg-4 col-md-6">
-        <div class="input-group">
-          <span class="input-group-text" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);"><i class="bi bi-search" style="color:var(--pb-text-muted);"></i></span>
-          <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search posts, authors, tags…">
-        </div>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <select name="category" class="form-select" onchange="this.form.submit()">
-          <option value="">All Categories</option>
-          {% for cat in categories %}
-            <option value="{{ cat.slug }}" {% if current_category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="col-lg-3 col-md-6">
-        <select name="sort" class="form-select" onchange="this.form.submit()">
-          <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
-          <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
-          <option value="views" {% if current_sort == 'views' %}selected{% endif %}>Most Viewed</option>
-          <option value="featured" {% if current_sort == 'featured' %}selected{% endif %}>Featured</option>
-        </select>
-      </div>
-      <div class="col-lg-2 col-md-6 d-flex gap-2">
-        <button type="submit" class="btn btn-pb-primary flex-grow-1"><i class="bi bi-search me-1"></i>Search</button>
-        {% if q or current_category or current_tag %}
-          <a href="{% url 'blogs:home' %}" class="btn btn-pb-outline"><i class="bi bi-x"></i></a>
-        {% endif %}
-      </div>
-    </form>
-  </div>
-</section>
-
-<!-- ═══ Tags Bar ═══ -->
-{% if tags %}
-<div style="background:var(--pb-dark);border-bottom:1px solid var(--pb-border);padding:0.75rem 0;overflow-x:auto;">
-  <div class="container">
-    <div class="d-flex gap-2 flex-nowrap">
-      {% for tag in tags %}
-        <a href="?tag={{ tag.slug }}" class="badge px-3 py-2 text-decoration-none"
-           style="background:{% if current_tag == tag.slug %}var(--pb-primary){% else %}rgba(255,255,255,0.06){% endif %};color:{% if current_tag == tag.slug %}#fff{% else %}var(--pb-text-muted){% endif %};border-radius:20px;white-space:nowrap;transition:all 0.2s;border:1px solid {% if current_tag == tag.slug %}var(--pb-primary){% else %}var(--pb-border){% endif %};">
-          #{{ tag.name }}
-        </a>
-      {% endfor %}
-    </div>
-  </div>
-</div>
-{% endif %}
-
-<!-- ═══ Blog Grid ═══ -->
-<section class="py-5">
-  <div class="container">
-    {% if q %}
-      <p style="color:var(--pb-text-muted);margin-bottom:1.5rem;">
-        <i class="bi bi-search me-2"></i>{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} for "<strong style="color:#fff;">{{ q }}</strong>"
-      </p>
-    {% endif %}
-
-    {% if page_obj.object_list %}
-      <div class="row g-4">
-        {% for blog in page_obj %}
-        <div class="col-lg-4 col-md-6 animate-fade-in">
-          <div class="card-glass h-100 d-flex flex-column" style="overflow:hidden;">
-            <!-- Image -->
-            <div style="position:relative;height:200px;overflow:hidden;">
-              {% if blog.featured_image %}
-                <img src="{{ blog.featured_image.url }}" alt="{{ blog.title }}"
-                     style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;">
-              {% else %}
-                <div style="width:100%;height:100%;background:linear-gradient(135deg,rgba(242,159,103,0.08),rgba(59,143,243,0.08));display:flex;align-items:center;justify-content:center;">
-                  <i class="bi bi-journal-text" style="font-size:3rem;color:var(--pb-text-muted);opacity:0.3;"></i>
-                </div>
-              {% endif %}
-              {% if blog.is_featured %}
-                <span class="badge position-absolute" style="top:10px;left:10px;background:var(--pb-primary);border-radius:6px;">
-                  <i class="bi bi-star-fill me-1"></i>Featured
-                </span>
-              {% endif %}
-              {% if blog.category %}
-                <a href="{% url 'blogs:category_detail' blog.category.slug %}" class="badge position-absolute text-decoration-none"
-                   style="top:10px;right:10px;background:rgba(59,143,243,0.85);border-radius:6px;">
-                  {{ blog.category.name }}
-                </a>
-              {% endif %}
-            </div>
-
-            <!-- Body -->
-            <div class="p-4 d-flex flex-column flex-grow-1">
-              <h5 style="color:#fff;font-weight:700;margin-bottom:0.75rem;line-height:1.4;">
-                <a href="{{ blog.get_absolute_url }}" style="color:inherit;text-decoration:none;">{{ blog.title }}</a>
-              </h5>
-              {% if blog.excerpt %}
-                <p style="color:var(--pb-text-muted);font-size:0.9rem;line-height:1.6;flex-grow:1;">{{ blog.excerpt|truncatechars:120 }}</p>
-              {% endif %}
-
-              <!-- Tags -->
-              {% if blog.tags.all %}
-                <div class="d-flex flex-wrap gap-1 mt-2 mb-3">
-                  {% for tag in blog.tags.all|slice:"3" %}
-                    <a href="?tag={{ tag.slug }}" class="badge text-decoration-none"
-                       style="background:rgba(255,255,255,0.05);color:var(--pb-text-muted);border:1px solid var(--pb-border);border-radius:4px;font-size:0.7rem;">#{{ tag.name }}</a>
-                  {% endfor %}
-                </div>
-              {% endif %}
-
-              <!-- Footer -->
-              <div class="d-flex align-items-center justify-content-between mt-auto pt-3" style="border-top:1px solid var(--pb-border);">
-                <div class="d-flex align-items-center gap-2">
-                  {% if blog.author.profile.avatar %}
-                    <img src="{{ blog.author.profile.avatar.url }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
-                  {% else %}
-                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;">
-                      <i class="bi bi-person-fill text-white" style="font-size:0.75rem;"></i>
-                    </div>
-                  {% endif %}
-                  <span style="color:var(--pb-text-muted);font-size:0.8rem;">{{ blog.author.get_full_name|default:blog.author.username }}</span>
-                </div>
-                <div class="d-flex gap-3" style="color:var(--pb-text-muted);font-size:0.8rem;">
-                  <span><i class="bi bi-eye me-1"></i>{{ blog.views }}</span>
-                  <span><i class="bi bi-heart me-1"></i>{{ blog.likes.count }}</span>
-                  <span><i class="bi bi-clock me-1"></i>{{ blog.reading_time }}m</span>
-                </div>
-              </div>
+      
+      <!-- ═══ Search + Filter Bar ═══ -->
+      <div class="card p-4 shadow-sm mb-5 border-0 rounded-4" style="background: var(--pb-dark-light);">
+        <form method="get" class="row g-3 align-items-center" id="searchFilterForm">
+          <div class="col-lg-4 col-md-6">
+            <div class="input-group">
+              <span class="input-group-text border-0" style="background: var(--pb-card-bg); color: var(--pb-text-muted);"><i class="bi bi-search"></i></span>
+              <input type="text" name="q" value="{{ q }}" class="form-control border-0" placeholder="Search posts, authors, tags…" style="background: var(--pb-card-bg) !important; color: var(--pb-text) !important;">
             </div>
           </div>
-        </div>
-        {% endfor %}
+          <div class="col-lg-3 col-md-6">
+            <select name="category" class="form-select border-0" onchange="this.form.submit()" style="background: var(--pb-card-bg) !important; color: var(--pb-text) !important;">
+              <option value="">All Categories</option>
+              {% for cat in categories %}
+                <option value="{{ cat.slug }}" {% if current_category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <select name="sort" class="form-select border-0" onchange="this.form.submit()" style="background: var(--pb-card-bg) !important; color: var(--pb-text) !important;">
+              <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+              <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+              <option value="views" {% if current_sort == 'views' %}selected{% endif %}>Most Viewed</option>
+              <option value="featured" {% if current_sort == 'featured' %}selected{% endif %}>Featured</option>
+            </select>
+          </div>
+          <div class="col-lg-2 col-md-6 d-flex gap-2">
+            <button type="submit" class="btn btn-pb-primary flex-grow-1"><i class="bi bi-search me-1"></i>Search</button>
+          </div>
+        </form>
       </div>
 
-      <!-- Pagination -->
-      {% if page_obj.has_other_pages %}
-        <nav class="mt-5 d-flex justify-content-center" aria-label="Page navigation">
-          <ul class="pagination">
-            {% if page_obj.has_previous %}
-              <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);color:var(--pb-text);">
-                  <i class="bi bi-chevron-left"></i>
-                </a>
-              </li>
-            {% endif %}
-            {% for i in page_obj.paginator.page_range %}
-              {% if page_obj.number == i %}
-                <li class="page-item active">
-                  <span class="page-link" style="background:var(--pb-primary);border-color:var(--pb-primary);">{{ i }}</span>
-                </li>
-              {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
-                <li class="page-item">
-                  <a class="page-link" href="?page={{ i }}{% if q %}&q={{ q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);color:var(--pb-text);">{{ i }}</a>
-                </li>
-              {% endif %}
-            {% endfor %}
-            {% if page_obj.has_next %}
-              <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" style="background:var(--pb-dark-lighter);border-color:var(--pb-border);color:var(--pb-text);">
-                  <i class="bi bi-chevron-right"></i>
-                </a>
-              </li>
-            {% endif %}
-          </ul>
-        </nav>
+      {% if q %}
+        <h4 style="color: var(--pb-text); font-weight: 700; margin-bottom: 2rem;">
+          <i class="bi bi-search me-2" style="color: var(--pb-primary);"></i>{{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }} for "<strong>{{ q }}</strong>"
+        </h4>
+      {% elif current_category %}
+        <h4 style="color: var(--pb-text); font-weight: 700; margin-bottom: 2rem;">
+          Category: <strong>{{ current_category }}</strong>
+        </h4>
+      {% else %}
+        <h4 style="color: var(--pb-text); font-weight: 700; margin-bottom: 2rem;">
+          All Articles
+        </h4>
       {% endif %}
 
-    {% else %}
-      <div class="text-center py-5">
-        <i class="bi bi-journal-x" style="font-size:4rem;color:var(--pb-text-muted);opacity:0.3;display:block;margin-bottom:1.5rem;"></i>
-        <h3 style="color:var(--pb-text-muted);">No posts found</h3>
-        <p style="color:var(--pb-text-muted);font-size:0.9rem;">
-          {% if q %}Try a different search term or <a href="{% url 'blogs:home' %}" style="color:var(--pb-primary);">browse all posts</a>.{% else %}No published posts yet.{% endif %}
-        </p>
-        {% if user.is_authenticated %}
-          {% if user.is_superuser or 'Authors' in user.groups.all|join:', ' or 'Editors' in user.groups.all|join:', ' %}
-            <a href="{% url 'blogs:blog_create' %}" class="btn btn-pb-primary mt-3"><i class="bi bi-plus-lg me-2"></i>Write First Post</a>
-          {% endif %}
-        {% endif %}
-      </div>
-    {% endif %}
-  </div>
-</section>
+      {% if page_obj.object_list %}
+        <div class="row g-4">
+          {% for blog in page_obj %}
+            <div class="col-lg-4 col-md-6">
+              <div class="card-glass h-100 d-flex flex-column" style="overflow:hidden; border-radius: 16px;">
+                <!-- Image -->
+                <div style="position:relative;height:200px;overflow:hidden;">
+                  {% if blog.featured_image %}
+                    <img src="{{ blog.featured_image.url }}" alt="{{ blog.title }}"
+                         style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;">
+                  {% else %}
+                    <div style="width:100%;height:100%;background:linear-gradient(135deg,rgba(167,209,255,0.1),rgba(0,106,204,0.1));display:flex;align-items:center;justify-content:center;">
+                      <i class="bi bi-journal-text" style="font-size:3rem;color:var(--pb-text-muted);opacity:0.3;"></i>
+                    </div>
+                  {% endif %}
+                  {% if blog.is_featured %}
+                    <span class="badge position-absolute" style="top:10px;left:10px;background:var(--pb-primary);border-radius:6px;">
+                      <i class="bi bi-star-fill me-1"></i>Featured
+                    </span>
+                  {% endif %}
+                  {% if blog.category %}
+                    <a href="{% url 'blogs:category_detail' blog.category.slug %}" class="badge position-absolute text-decoration-none"
+                       style="top:10px;right:10px;background:rgba(0,106,204,0.85);border-radius:6px; color:var(--pb-text) !important;">
+                      {{ blog.category.name }}
+                    </a>
+                  {% endif %}
+                </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Hover effect on blog cards
-    document.querySelectorAll('.card-glass img').forEach(function(img) {
-        img.closest('.card-glass').addEventListener('mouseenter', function() {
-            if (img.tagName === 'IMG') img.style.transform = 'scale(1.05)';
-        });
-        img.closest('.card-glass').addEventListener('mouseleave', function() {
-            if (img.tagName === 'IMG') img.style.transform = 'scale(1)';
-        });
-    });
-});
-</script>
+                <!-- Body -->
+                <div class="p-4 d-flex flex-column flex-grow-1">
+                  <h5 style="color:var(--pb-text);font-weight:700;margin-bottom:0.75rem;line-height:1.4;">
+                    <a href="{{ blog.get_absolute_url }}" style="color:inherit;text-decoration:none;">{{ blog.title }}</a>
+                  </h5>
+                  {% if blog.excerpt %}
+                    <p style="color:var(--pb-text-muted);font-size:0.9rem;line-height:1.6;flex-grow:1;">{{ blog.excerpt|truncatechars:120 }}</p>
+                  {% endif %}
+
+                  <!-- Footer -->
+                  <div class="d-flex align-items-center justify-content-between mt-auto pt-3" style="border-top:1px solid rgba(0,0,0,0.06);">
+                    <div class="d-flex align-items-center gap-2">
+                      {% if blog.author.profile.avatar %}
+                        <img src="{{ blog.author.profile.avatar.url }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
+                      {% else %}
+                        <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;">
+                          <i class="bi bi-person-fill text-white" style="font-size:0.75rem;"></i>
+                        </div>
+                      {% endif %}
+                      <div>
+                        <span style="color:var(--pb-text-muted);font-size:0.8rem;display:block;font-weight:600;">{{ blog.author.get_full_name|default:blog.author.username }}</span>
+                        <span style="color:var(--pb-text-muted);font-size:0.7rem;display:block;">{{ blog.published_at|date:"M d, Y" }} &middot; {{ blog.reading_time }}m read</span>
+                      </div>
+                    </div>
+                    <div>
+                      {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'interactions:toggle_bookmark' blog.slug %}" style="margin:0;">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-link p-0" style="color: #006acc;" title="Bookmark">
+                            <i class="bi {% if blog.id in bookmarked_blog_ids %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}" style="font-size: 1.15rem;"></i>
+                          </button>
+                        </form>
+                      {% else %}
+                        <a href="{% url 'accounts:login' %}?next={{ request.path }}" style="color: #808080;" title="Login to bookmark">
+                          <i class="bi bi-bookmark" style="font-size: 1.15rem;"></i>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+          <nav class="mt-5 d-flex justify-content-center">
+            <ul class="pagination">
+              {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" style="background:var(--pb-card-bg);border-color: var(--pb-border);color:var(--pb-text);">
+                    <i class="bi bi-chevron-left"></i>
+                  </a>
+                </li>
+              {% endif %}
+              {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                  <li class="page-item active">
+                    <span class="page-link" style="background:var(--pb-primary);border-color:var(--pb-primary);color:var(--pb-text);">{{ i }}</span>
+                  </li>
+                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}{% if q %}&q={{ q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" style="background:var(--pb-card-bg);border-color: var(--pb-border);color:var(--pb-text);">{{ i }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              {% if page_obj.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" style="background:var(--pb-card-bg);border-color: var(--pb-border);color:var(--pb-text);">
+                    <i class="bi bi-chevron-right"></i>
+                  </a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+        {% endif %}
+
+      {% else %}
+        <div class="text-center py-5">
+          <i class="bi bi-journal-x" style="font-size:4rem;color:var(--pb-text-muted);opacity:0.3;display:block;margin-bottom:1.5rem;"></i>
+          <h3 style="color:var(--pb-text-muted);">No posts found</h3>
+          <p style="color:var(--pb-text-muted);font-size:0.9rem;">
+            Try a different search term or <a href="{% url 'blogs:home' %}" style="color:var(--pb-primary);">browse all posts</a>.
+          </p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+{% else %}
+  <!-- ═══ Default Clean Home View ═══ -->
+  <!-- ═══ Hero Section ═══ -->
+  <section class="py-5" style="background: transparent; position: relative; overflow: hidden; padding-top: 5rem; padding-bottom: 5rem;">
+    <div class="container text-center">
+      <span class="mb-3 px-3 py-2 d-inline-block" style="background:rgba(0,106,204,0.08);color:#006acc;border:1px solid rgba(0,106,204,0.15);border-radius:20px;font-size:0.75rem;font-weight:600;letter-spacing:1px;">
+        EXPLORE. LEARN. SHARE.
+      </span>
+      <h1 class="hero-title">
+        Discover Inspiring Stories<br>from <span style="color: var(--pb-primary);">Amazing</span> Writers
+      </h1>
+      <p class="hero-subtitle">
+        Read quality articles on technology, lifestyle, business and more.
+      </p>
+      
+      <form method="get" action="{% url 'blogs:home' %}" class="mx-auto" style="max-width: 600px;">
+        <div class="input-group shadow-sm" style="border-radius: 30px; overflow: hidden; background: var(--pb-card-bg); border: 1px solid var(--pb-border); padding: 0.25rem;">
+          <span class="input-group-text border-0 bg-transparent ps-3"><i class="bi bi-search" style="color: var(--pb-text-muted);"></i></span>
+          <input type="text" name="q" class="form-control border-0" placeholder="Search all blogs, authors, categories..." style="background: var(--pb-card-bg) !important; color: var(--pb-text) !important; font-size: 0.95rem; box-shadow: none !important;">
+          <button type="submit" class="btn btn-pb-primary px-4 py-2" style="border-radius: 25px !important; background: var(--pb-primary); font-size: 0.9rem;">
+            Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══ Popular Categories Section ═══ -->
+  <section class="py-5" style="background: var(--pb-card-bg); border-top: 1px solid var(--pb-border); border-bottom: 1px solid var(--pb-border);">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 style="font-weight: 700; color: var(--pb-text); margin: 0; font-size: 1.35rem;">Popular Categories</h4>
+        <a href="{% url 'blogs:category_list' %}" style="color: var(--pb-primary); font-weight: 600; text-decoration: none; font-size: 0.85rem;">
+          View all <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+      
+      <div class="row g-3 justify-content-center">
+        {% for cat in categories|slice:":6" %}
+          <div class="col-6 col-sm-4 col-md-2">
+            <a href="{% url 'blogs:category_detail' cat.slug %}" class="category-card shadow-sm">
+              <div class="category-icon shadow-sm">
+                {% if cat.slug == 'technology' or 'tech' in cat.slug %}
+                  <i class="bi bi-laptop"></i>
+                {% elif cat.slug == 'programming' or 'code' in cat.slug %}
+                  <i class="bi bi-code-slash"></i>
+                {% elif cat.slug == 'business' or 'finance' in cat.slug %}
+                  <i class="bi bi-briefcase"></i>
+                {% elif cat.slug == 'lifestyle' %}
+                  <i class="bi bi-heart"></i>
+                {% elif cat.slug == 'education' %}
+                  <i class="bi bi-mortarboard"></i>
+                {% elif cat.slug == 'travel' %}
+                  <i class="bi bi-airplane"></i>
+                {% else %}
+                  <i class="bi bi-tags"></i>
+                {% endif %}
+              </div>
+              <span class="category-title">{{ cat.name }}</span>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Latest Articles Section ═══ -->
+  <section class="py-5" style="background: var(--pb-card-bg);">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 style="font-weight: 700; color: var(--pb-text); margin: 0; font-size: 1.35rem;">Latest Articles</h4>
+        <a href="?all=true" style="color: var(--pb-primary); font-weight: 600; text-decoration: none; font-size: 0.85rem;">
+          View all <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+      
+      <div class="row g-4">
+        {% for blog in page_obj|slice:":3" %}
+          <div class="col-lg-4 col-md-6">
+            <div class="card-glass h-100 d-flex flex-column" style="overflow:hidden; border-radius: 16px;">
+              <!-- Image -->
+              <div style="position:relative;height:220px;overflow:hidden;">
+                {% if blog.featured_image %}
+                  <img src="{{ blog.featured_image.url }}" alt="{{ blog.title }}"
+                       style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s ease;">
+                {% else %}
+                  <div style="width:100%;height:100%;background:linear-gradient(135deg,rgba(167,209,255,0.1),rgba(0,106,204,0.1));display:flex;align-items:center;justify-content:center;">
+                    <i class="bi bi-journal-text" style="font-size:3.5rem;color:var(--pb-text-muted);opacity:0.3;"></i>
+                  </div>
+                {% endif %}
+                {% if blog.is_featured %}
+                  <span class="badge position-absolute" style="top:10px;left:10px;background:var(--pb-primary);border-radius:6px;">
+                    <i class="bi bi-star-fill me-1"></i>Featured
+                  </span>
+                {% endif %}
+                {% if blog.category %}
+                  <a href="{% url 'blogs:category_detail' blog.category.slug %}" class="badge position-absolute text-decoration-none"
+                     style="top:10px;right:10px;background:rgba(0,106,204,0.85);border-radius:6px; color:var(--pb-text) !important;">
+                    {{ blog.category.name }}
+                  </a>
+                {% endif %}
+              </div>
+
+              <!-- Body -->
+              <div class="p-4 d-flex flex-column flex-grow-1">
+                <h5 style="color:var(--pb-text);font-weight:700;margin-bottom:0.75rem;line-height:1.4;">
+                  <a href="{{ blog.get_absolute_url }}" style="color:inherit;text-decoration:none;">{{ blog.title }}</a>
+                </h5>
+                {% if blog.excerpt %}
+                  <p style="color:var(--pb-text-muted);font-size:0.9rem;line-height:1.6;flex-grow:1;">{{ blog.excerpt|truncatechars:120 }}</p>
+                {% endif %}
+
+                <!-- Footer -->
+                <div class="d-flex align-items-center justify-content-between mt-auto pt-3" style="border-top:1px solid rgba(0,0,0,0.06);">
+                  <div class="d-flex align-items-center gap-2">
+                    {% if blog.author.profile.avatar %}
+                      <img src="{{ blog.author.profile.avatar.url }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
+                    {% else %}
+                      <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--pb-primary),var(--pb-blue));display:flex;align-items:center;justify-content:center;">
+                        <i class="bi bi-person-fill text-white" style="font-size:0.75rem;"></i>
+                      </div>
+                    {% endif %}
+                    <div>
+                      <span style="color:var(--pb-text-muted);font-size:0.8rem;display:block;font-weight:600;">{{ blog.author.get_full_name|default:blog.author.username }}</span>
+                      <span style="color:var(--pb-text-muted);font-size:0.7rem;display:block;">{{ blog.published_at|date:"M d, Y" }} &middot; {{ blog.reading_time }}m read</span>
+                    </div>
+                  </div>
+                  <div>
+                    {% if user.is_authenticated %}
+                      <form method="post" action="{% url 'interactions:toggle_bookmark' blog.slug %}" style="margin:0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link p-0" style="color: #006acc;" title="Bookmark">
+                          <i class="bi {% if blog.id in bookmarked_blog_ids %}bi-bookmark-fill{% else %}bi-bookmark{% endif %}" style="font-size: 1.15rem;"></i>
+                        </button>
+                      </form>
+                    {% else %}
+                      <a href="{% url 'accounts:login' %}?next={{ request.path }}" style="color: #808080;" title="Login to bookmark">
+                        <i class="bi bi-bookmark" style="font-size: 1.15rem;"></i>
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="text-center py-5">
+            <p style="color: var(--pb-text-muted);">No articles published yet.</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Newsletter Subscription Form ═══ -->
+  <section class="py-5" style="background: var(--pb-card-bg); border-bottom: 1px solid var(--pb-border);">
+    <div class="container">
+      <div class="p-4 p-md-5 rounded-4 d-flex flex-column flex-md-row align-items-center justify-content-between gap-4" 
+           style="background: rgba(167, 209, 255, 0.25); border: 1px solid rgba(0, 106, 204, 0.15);">
+        <div class="d-flex align-items-center gap-3">
+          <div class="d-flex align-items-center justify-content-center rounded-circle" 
+               style="width: 60px; height: 60px; background: var(--pb-card-bg); color: #006acc; font-size: 1.75rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,106,204,0.1);">
+            <i class="bi bi-envelope-open"></i>
+          </div>
+          <div>
+            <h4 style="color: var(--pb-text); font-weight: 700; margin-bottom: 0.25rem; font-size: 1.25rem;">Stay Updated with ProBlog</h4>
+            <p style="color: var(--pb-text-muted); margin: 0; font-size: 0.9rem;">Get the latest articles and updates in your email.</p>
+          </div>
+        </div>
+        <form method="post" action="#" class="d-flex gap-2 w-100 w-md-auto" style="max-width: 450px;" onsubmit="event.preventDefault(); alert('Subscribed successfully!');">
+          <input type="email" placeholder="Enter your email" class="form-control px-3" required
+                 style="background: var(--pb-card-bg) !important; color: var(--pb-text) !important; border: 1px solid var(--pb-border) !important; border-radius: 8px;">
+          <button type="submit" class="btn btn-pb-primary px-4" style="border-radius: 8px; font-weight: 600; white-space: nowrap;">
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Custom Footer ═══ -->
+  <footer class="custom-footer py-5" style="background: var(--pb-dark-light); color: var(--pb-text);">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Left Column -->
+        <div class="col-lg-3 col-md-6">
+          <a class="navbar-brand d-inline-block mb-3" href="{% url 'blogs:home' %}" style="font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; text-decoration: none;">
+            <span style="color: var(--pb-text);">Pro</span><span style="color: #006acc;">Blog</span>
+          </a>
+          <p style="color: #808080; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">
+            A multi-author blogging platform for writers, editors, and creators.
+          </p>
+          <div class="d-flex gap-2">
+            <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="social-btn"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" class="social-btn"><i class="bi bi-linkedin"></i></a>
+            <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
+          </div>
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="col-lg-2 col-md-6 col-6">
+          <h6 style="font-weight: 700; color: var(--pb-text); margin-bottom: 1.25rem;">Quick Links</h6>
+          <ul class="list-unstyled d-flex flex-column gap-2" style="font-size: 0.9rem;">
+            <li><a href="{% url 'blogs:home' %}" class="footer-link">Home</a></li>
+            <li><a href="{% url 'blogs:category_list' %}" class="footer-link">Categories</a></li>
+            <li><a href="{% url 'blogs:author_list' %}" class="footer-link">Authors</a></li>
+            <li><a href="#" class="footer-link">About</a></li>
+            <li><a href="#" class="footer-link">Contact</a></li>
+          </ul>
+        </div>
+        
+        <!-- Resources -->
+        <div class="col-lg-2 col-md-6 col-6">
+          <h6 style="font-weight: 700; color: var(--pb-text); margin-bottom: 1.25rem;">Resources</h6>
+          <ul class="list-unstyled d-flex flex-column gap-2" style="font-size: 0.9rem;">
+            <li><a href="#" class="footer-link">Careers</a></li>
+            <li><a href="#" class="footer-link">Community</a></li>
+            <li><a href="#" class="footer-link">Help Center</a></li>
+            <li><a href="#" class="footer-link">API Reference</a></li>
+          </ul>
+        </div>
+        
+        <!-- Legal -->
+        <div class="col-lg-2 col-md-6 col-6">
+          <h6 style="font-weight: 700; color: var(--pb-text); margin-bottom: 1.25rem;">Legal</h6>
+          <ul class="list-unstyled d-flex flex-column gap-2" style="font-size: 0.9rem;">
+            <li><a href="#" class="footer-link">Privacy Policy</a></li>
+            <li><a href="#" class="footer-link">Terms of Service</a></li>
+            <li><a href="#" class="footer-link">Services</a></li>
+            <li><a href="#" class="footer-link">Cookie Policy</a></li>
+          </ul>
+        </div>
+        
+        <!-- Newsletter -->
+        <div class="col-lg-3 col-md-6">
+          <h6 style="font-weight: 700; color: var(--pb-text); margin-bottom: 1.25rem;">Newsletter</h6>
+          <p style="color: #808080; font-size: 0.85rem; line-height: 1.5; margin-bottom: 1rem;">
+            Subscribe to our newsletter to receive the latest updates.
+          </p>
+          <form method="post" action="#" class="d-flex flex-column gap-2" onsubmit="event.preventDefault(); alert('Subscribed successfully!');">
+            <input type="email" placeholder="Enter your email" class="form-control" required
+                   style="background: var(--pb-card-bg) !important; color: var(--pb-text) !important; border: 1px solid var(--pb-border) !important; border-radius: 8px;">
+            <button type="submit" class="btn btn-pb-primary w-100" style="border-radius: 8px; font-weight: 600;">
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </div>
+      
+      <hr style="border-color: rgba(0,0,0,0.06); margin: 3.5rem 0 1.5rem 0;">
+      
+      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+        <p style="color: #808080; font-size: 0.85rem; margin: 0;">
+          &copy; 2026 ProBlog. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </footer>
+{% endif %}
 {% endblock %}

@@ -5,7 +5,7 @@
 
   <div class="d-flex align-items-center mb-4 animate-fade-in flex-wrap gap-3">
     <div>
-      <h1 style="color:#fff;font-weight:800;margin:0;"><i class="bi bi-shield-check me-2" style="color:var(--pb-teal);"></i>Moderator Dashboard</h1>
+      <h1 style="color:var(--pb-text);font-weight:800;margin:0;"><i class="bi bi-shield-check me-2" style="color:var(--pb-teal);"></i>Moderator Dashboard</h1>
       <p style="color:var(--pb-text-muted);margin:0.25rem 0 0;font-size:0.9rem;">Manage reports and comments</p>
     </div>
   </div>
@@ -54,11 +54,11 @@
             {% for report in page_obj %}
               <tr style="border-bottom:1px solid var(--pb-border);">
                 <td style="padding:0.85rem 1.25rem;vertical-align:middle;">
-                  <span style="color:#fff;font-size:0.85rem;font-weight:600;">{{ report.reporter.username }}</span>
+                  <span style="color:var(--pb-text);font-size:0.85rem;font-weight:600;">{{ report.reporter.username }}</span>
                 </td>
                 <td style="padding:0.85rem;vertical-align:middle;">
                   {% if report.comment %}
-                    <div style="font-size:0.82rem;color:var(--pb-text-muted);">Comment by <strong style="color:#fff;">{{ report.comment.user.username }}</strong></div>
+                    <div style="font-size:0.82rem;color:var(--pb-text-muted);">Comment by <strong style="color:var(--pb-text);">{{ report.comment.user.username }}</strong></div>
                     <div style="font-size:0.75rem;color:var(--pb-text-muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">"{{ report.comment.content }}"</div>
                   {% elif report.blog %}
                     <div style="font-size:0.82rem;color:var(--pb-text-muted);">Blog: <a href="{{ report.blog.get_absolute_url }}" style="color:var(--pb-blue);">{{ report.blog.title|truncatechars:35 }}</a></div>
@@ -106,7 +106,7 @@
   {% else %}
     <div class="card-glass p-5 text-center mb-5 animate-fade-in animate-delay-1">
       <i class="bi bi-shield-check" style="font-size:3rem;color:var(--pb-teal);opacity:0.5;display:block;margin-bottom:1rem;"></i>
-      <h5 style="color:#fff;">All Clear!</h5>
+      <h5 style="color:var(--pb-text);">All Clear!</h5>
       <p style="color:var(--pb-text-muted);font-size:0.9rem;">No pending reports at this time.</p>
     </div>
   {% endif %}
@@ -121,7 +121,7 @@
         <div class="p-3 d-flex align-items-start gap-3" style="border-bottom:1px solid var(--pb-border);">
           <div style="flex:1;">
             <div class="d-flex align-items-center gap-2 mb-1">
-              <strong style="color:#fff;font-size:0.85rem;">{{ comment.user.username }}</strong>
+              <strong style="color:var(--pb-text);font-size:0.85rem;">{{ comment.user.username }}</strong>
               <span style="color:var(--pb-text-muted);font-size:0.75rem;">on "{{ comment.blog.title|truncatechars:30 }}"</span>
               <span style="color:var(--pb-text-muted);font-size:0.72rem;margin-left:auto;">{{ comment.created_at|date:"M d" }}</span>
             </div>
