@@ -27,6 +27,36 @@ class BlogAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     filter_horizontal = ['tags']
     raw_id_fields = ['author', 'category']
+    fieldsets = (
+        ('Content', {
+            'fields': ('title', 'slug', 'excerpt', 'content', 'category', 'tags')
+        }),
+        ('Media', {
+            'fields': ('featured_image', 'video_url')
+        }),
+        ('Status & Settings', {
+            'fields': ('author', 'status', 'is_featured')
+        }),
+        ('Metadata', {
+            'fields': ('views', 'created_at', 'updated_at', 'published_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    fieldsets = (
+        ('Content', {
+            'fields': ('title', 'slug', 'excerpt', 'content', 'category', 'tags')
+        }),
+        ('Media', {
+            'fields': ('featured_image', 'video_url')
+        }),
+        ('Status & Settings', {
+            'fields': ('author', 'status', 'is_featured')
+        }),
+        ('Metadata', {
+            'fields': ('views', 'created_at', 'updated_at', 'published_at'),
+            'classes': ('collapse',)
+        }),
+    )
 
 
 @admin.register(BlogReview)

@@ -80,6 +80,17 @@ class Blog(models.Model):
     featured_image = models.ImageField(
         upload_to='blogs/', blank=True, null=True
     )
+    video_url = models.URLField(
+        blank=True, null=True, help_text='URL to video file (MP4, WebM, or embedded video URL)'
+    )
+    video = models.FileField(
+        upload_to='blogs/videos/', blank=True, null=True,
+        help_text='Uploaded video file (MP4, WebM, max 50MB)'
+    )
+    video = models.FileField(
+        upload_to='blogs/videos/', blank=True, null=True,
+        help_text='Uploaded video file (MP4, WebM, max 50MB)'
+    )
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default=STATUS_DRAFT
     )

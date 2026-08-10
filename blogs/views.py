@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponseForbidden
 from django.utils import timezone
 
-from .models import Blog, Category, Tag, BlogReview, BlogMedia
+from .models import Blog, Category, Tag, BlogReview
 from .forms import BlogForm, CategoryForm, TagForm, ReviewForm
 
 
@@ -222,26 +222,8 @@ def blog_edit(request, slug):
                 Blog.STATUS_REJECTED, Blog.STATUS_CHANGES
             ):
                 updated.status = Blog.STATUS_DRAFT
-            # Handle featured selection from uploaded media similarly to create
-            featured_index = -1
-            try:
-                featured_index = int(request.POST.get('featured_media_index', -1))
-            except (TypeError, ValueError):
-                featured_index = -1
-
-            media_files = request.FILES.getlist('media') if request.FILES else []
-            if 0 <= featured_index < len(media_files):
-                candidate = media_files[featured_index]
-                if getattr(candidate, 'content_type', '').startswith('image/'):
-                    updated.featured_image = candidate
-
             updated.save()
             form.save_m2m()
-
-            for f in media_files:
-                ctype = getattr(f, 'content_type', '')
-                mtype = BlogMedia.MEDIA_IMAGE if ctype.startswith('image/') else BlogMedia.MEDIA_VIDEO
-                BlogMedia.objects.create(blog=updated, file=f, media_type=mtype)
 
             messages.success(request, f'Post "{blog.title}" updated!')
             return redirect('blogs:blog_detail', slug=blog.slug)

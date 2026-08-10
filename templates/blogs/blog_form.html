@@ -39,13 +39,13 @@
               {% endif %}
             </div>
 
-            <!-- Category + Image row -->
+            <!-- Category + Image + Video row -->
             <div class="row mb-4">
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <label for="id_category" class="form-label"><i class="bi bi-folder me-1"></i>Category</label>
                 {{ form.category }}
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <label for="id_featured_image" class="form-label"><i class="bi bi-image me-1"></i>Featured Image <small style="color:var(--pb-text-muted);">(max 5MB)</small></label>
                 {{ form.featured_image }}
                 {% if form.featured_image.errors %}
@@ -62,16 +62,23 @@
                   </div>
                 {% endif %}
               </div>
-            </div>
-
-            <div class="mb-4">
-              <label class="form-label"><i class="bi bi-folder-symlink me-1"></i>Media (images & videos)</label>
-              {{ form.media }}
-              <input type="hidden" name="featured_media_index" id="featured_media_index" value="-1">
-              <div id="mediaPreview" style="margin-top:0.75rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.75rem;"></div>
-              {% if form.media.errors %}
-                <div class="errorlist">{% for e in form.media.errors %}<li>{{ e }}</li>{% endfor %}</div>
-              {% endif %}
+              <div class="col-md-4">
+                <label for="id_video" class="form-label"><i class="bi bi-camera-video me-1"></i>Video <small style="color:var(--pb-text-muted);">(optional, max 50MB)</small></label>
+                {{ form.video }}
+                {% if form.video.errors %}
+                  <div class="errorlist">{% for e in form.video.errors %}<li>{{ e }}</li>{% endfor %}</div>
+                {% endif %}
+                <!-- Video preview -->
+                <div id="videoPreviewWrap" style="margin-top:0.75rem;display:none;">
+                  <video id="videoPreview" muted preload="metadata" style="width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--pb-border);"></video>
+                </div>
+                {% if blog and blog.video %}
+                  <div class="mt-2">
+                    <video src="{{ blog.video.url }}" muted preload="metadata" style="width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--pb-border);" id="currentVideo"></video>
+                    <small style="color:var(--pb-text-muted);">Current video — upload new to replace</small>
+                  </div>
+                {% endif %}
+              </div>
             </div>
 
             <!-- Excerpt -->
@@ -171,6 +178,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Video preview
+    var vidInput = document.getElementById('id_video');
+    if (vidInput) {
+        vidInput.addEventListener('change', function() {
+            var file = this.files[0];
+            if (file) {
+                var wrap = document.getElementById('videoPreviewWrap');
+                var vid = document.getElementById('videoPreview');
+                var curr = document.getElementById('currentVideo');
+                wrap.style.display = 'block';
+                vid.src = URL.createObjectURL(file);
+                if (curr) curr.style.display = 'none';
+            }
+        });
+    }
+
     // Excerpt character counter
     var excerptField = document.getElementById('id_excerpt');
     var excerptCounter = document.getElementById('excerptCounter');
@@ -195,86 +218,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         contentField.addEventListener('input', updateWords);
         updateWords();
-    }
-
-    // Media previews and featured selection
-    var mediaInput = document.getElementById('id_media');
-    var mediaPreview = document.getElementById('mediaPreview');
-    var featuredField = document.getElementById('featured_media_index');
-
-    function clearMediaPreview() {
-      if (!mediaPreview) return;
-      mediaPreview.innerHTML = '';
-      featuredField.value = -1;
-    }
-
-    function makePreview(file, idx) {
-      var container = document.createElement('div');
-      container.style.position = 'relative';
-      container.style.border = '1px solid var(--pb-border)';
-      container.style.borderRadius = '8px';
-      container.style.overflow = 'hidden';
-      container.style.background = 'rgba(255,255,255,0.02)';
-      container.style.cursor = 'pointer';
-      container.dataset.index = idx;
-
-      var badge = document.createElement('div');
-      badge.style.position = 'absolute';
-      badge.style.right = '6px';
-      badge.style.top = '6px';
-      badge.style.background = 'rgba(0,0,0,0.5)';
-      badge.style.color = '#fff';
-      badge.style.fontSize = '12px';
-      badge.style.padding = '4px 6px';
-      badge.style.borderRadius = '6px';
-      badge.textContent = 'Set Featured';
-
-      var setFeatured = function() {
-        featuredField.value = idx;
-        mediaPreview.querySelectorAll('div[data-index]').forEach(function(el) {
-          el.style.boxShadow = '';
-        });
-        container.style.boxShadow = '0 0 0 3px rgba(242,159,103,0.18)';
-      };
-      container.addEventListener('click', setFeatured);
-
-      if (file.type.startsWith('image/')) {
-        var img = document.createElement('img');
-        img.style.width = '100%';
-        img.style.height = '110px';
-        img.style.objectFit = 'cover';
-        img.alt = file.name;
-        var reader = new FileReader();
-        reader.onload = function(e) { img.src = e.target.result; };
-        reader.readAsDataURL(file);
-        container.appendChild(img);
-      } else if (file.type.startsWith('video/')) {
-        var vid = document.createElement('video');
-        vid.style.width = '100%';
-        vid.style.height = '110px';
-        vid.style.objectFit = 'cover';
-        vid.controls = false;
-        vid.muted = true;
-        vid.loop = true;
-        var reader = new FileReader();
-        reader.onload = function(e) { vid.src = e.target.result; vid.play().catch(function(){}); };
-        reader.readAsDataURL(file);
-        container.appendChild(vid);
-      }
-
-      container.appendChild(badge);
-      return container;
-    }
-
-    if (mediaInput) {
-      mediaInput.addEventListener('change', function() {
-        clearMediaPreview();
-        var files = Array.from(this.files || []);
-        files.forEach(function(f, i) {
-          var p = makePreview(f, i);
-          mediaPreview.appendChild(p);
-        });
-      });
     }
 
     // Tag checkbox styling

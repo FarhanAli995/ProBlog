@@ -4,6 +4,16 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block extra_css %}
+<!-- Three.js from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Gallery Tunnel Component -->
+<script src="{% static 'js/gallery-tunnel.js' %}"></script>
+<!-- Video Hover Player -->
+<script src="{% static 'js/gallery-tunnel-video.js' %}"></script>
+<!-- Video Hover Player -->
+<script src="{% static 'js/gallery-tunnel-video.js' %}"></script>
+<!-- Video Hover Player -->
+<script src="{% static 'js/gallery-tunnel-video.js' %}"></script>
 <style>
     /* Theme variables are inherited from base.html */
 
@@ -261,8 +271,8 @@
         <div class="row g-4">
           {% for blog in page_obj %}
             <div class="col-lg-4 col-md-6">
-              <div class="card-glass h-100 d-flex flex-column" style="overflow:hidden; border-radius: 16px;">
-                <!-- Image -->
+              <div class="card-glass h-100 d-flex flex-column" style="overflow:hidden; border-radius: 16px;" {% if blog.video and blog.featured_image %}data-video-url="{{ blog.video.url }}" data-video-thumbnail="{{ blog.featured_image.url }}"{% elif blog.video %}data-video-url="{{ blog.video.url }}"{% endif %}>
+                <!-- Image/Video -->
                 <div style="position:relative;height:200px;overflow:hidden;">
                   {% if blog.featured_image %}
                     <img src="{{ blog.featured_image.url }}" alt="{{ blog.title }}"
@@ -377,6 +387,11 @@
 
 {% else %}
   <!-- ═══ Default Clean Home View ═══ -->
+  <!-- ═══ Gallery Tunnel Hero Section ═══ -->
+  <section id="gallery-tunnel-hero" style="position: relative; overflow: hidden; height: 100vh; width: 100%; margin: 0; padding: 0; background: #000000;">
+    <!-- Tunnel will render here via Three.js -->
+  </section>
+
   <!-- ═══ Hero Section ═══ -->
   <section class="py-5" style="background: transparent; position: relative; overflow: hidden; padding-top: 5rem; padding-bottom: 5rem;">
     <div class="container text-center">
@@ -454,8 +469,8 @@
       <div class="row g-4">
         {% for blog in page_obj|slice:":3" %}
           <div class="col-lg-4 col-md-6">
-            <div class="card-glass h-100 d-flex flex-column" style="overflow:hidden; border-radius: 16px;">
-              <!-- Image -->
+            <div class="card-glass h-100 d-flex flex-column" style="overflow:hidden; border-radius: 16px;" {% if blog.video and blog.featured_image %}data-video-url="{{ blog.video.url }}" data-video-thumbnail="{{ blog.featured_image.url }}"{% elif blog.video %}data-video-url="{{ blog.video.url }}"{% endif %}>
+              <!-- Image/Video -->
               <div style="position:relative;height:220px;overflow:hidden;">
                 {% if blog.featured_image %}
                   <img src="{{ blog.featured_image.url }}" alt="{{ blog.title }}"
@@ -635,4 +650,59 @@
     </div>
   </footer>
 {% endif %}
+
+{% block extra_js %}
+<script>
+  // Initialize Gallery Tunnel only on home page (not in search mode)
+  document.addEventListener('DOMContentLoaded', function() {
+    const tunnelContainer = document.getElementById('gallery-tunnel-hero');
+    if (tunnelContainer && typeof window.GalleryTunnel !== 'undefined') {
+      try {
+        // Collect blog featured images from the page
+        const blogImages = [];
+        document.querySelectorAll('.card-glass img').forEach((img) => {
+          if (img.src && img.src.includes('media')) {
+            blogImages.push(img.src);
+          }
+        });
+
+        // Curated tech, research & emerging technology images (Unsplash)
+        const defaultBlogImages = [
+          'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80', // AI & Technology
+          'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80', // Data Science & Analytics
+          'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80', // Machine Learning
+          'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80', // Development & Code
+          'https://images.unsplash.com/photo-1516321318423-f06f70d504d0?w=800&q=80', // Web Technology
+          'https://images.unsplash.com/photo-1559056199-641a0ac8b3f3?w=800&q=80', // Cloud Computing
+          'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80', // Research & Innovation
+          'https://images.unsplash.com/photo-1564721595645-38f00a7ae0ca?w=800&q=80', // Tech Stack
+        ];
+
+        // Use blog images if available, otherwise use default tech images
+        const tunnelImages = blogImages.length >= 5 ? blogImages.slice(0, 5) : defaultBlogImages.slice(0, 5);
+
+        new window.GalleryTunnel('#gallery-tunnel-hero', {
+          background: '#000000',
+          lineColor: '#B0B0B0',
+          lineOpacity: 50,
+          colors: ['#FF6A00', '#AB54F7', '#EA3737', '#0072E3', '#00AA3C', '#FFB200'],
+          grid: 4,
+          speed: 100,
+          boost: 100,
+          fade: 100,
+          label: true,
+          labelText: 'Explore ProBlog',
+          labelFill: '#FFFFFF',
+          labelColor: '#000000',
+          images: tunnelImages
+        });
+      } catch (error) {
+        console.error('Failed to initialize Gallery Tunnel:', error);
+        // Fallback: hide tunnel if initialization fails
+        tunnelContainer.style.display = 'none';
+      }
+    }
+  });
+</script>
+{% endblock %}
 {% endblock %}
