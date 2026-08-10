@@ -11,7 +11,7 @@ class BlogForm(forms.ModelForm):
 
     class Meta:
         model = Blog
-        fields = ['title', 'category', 'tags', 'excerpt', 'content', 'featured_image', 'video_url']
+        fields = ['title', 'category', 'tags', 'excerpt', 'content', 'featured_image', 'video', 'video_url']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -30,6 +30,10 @@ class BlogForm(forms.ModelForm):
                 'id': 'blog-content',
             }),
             'featured_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'video': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'accept': 'video/mp4,video/webm',
+            }),
             'video_url': forms.URLInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'https://example.com/video.mp4 or YouTube/Vimeo embed URL',
@@ -49,6 +53,15 @@ class BlogForm(forms.ModelForm):
             if image.size > 5 * 1024 * 1024:
                 raise forms.ValidationError('Image must be smaller than 5 MB.')
         return image
+
+    def clean_video(self):
+        video = self.cleaned_data.get('video')
+        if video and hasattr(video, 'size'):
+            if video.size > 50 * 1024 * 1024:
+                raise forms.ValidationError('Video must be smaller than 50 MB.')
+            if video.content_type not in ['video/mp4', 'video/webm']:
+                raise forms.ValidationError('Only MP4 and WebM video formats are supported.')
+        return video
 
 
 class CategoryForm(forms.ModelForm):

@@ -59,6 +59,12 @@ http://127.0.0.1:8000/
 - Bookmark and like actions for authenticated users
 - Email-enabled password reset and account management
 
+## Demo Video
+
+A screen recording of the running project is included in the repository at `media/blogs/media/11.mp4`.
+
+You can watch it directly from GitHub by downloading the MP4 file or viewing it locally with any browser or media player that supports MP4.
+
 ## Notes
 
 - This project assumes `DEBUG = True` for local development.

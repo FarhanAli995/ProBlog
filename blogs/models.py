@@ -87,10 +87,6 @@ class Blog(models.Model):
         upload_to='blogs/videos/', blank=True, null=True,
         help_text='Uploaded video file (MP4, WebM, max 50MB)'
     )
-    video = models.FileField(
-        upload_to='blogs/videos/', blank=True, null=True,
-        help_text='Uploaded video file (MP4, WebM, max 50MB)'
-    )
     status = models.CharField(
         max_length=20, choices=STATUS_CHOICES, default=STATUS_DRAFT
     )
