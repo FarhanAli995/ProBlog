@@ -174,8 +174,8 @@ def author_list(request):
 
 @login_required
 def blog_create(request):
-    if not (request.user.is_staff or is_author(request.user)):
-        messages.error(request, 'You need author or staff permissions to create blog posts.')
+    if not is_author(request.user):
+        messages.error(request, 'You need Author permissions to create blog posts.')
         return redirect('blogs:home')
 
     if request.method == 'POST':
@@ -184,35 +184,14 @@ def blog_create(request):
             blog = form.save(commit=False)
             blog.author = request.user
             blog.status = Blog.STATUS_DRAFT
-
-            # If user selected one of the uploaded media as featured, assign it
-            featured_index = -1
-            try:
-                featured_index = int(request.POST.get('featured_media_index', -1))
-            except (TypeError, ValueError):
-                featured_index = -1
-
-            media_files = request.FILES.getlist('media') if request.FILES else []
-            if 0 <= featured_index < len(media_files):
-                candidate = media_files[featured_index]
-                if getattr(candidate, 'content_type', '').startswith('image/'):
-                    blog.featured_image = candidate
-
             blog.save()
             form.save_m2m()
-
-            # Save each uploaded media as BlogMedia
-            for f in media_files:
-                ctype = getattr(f, 'content_type', '')
-                mtype = BlogMedia.MEDIA_IMAGE if ctype.startswith('image/') else BlogMedia.MEDIA_VIDEO
-                BlogMedia.objects.create(blog=blog, file=f, media_type=mtype)
-
             messages.success(request, f'Draft "{blog.title}" created successfully!')
             return redirect('blogs:blog_detail', slug=blog.slug)
     else:
         form = BlogForm()
 
-    return render(request, 'blogs/blog_create.html', {
+    return render(request, 'blogs/blog_form.html', {
         'form': form,
         'title': 'Create New Post',
         'action': 'Create',
