@@ -1,0 +1,85 @@
+{% extends "customadmin/base.html" %}
+{% load customadmin_extras %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h3 class="fw-bold mb-0">{{ section.verbose_name_plural }}</h3>
+    {% if section.can_add %}
+        <a href="{% url 'customadmin:section_add' section.slug %}" class="btn btn-pb-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i>Add {{ section.verbose_name }}
+        </a>
+    {% endif %}
+</div>
+
+<div class="card-glass p-3 mb-3">
+    <form method="get" class="row g-2 align-items-end">
+        {% if section.search_fields %}
+        <div class="col-md-4">
+            <label class="form-label">Search</label>
+            <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search {{ section.verbose_name_plural|lower }}...">
+        </div>
+        {% endif %}
+        {% for field_name, label in section.list_filter %}
+        <div class="col-md-2">
+            <label class="form-label">{{ label }}</label>
+            <select name="{{ field_name }}" class="form-select">
+                <option value="">All</option>
+                <option value="True" {% if active_filters|get_item:field_name == "True" %}selected{% endif %}>Yes</option>
+                <option value="False" {% if active_filters|get_item:field_name == "False" %}selected{% endif %}>No</option>
+            </select>
+        </div>
+        {% endfor %}
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-pb-outline btn-sm w-100">Filter</button>
+        </div>
+    </form>
+</div>
+
+<div class="card-glass p-0">
+    <div class="table-responsive">
+        <table class="table ca-table mb-0">
+            <thead>
+                <tr>
+                    {% for field_name, label in section.list_display %}
+                        <th>{{ label }}</th>
+                    {% endfor %}
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for obj in page_obj %}
+                <tr>
+                    {% for field_name, label in section.list_display %}
+                        <td>{{ obj|get_attr:field_name }}</td>
+                    {% endfor %}
+                    <td class="text-end">
+                        {% if section.can_edit %}
+                            <a href="{% url 'customadmin:section_edit' section.slug obj.pk %}" class="btn btn-sm btn-pb-outline">Edit</a>
+                        {% endif %}
+                        {% if section.can_delete %}
+                            <a href="{% url 'customadmin:section_delete' section.slug obj.pk %}" class="btn btn-sm btn-pb-danger">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="{{ section.list_display|length|add:1 }}" class="text-center text-muted py-4">No records found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="mt-3">
+    <ul class="pagination pagination-sm">
+        {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}">Previous</a></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}">Next</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

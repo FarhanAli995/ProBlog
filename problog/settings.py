@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'comments.apps.CommentsConfig',
     'interactions.apps.InteractionsConfig',
     'dashboard.apps.DashboardConfig',
+    'customadmin.apps.CustomadminConfig',
 ]
 
 from django.contrib.messages import constants as message_constants

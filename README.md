@@ -65,6 +65,13 @@ A screen recording of the running project is included in the repository at `medi
 
 You can watch it directly from GitHub by downloading the MP4 file or viewing it locally with any browser or media player that supports MP4.
 
+## Recent Updates
+
+- Added video upload support in the blog post form so users can select and upload video files from their PC or laptop.
+- Added video display support on the blog detail page so uploaded videos show inline with the post.
+- Added file validation for MP4 and WebM with a 50MB upload limit.
+- Added a README demo video reference for `media/blogs/media/11.mp4`.
+
 ## Notes
 
 - This project assumes `DEBUG = True` for local development.

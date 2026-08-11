@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} · ProBlog Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ca-layout {
+        display: flex;
+        min-height: calc(100vh - 140px);
+    }
+    .ca-sidebar {
+        width: 250px;
+        flex-shrink: 0;
+        border-right: 1px solid var(--pb-border);
+        padding: 1.5rem 1rem;
+    }
+    .ca-sidebar h6 {
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.72rem;
+        color: var(--pb-text-muted);
+        margin: 1.2rem 0 0.4rem 0.5rem;
+    }
+    .ca-sidebar h6:first-child { margin-top: 0; }
+    .ca-nav-link {
+        display: block;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        color: var(--pb-text) !important;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 2px;
+        transition: all .2s ease;
+    }
+    .ca-nav-link:hover {
+        background: rgba(0, 106, 204, 0.1);
+        color: var(--pb-primary) !important;
+    }
+    .ca-nav-link.active {
+        background: var(--pb-primary);
+        color: #fff !important;
+    }
+    .ca-content {
+        flex: 1;
+        padding: 1.75rem 2rem;
+        min-width: 0;
+    }
+    .ca-stat-card {
+        border-radius: 14px;
+        padding: 1.1rem 1.25rem;
+    }
+    .ca-stat-card .ca-stat-value {
+        font-size: 1.6rem;
+        font-weight: 800;
+    }
+    .ca-stat-card .ca-stat-label {
+        font-size: 0.8rem;
+        color: var(--pb-text-muted);
+    }
+    .ca-table thead th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--pb-text-muted);
+        border-bottom: 1px solid var(--pb-border);
+    }
+    .ca-table td, .ca-table th {
+        vertical-align: middle;
+        padding: 0.65rem 0.85rem;
+    }
+    @media (max-width: 900px) {
+        .ca-layout { flex-direction: column; }
+        .ca-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--pb-border); }
+    }
+</style>
+{% block admin_extra_css %}{% endblock %}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="ca-layout">
+        <aside class="ca-sidebar">
+            <a href="{% url 'customadmin:home' %}" class="ca-nav-link {% if not active_slug %}active{% endif %}">
+                <i class="bi bi-speedometer2 me-2"></i>Overview
+            </a>
+            {% for group_name, sections in nav_groups %}
+                <h6>{{ group_name }}</h6>
+                {% for section in sections %}
+                    <a href="{% url 'customadmin:section_list' section.slug %}"
+                       class="ca-nav-link {% if active_slug == section.slug %}active{% endif %}">
+                        {{ section.verbose_name_plural }}
+                    </a>
+                {% endfor %}
+            {% endfor %}
+            <hr class="my-3" style="border-color: var(--pb-border);">
+            <a href="{% url 'dashboard:superuser' %}" class="ca-nav-link">
+                <i class="bi bi-graph-up me-2"></i>Superuser Dashboard
+            </a>
+        </aside>
+        <div class="ca-content">
+            {% block admin_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
