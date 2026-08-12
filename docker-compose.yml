@@ -8,6 +8,12 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DJANGO_DEBUG=True
-      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY:-django-insecure-t04)3ygr6#(qi$%ah1v^#*8yy*s5n&y7^nkmk5i2%)6&@x^r!2}
+      - DJANGO_DEBUG=${DJANGO_DEBUG:-True}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER:-alyyfarhan4@gmail.com}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD:-}
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL:-alyyfarhan4@gmail.com}
+    env_file:
+      - .env
     restart: unless-stopped

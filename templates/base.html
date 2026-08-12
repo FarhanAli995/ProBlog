@@ -607,6 +607,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'blogs:author_list' %}"><i class="bi bi-people me-1"></i>Authors</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'pages:about' %}"><i class="bi bi-info-circle me-1"></i>About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'pages:contact' %}"><i class="bi bi-chat-dots me-1"></i>Contact</a>
+                    </li>
                     {% if user.is_authenticated %}
                         {% if user.is_superuser or 'Authors' in user.groups.all|join:', ' or 'Editors' in user.groups.all|join:', ' %}
                         <li class="nav-item">
@@ -727,8 +733,20 @@
 
     <!-- ═══ Footer ═══ -->
     <footer class="footer-problog">
-        <div class="container text-center">
-            <p>&copy; 2026 <a href="/"><span style="color:var(--pb-primary);">Pro</span>Blog</a>. All rights reserved.</p>
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-6 text-center text-md-start">
+                    <p style="margin: 0;">&copy; 2026 <a href="/"><span style="color:var(--pb-primary);">Pro</span>Blog</a>. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="{% url 'pages:about' %}" style="color: var(--pb-primary); text-decoration: none; font-size: 0.85rem; margin: 0 0.75rem;">About</a>
+                    <a href="{% url 'pages:contact' %}" style="color: var(--pb-primary); text-decoration: none; font-size: 0.85rem; margin: 0 0.75rem;">Contact</a>
+                    <span style="color: var(--pb-text-muted); margin: 0 0.25rem;">|</span>
+                    <a href="{% url 'pages:terms' %}" style="color: var(--pb-text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 0.5rem;">Terms</a>
+                    <a href="{% url 'pages:privacy' %}" style="color: var(--pb-text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 0.5rem;">Privacy</a>
+                    <a href="{% url 'pages:disclaimer' %}" style="color: var(--pb-text-muted); text-decoration: none; font-size: 0.8rem; margin: 0 0.5rem;">Disclaimer</a>
+                </div>
+            </div>
         </div>
     </footer>
 

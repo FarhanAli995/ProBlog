@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About ProBlog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row mb-5 py-4">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-700 mb-3" style="color: var(--pb-primary);">
+                <i class="bi bi-book-half me-2"></i>About ProBlog
+            </h1>
+            <p class="lead" style="color: var(--pb-text-muted); font-size: 1.1rem;">
+                A professional multi-author blogging platform built for writers, editors, and communities.
+            </p>
+        </div>
+    </div>
+
+    <!-- What is ProBlog Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card-glass p-4 mb-4">
+                <h2 class="h3 mb-3" style="color: var(--pb-primary);">
+                    <i class="bi bi-lightbulb me-2"></i>What is ProBlog?
+                </h2>
+                <p class="mb-3">
+                    ProBlog is a cutting-edge blogging platform designed to empower writers, journalists, and content creators. 
+                    Built with modern web technology and a focus on quality publishing, ProBlog provides a complete ecosystem 
+                    for creating, reviewing, and sharing engaging content.
+                </p>
+                <p>
+                    Whether you're a solo writer or part of a larger editorial team, ProBlog scales with your needs. 
+                    Our platform combines beautiful design with powerful features to help your stories reach the world.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="h3 mb-4" style="color: var(--pb-primary);">
+                <i class="bi bi-diagram-3 me-2"></i>How It Works
+            </h2>
+            <div class="row g-3">
+                <!-- Step 1: Authors Write -->
+                <div class="col-md-6">
+                    <div class="card-glass p-4 h-100">
+                        <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(0, 106, 204, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <i class="bi bi-pencil-square" style="font-size: 1.5rem; color: var(--pb-primary);"></i>
+                        </div>
+                        <h4 class="mb-2">1. Authors Write</h4>
+                        <p style="color: var(--pb-text-muted); font-size: 0.9rem;">
+                            Authors create rich, multimedia blog posts with support for text, images, videos, and more. 
+                            Draft, refine, and prepare your content for publication.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 2: Editors Review -->
+                <div class="col-md-6">
+                    <div class="card-glass p-4 h-100">
+                        <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(0, 125, 240, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <i class="bi bi-clipboard-check" style="font-size: 1.5rem; color: var(--pb-blue);"></i>
+                        </div>
+                        <h4 class="mb-2">2. Editors Review</h4>
+                        <p style="color: var(--pb-text-muted); font-size: 0.9rem;">
+                            Our editorial team carefully reviews submissions for quality, accuracy, and alignment with community standards. 
+                            Professional feedback ensures the best content reaches readers.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 3: Moderators Moderate -->
+                <div class="col-md-6">
+                    <div class="card-glass p-4 h-100">
+                        <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(167, 209, 255, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <i class="bi bi-shield-check" style="font-size: 1.5rem; color: var(--pb-teal);"></i>
+                        </div>
+                        <h4 class="mb-2">3. Moderators Moderate</h4>
+                        <p style="color: var(--pb-text-muted); font-size: 0.9rem;">
+                            Dedicated moderators maintain a safe and respectful community by managing comments, 
+                            handling reports, and ensuring all interactions meet our community guidelines.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step 4: Readers Discover -->
+                <div class="col-md-6">
+                    <div class="card-glass p-4 h-100">
+                        <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <i class="bi bi-compass" style="font-size: 1.5rem; color: var(--pb-yellow);"></i>
+                        </div>
+                        <h4 class="mb-2">4. Readers Discover</h4>
+                        <p style="color: var(--pb-text-muted); font-size: 0.9rem;">
+                            Published content is beautifully displayed on our platform. Readers can browse, search, bookmark, and engage 
+                            with posts through likes, follows, and thoughtful comments.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="h3 mb-4" style="color: var(--pb-primary);">
+                <i class="bi bi-star me-2"></i>Key Features
+            </h2>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="d-flex gap-3 mb-3">
+                        <i class="bi bi-film" style="font-size: 1.5rem; color: var(--pb-primary);"></i>
+                        <div>
+                            <h5>Rich Media Support</h5>
+                            <p style="color: var(--pb-text-muted); font-size: 0.9rem; margin: 0;">Upload images, videos, and embedded content directly into your posts.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-3 mb-3">
+                        <i class="bi bi-bookmark" style="font-size: 1.5rem; color: var(--pb-primary);"></i>
+                        <div>
+                            <h5>Bookmarks & Collections</h5>
+                            <p style="color: var(--pb-text-muted); font-size: 0.9rem; margin: 0;">Save your favorite posts to personalized reading lists.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-3 mb-3">
+                        <i class="bi bi-chat-dots" style="font-size: 1.5rem; color: var(--pb-primary);"></i>
+                        <div>
+                            <h5>Threaded Comments</h5>
+                            <p style="color: var(--pb-text-muted); font-size: 0.9rem; margin: 0;">Engage in meaningful discussions with nested comments and community interaction.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-3 mb-3">
+                        <i class="bi bi-people" style="font-size: 1.5rem; color: var(--pb-primary);"></i>
+                        <div>
+                            <h5>Follow Authors</h5>
+                            <p style="color: var(--pb-text-muted); font-size: 0.9rem; margin: 0;">Subscribe to your favorite writers and never miss an update.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-3 mb-3">
+                        <i class="bi bi-tag" style="font-size: 1.5rem; color: var(--pb-primary);"></i>
+                        <div>
+                            <h5>Categories & Tags</h5>
+                            <p style="color: var(--pb-text-muted); font-size: 0.9rem; margin: 0;">Explore content organized by topic and interest.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-3 mb-3">
+                        <i class="bi bi-graph-up" style="font-size: 1.5rem; color: var(--pb-primary);"></i>
+                        <div>
+                            <h5>Analytics</h5>
+                            <p style="color: var(--pb-text-muted); font-size: 0.9rem; margin: 0;">Track engagement and understand your audience.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card-glass p-5">
+                <div class="row text-center">
+                    <div class="col-md-6 mb-4">
+                        <h3 style="font-size: 2.5rem; font-weight: 700; color: var(--pb-primary);">{{ published_blogs }}</h3>
+                        <p style="color: var(--pb-text-muted);" class="mb-0">Published Articles</p>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <h3 style="font-size: 2.5rem; font-weight: 700; color: var(--pb-primary);">{{ total_authors }}</h3>
+                        <p style="color: var(--pb-text-muted);" class="mb-0">Active Authors</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="h3 mb-4" style="color: var(--pb-primary);">
+                <i class="bi bi-people-fill me-2"></i>Our Team
+            </h2>
+            <div class="card-glass p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center">
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, rgba(0, 106, 204, 0.2), rgba(0, 125, 240, 0.15)); display: flex; align-items: center; justify-content: center; margin: 0 auto; border: 3px solid var(--pb-primary);">
+                            <i class="bi bi-person-fill" style="font-size: 3rem; color: var(--pb-primary);"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <h4 class="mb-1">Farhan Ali</h4>
+                        <p style="color: var(--pb-primary); font-weight: 600; margin: 0 0 0.5rem 0;">Founder & Administrator</p>
+                        <p style="color: var(--pb-text-muted); font-size: 0.9rem; margin: 0;">
+                            Farhan Ali is the visionary behind ProBlog, responsible for the platform's architecture, 
+                            editorial direction, and community management. With a passion for quality content and innovative technology, 
+                            Farhan leads the ProBlog team to build the best blogging platform for the modern age.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <h3 class="mb-3">Ready to Join ProBlog?</h3>
+            <p style="color: var(--pb-text-muted); margin-bottom: 2rem;">Start reading amazing content or become a contributor today.</p>
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <a href="{% url 'blogs:home' %}" class="btn btn-pb-primary">
+                    <i class="bi bi-compass me-1"></i>Browse Articles
+                </a>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'accounts:register' %}" class="btn btn-pb-outline">
+                        <i class="bi bi-person-plus me-1"></i>Create Account
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

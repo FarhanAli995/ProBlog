@@ -18,6 +18,8 @@ RUN apt-get update \
 # Install Python dependencies first for better layer caching
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+# Ensure python-dotenv is installed (in case it's not in requirements)
+RUN pip install python-dotenv
 
 # Copy the rest of the project
 COPY . .
