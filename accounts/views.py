@@ -11,8 +11,13 @@ from django.contrib.auth.views import (
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
+from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponseRedirect
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, CustomLoginForm
-from .models import Profile
+from .models import Profile, EmailVerificationToken
+from .utils import send_verification_email, send_password_reset_email
+import uuid
 
 
 class CustomLoginView(LoginView):
@@ -27,7 +32,17 @@ class CustomLoginView(LoginView):
         return reverse_lazy('accounts:profile', kwargs={'username': self.request.user.username})
 
     def form_valid(self, form):
-        messages.success(self.request, f'Welcome back, {form.get_user().username}!')
+        user = form.get_user()
+        
+        # Check if email is verified
+        if not user.profile.is_email_verified:
+            messages.error(
+                self.request,
+                'Please verify your email address before logging in. Check your inbox for the verification link.'
+            )
+            return HttpResponseRedirect(reverse_lazy('accounts:login'))
+        
+        messages.success(self.request, f'Welcome back, {user.username}!')
         return super().form_valid(form)
 
 
@@ -52,11 +67,86 @@ class RegisterView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        messages.success(
-            self.request,
-            'Your account has been created! You can now log in.'
-        )
+        
+        # Create verification token
+        token = EmailVerificationToken.objects.create(user=self.object)
+        
+        # Send verification email
+        email_sent = send_verification_email(self.request, self.object, token.token)
+        
+        if email_sent:
+            messages.success(
+                self.request,
+                'Account created! Please check your email to verify your account before logging in.'
+            )
+        else:
+            messages.warning(
+                self.request,
+                'Account created but we could not send verification email. Please contact support.'
+            )
+        
         return response
+
+
+def verify_email(request, token):
+    """Verify user email with token"""
+    try:
+        # token is already a UUID object from the URL converter
+        token_obj = EmailVerificationToken.objects.get(token=token)
+        
+        if token_obj.is_valid():
+            # Mark user as verified
+            profile = token_obj.user.profile
+            profile.is_email_verified = True
+            profile.save()
+            
+            # Mark token as used
+            token_obj.is_used = True
+            token_obj.save()
+            
+            messages.success(request, 'Your email has been verified successfully! You can now log in.')
+            return redirect('accounts:login')
+        else:
+            if token_obj.is_used:
+                messages.error(request, 'This verification link has already been used.')
+            else:
+                messages.error(request, 'This verification link has expired. Please request a new one.')
+            return redirect('accounts:login')
+            
+    except EmailVerificationToken.DoesNotExist:
+        messages.error(request, 'Invalid verification link.')
+        return redirect('accounts:login')
+    except ValueError:
+        messages.error(request, 'Invalid verification token.')
+        return redirect('accounts:login')
+
+
+def resend_verification(request):
+    """Resend verification email"""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            if user.profile.is_email_verified:
+                messages.info(request, 'This email is already verified. You can log in.')
+                return redirect('accounts:login')
+            
+            # Delete old token and create new one
+            EmailVerificationToken.objects.filter(user=user).delete()
+            token = EmailVerificationToken.objects.create(user=user)
+            
+            email_sent = send_verification_email(request, user, token.token)
+            if email_sent:
+                messages.success(request, 'Verification email has been resent. Please check your inbox.')
+            else:
+                messages.error(request, 'Failed to send verification email. Please try again later.')
+            
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with this email address.')
+        
+        return redirect('accounts:login')
+    
+    return render(request, 'accounts/resend_verification.html')
 
 
 class ProfileDetailView(DetailView):
@@ -145,6 +235,22 @@ class CustomPasswordResetView(PasswordResetView):
             'placeholder': 'Enter your registered email'
         })
         return form
+    
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+        try:
+            user = User.objects.get(email=email)
+            # Check if email is verified before allowing password reset
+            if not user.profile.is_email_verified:
+                messages.error(
+                    self.request,
+                    'Please verify your email address first. Check your inbox for the verification link.'
+                )
+                return redirect('accounts:password_reset')
+        except User.DoesNotExist:
+            pass  # Don't reveal if user exists or not for security
+        
+        return super().form_valid(form)
 
 
 class CustomPasswordResetDoneView(PasswordResetDoneView):

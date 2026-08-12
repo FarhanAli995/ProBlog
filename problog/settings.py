@@ -139,9 +139,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'staticfiles']
+STATIC_ROOT = BASE_DIR / 'static_root'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (User uploads)
@@ -158,5 +158,21 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Email backend (console for development)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email backend configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'alyyfarhan4@gmail.com'
+EMAIL_HOST_PASSWORD = 'noeu xtsr fsxr xlfn'
+DEFAULT_FROM_EMAIL = 'alyyfarhan4@gmail.com'
+
+# Email verification settings
+EMAIL_VERIFICATION_REQUIRED = True
+EMAIL_VERIFICATION_TIMEOUT = 86400  # 24 hours in seconds
+EMAIL_VERIFICATION_AFTER_CHANGE = True
+
+# Authentication settings - require email verification
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'

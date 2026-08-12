@@ -9,6 +9,10 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.CustomLogoutView.as_view(), name='logout'),
 
+    # Email verification
+    path('verify/<uuid:token>/', views.verify_email, name='verify_email'),
+    path('resend-verification/', views.resend_verification, name='resend_verification'),
+
     # Profile (edit must come before the dynamic username route)
     path('profile/edit/', views.profile_edit, name='profile_edit'),
     path('profile/<str:username>/', views.ProfileDetailView.as_view(), name='profile'),

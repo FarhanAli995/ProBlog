@@ -1,0 +1,10 @@
+Hello {{ user.first_name|default:user.username }},
+
+Thanks for registering on ProBlog. Please verify your email address by clicking the link below:
+
+{{ verification_url }}
+
+If you didn't create this account, you can safely ignore this email.
+
+Thank you,
+ProBlog Team

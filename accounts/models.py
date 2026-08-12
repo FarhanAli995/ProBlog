@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import uuid
+from datetime import timedelta
+from django.utils import timezone
 
 
 class Profile(models.Model):
@@ -12,6 +15,7 @@ class Profile(models.Model):
     website = models.URLField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_email_verified = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created_at']
@@ -35,6 +39,28 @@ class Profile(models.Model):
             return "Author"
         else:
             return "Reader"
+
+
+class EmailVerificationToken(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='verification_token')
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Verification token for {self.user.username}"
+
+    def is_valid(self):
+        return not self.is_used and timezone.now() < self.expires_at
+
+    def save(self, *args, **kwargs):
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(seconds=86400)  # 24 hours
+        super().save(*args, **kwargs)
 
 
 @receiver(post_save, sender=User)
