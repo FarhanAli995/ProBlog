@@ -10,6 +10,8 @@
     constructor() {
       this.setupVideoHovers();
       this.observeNewCards();
+      // Also check for video posts in gallery tunnel
+      this.setupTunnelVideoThumbnails();
     }
 
     setupVideoHovers() {
@@ -33,9 +35,6 @@
       observer.observe(document.body, { childList: true, subtree: true });
     }
 
-      // Also check for video posts in gallery tunnel
-      this.setupTunnelVideoThumbnails();
-    }
 
     addVideoHoverToCard(card, videoUrl, thumbnailImg) {
       const imageContainer = thumbnailImg.parentElement;
