@@ -8,25 +8,25 @@ django.setup()
 from django.contrib.auth.models import User
 
 # Create superuser if it doesn't exist
-if not User.objects.filter(username='admin').exists():
+if not User.objects.filter(username='farhanali').exists():
     User.objects.create_superuser(
-        username='admin',
-        email='alyyfarhan4@gmail.com',
-        password='admin321@#$'
+        username='farhanali',
+        email='farhanaly812@gmail.com',
+        password='FarhanAli@2024'
     )
-    print('✅ Superuser "admin" created successfully')
+    print('✅ Superuser "farhanali" created with email farhanaly812@gmail.com')
+    print('   Password: FarhanAli@2024')
 else:
-    print('⚠️  Superuser "admin" already exists')
+    print('⚠️  Superuser "farhanali" already exists')
 
-# Create editor user if it doesn't exist
-if not User.objects.filter(username='alyyfarhan4').exists():
-    editor = User.objects.create_user(
-        username='alyyfarhan4',
-        email='alyyfarhan4@gmail.com',
-        password='aly321@#$',
-        is_staff=True,
-        is_superuser=True
+# Create admin user if it doesn't exist
+if not User.objects.filter(username='admin').exists():
+    admin_user = User.objects.create_superuser(
+        username='admin',
+        email='admin@problog.com',
+        password='AdminProBlog@2024'
     )
-    print('✅ Editor user "alyyfarhan4" created successfully')
+    print('✅ Admin user "admin" created')
+    print('   Password: AdminProBlog@2024')
 else:
-    print('⚠️  Editor user "alyyfarhan4" already exists')
+    print('⚠️  Admin user "admin" already exists')
