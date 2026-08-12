@@ -43,9 +43,12 @@ if os.environ.get('DJANGO_ALLOWED_HOSTS'):
 else:
     # Default hosts for development
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-    # Add Vercel domain if running on Vercel
+    # Handle Vercel deployment URLs
     if vercel_url := os.environ.get('VERCEL_URL'):
         ALLOWED_HOSTS.append(vercel_url)
+    # Handle Vercel project name (converts to vercel.app domain)
+    if vercel_project_name := os.environ.get('VERCEL_PROJECT_NAME'):
+        ALLOWED_HOSTS.append(f"{vercel_project_name}.vercel.app")
     # Add custom domain if specified
     if custom_domain := os.environ.get('CUSTOM_DOMAIN'):
         ALLOWED_HOSTS.append(custom_domain)
