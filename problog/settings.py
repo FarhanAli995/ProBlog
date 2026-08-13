@@ -41,8 +41,8 @@ if os.environ.get('DJANGO_ALLOWED_HOSTS'):
         if host.strip()
     ]
 else:
-    # Default hosts for development
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    # Default hosts for development and Vercel
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.vercel.app', '.now.sh']
     # Handle Vercel deployment URLs
     if vercel_url := os.environ.get('VERCEL_URL'):
         ALLOWED_HOSTS.append(vercel_url)

@@ -1,5 +1,10 @@
 {
-  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate",
-  "outputDirectory": "staticfiles",
-  "framework": "django"
+  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput --noinput && python manage.py migrate --noinput",
+  "outputDirectory": "static_root",
+  "framework": "django",
+  "env": {
+    "DJANGO_DEBUG": "False",
+    "DJANGO_ALLOWED_HOSTS": ".vercel.app,.now.sh",
+    "DATABASE_URL": "postgresql://neondb_owner:npg_ZMUpci54jduK@ep-lucky-field-ayjy0v21-pooler.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+  }
 }
