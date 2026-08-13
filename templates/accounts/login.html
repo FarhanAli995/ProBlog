@@ -26,10 +26,10 @@
             <form method="post" novalidate id="loginForm">
                 {% csrf_token %}
 
-                <!-- Username -->
+                <!-- Username or Email -->
                 <div class="mb-3">
                     <label for="id_username" class="form-label">
-                        <i class="bi bi-person me-1"></i>Username
+                        <i class="bi bi-person me-1"></i>Username or Email
                     </label>
                     {{ form.username }}
                     {% if form.username.errors %}

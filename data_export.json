@@ -1,0 +1,783 @@
+[
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "Authors",
+    "permissions": [
+      [
+        "add_blog",
+        "blogs",
+        "blog"
+      ],
+      [
+        "change_blog",
+        "blogs",
+        "blog"
+      ],
+      [
+        "delete_blog",
+        "blogs",
+        "blog"
+      ],
+      [
+        "view_blog",
+        "blogs",
+        "blog"
+      ]
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "Editors",
+    "permissions": [
+      [
+        "add_blog",
+        "blogs",
+        "blog"
+      ],
+      [
+        "change_blog",
+        "blogs",
+        "blog"
+      ],
+      [
+        "delete_blog",
+        "blogs",
+        "blog"
+      ],
+      [
+        "view_blog",
+        "blogs",
+        "blog"
+      ],
+      [
+        "add_blogreview",
+        "blogs",
+        "blogreview"
+      ],
+      [
+        "change_blogreview",
+        "blogs",
+        "blogreview"
+      ],
+      [
+        "delete_blogreview",
+        "blogs",
+        "blogreview"
+      ],
+      [
+        "view_blogreview",
+        "blogs",
+        "blogreview"
+      ],
+      [
+        "add_category",
+        "blogs",
+        "category"
+      ],
+      [
+        "change_category",
+        "blogs",
+        "category"
+      ],
+      [
+        "delete_category",
+        "blogs",
+        "category"
+      ],
+      [
+        "view_category",
+        "blogs",
+        "category"
+      ],
+      [
+        "add_tag",
+        "blogs",
+        "tag"
+      ],
+      [
+        "change_tag",
+        "blogs",
+        "tag"
+      ],
+      [
+        "delete_tag",
+        "blogs",
+        "tag"
+      ],
+      [
+        "view_tag",
+        "blogs",
+        "tag"
+      ]
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "Moderators",
+    "permissions": [
+      [
+        "add_comment",
+        "comments",
+        "comment"
+      ],
+      [
+        "change_comment",
+        "comments",
+        "comment"
+      ],
+      [
+        "delete_comment",
+        "comments",
+        "comment"
+      ],
+      [
+        "view_comment",
+        "comments",
+        "comment"
+      ],
+      [
+        "add_report",
+        "comments",
+        "report"
+      ],
+      [
+        "change_report",
+        "comments",
+        "report"
+      ],
+      [
+        "delete_report",
+        "comments",
+        "report"
+      ],
+      [
+        "view_report",
+        "comments",
+        "report"
+      ]
+    ]
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$6D7D0Ats9WjHEi5E5YlYJK$oI290wNbr+hoPNnFgPoeGAgu+KdlhLP1Vh1aDcyNgTU=",
+    "last_login": "2026-08-13T08:44:19.983Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@example.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-08-08T08:24:17.375Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$OP9zEYoVZ0LaWA80kFdkgp$L0bS9IY7DU/ADh9RsVk83CdmxyrMFU3ElxfFWs+/cf8=",
+    "last_login": "2026-08-13T08:46:57.687Z",
+    "is_superuser": true,
+    "username": "alyyfarhan4@",
+    "first_name": "",
+    "last_name": "",
+    "email": "alyyfarhan4@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-08-13T08:37:32.565Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "0n1fivfwqbtfnad10sucja8du74lei0b",
+  "fields": {
+    "session_data": ".eJxVjLsOwjAMAP_FM4pip0mbjux8Q2QnLimgVupjQvw7qtQB1rvTvSHxvtW0r7qksUAPCJdfJpyfOh2iPHi6zybP07aMYo7EnHY1t7no63q2f4PKa4UesstMrmkHFRL0YiPy4JwoO2woBlW2vpXYZfFU1BNyQNcoRiLb-QCfL-99N4Q:1wsbN9:ITD-zwQkIedmhjnz0p695fNgbm01fygLKQ5VYQyEwpE",
+    "expire_date": "2026-08-22T07:21:35.235Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "2cybg2swwg606tke9x1ov20lsnxmqpe8",
+  "fields": {
+    "session_data": ".eJxVjDEOgzAMAP_iuYoCIQ5h7N43IDt2GtoKJAJT1b9XSAztene6N4y0b2Xcq67jJDBAB5dfxpSeOh9CHjTfF5OWeVsnNkdiTlvNbRF9Xc_2b1CoFhigcY0yYk-We5-dSooxW8YUs7CKixSQrGDrVRy6EK0nbDtJQSJLyvD5Av31ONM:1wu4XM:rngj5uNI_0ADnvxkPFRfxfn29ImQ-08TzLU3fv7vdOI",
+    "expire_date": "2026-08-26T08:42:12.454Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "h5li4533zu5bgojay92l0rymebt3wzax",
+  "fields": {
+    "session_data": ".eJxVjLsOwjAMAP_FM4pip0mbjux8Q2QnLimgVupjQvw7qtQB1rvTvSHxvtW0r7qksUAPCJdfJpyfOh2iPHi6zybP07aMYo7EnHY1t7no63q2f4PKa4UesstMrmkHFRL0YiPy4JwoO2woBlW2vpXYZfFU1BNyQNcoRiLb-QCfL-99N4Q:1wsbNf:QU4TaoGOsNcM8UBeUQsqguSnoA3kvdLMDjBkPsvCMa0",
+    "expire_date": "2026-08-22T07:22:07.606Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "o564ed4oolaaa1llkp3hoehbk46phmuk",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGlmxN_5R0nMGa9dr4wBypDipEHeHSCmgfTPzXiLitta49bzEicVZgDj9boTpkdsO-I7tNss0t3WZSO6KPGiX15nz83K4fwcVe_3WhEDOq6x10AWdVprJsjE4ohuUQVV80CaQK8AKGAZrR-_JQnFJJQvi_QHWpjc9:1wu1gA:db5sGTnDgnyDP4ExfR32wMMyOyM3hO3lwz3rp7KDZOg",
+    "expire_date": "2026-08-26T05:39:06.409Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "s3o9d8yz8k4m5sadkz4vvk7uhsgh0e8k",
+  "fields": {
+    "session_data": ".eJxVjDkOwjAQAP-yNbJss_hISc8bLHt3gwPIlnJUiL-jSCmgnRnNG1Le1pq2ReY0MQzg4PTLSqantF3wI7d7V9TbOk9F7Yk67KJuneV1Pdq_Qc1LhQEijsYREprRUcCzIV-KxOhNGVGEY9TeBLZRX7QEi8461AWJs2PWVuDzBd3YN68:1wuR5V:aOSfPYzqW96BFBEj28Cgytgyd_RAHMvHGcS9ILo8Yr4",
+    "expire_date": "2026-08-27T08:46:57.709Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "swben58sethiru9et8xwgnqlee4b4awk",
+  "fields": {
+    "session_data": ".eJxVjMsOgjAQAP9lz6ahXfqAo3e_odntthY1kFA4Gf_dkHDQ68xk3hBp32rcW17jJDACwuWXMaVnng8hD5rvi0rLvK0TqyNRp23qtkh-Xc_2b1CpVRiBCdkHnY0ZTCFvtBF2Yi315DttSZcwGDuwLygaBTvn-hDYYfFJJ4fw-QLWpjc9:1wtO38:9lLHNFvLSj1d5Lv8H6Xd9WumBSvVHBP5Qe8xZ4T8rZk",
+    "expire_date": "2026-08-24T11:20:10.446Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "zwk4i8s5ci17or3c337rcdsyewfmw0m4",
+  "fields": {
+    "session_data": ".eJxVjMsOgjAQAP9lz6ahXfqAo3e_odntthY1kFA4Gf_dkHDQ68xk3hBp32rcW17jJDACwuWXMaVnng8hD5rvi0rLvK0TqyNRp23qtkh-Xc_2b1CpVRiBCdkHnY0ZTCFvtBF2Yi315DttSZcwGDuwLygaBTvn-hDYYfFJJ4fw-QLWpjc9:1wsp27:6EiCqdagaPQhlDsGIXc1QoY4avoqLJVoYWGMUO_Q0xE",
+    "expire_date": "2026-08-22T21:56:47.724Z"
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "avatar": "avatars/ChatGPT_Image_Jul_29_2026_03_21_30_PM_wnA4ysJ.png",
+    "bio": "",
+    "location": "",
+    "website": "",
+    "created_at": "2026-08-08T08:24:18.233Z",
+    "updated_at": "2026-08-13T08:44:19.998Z",
+    "is_email_verified": true
+  }
+},
+{
+  "model": "accounts.profile",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "alyyfarhan4@"
+    ],
+    "avatar": "avatars/default.png",
+    "bio": "",
+    "location": "",
+    "website": "",
+    "created_at": "2026-08-13T08:37:36.270Z",
+    "updated_at": "2026-08-13T08:46:57.696Z",
+    "is_email_verified": true
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 1,
+  "fields": {
+    "name": "Wireless Headphones",
+    "slug": "wireless-headphones",
+    "description": "High-quality audio without the cords. Browse Bluetooth headphones, earbuds, and over-ear models.",
+    "created_at": "2026-08-10T11:27:25.974Z"
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 2,
+  "fields": {
+    "name": "smart Home Devices",
+    "slug": "smart-home-devices",
+    "description": "Automate your living space with smart lights, thermostats, security cameras, and voice assistants.",
+    "created_at": "2026-08-10T11:27:55.990Z"
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 3,
+  "fields": {
+    "name": "Organic Skincare",
+    "slug": "organic-skincare",
+    "description": "Natural and cruelty-free beauty products made from plant-based ingredients for all skin types.",
+    "created_at": "2026-08-10T11:28:11.295Z"
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 4,
+  "fields": {
+    "name": "Artificial Intelligence",
+    "slug": "artificial-intelligence",
+    "description": "Latest news, tutorials, and analysis on AI, machine learning, and neural networks.",
+    "created_at": "2026-08-10T11:28:31.634Z"
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 5,
+  "fields": {
+    "name": "Sustainable Living",
+    "slug": "sustainable-living",
+    "description": "Tips and guides on reducing your carbon footprint, eco-friendly products, and green energy.",
+    "created_at": "2026-08-10T11:28:40.059Z"
+  }
+},
+{
+  "model": "blogs.blog",
+  "pk": 1,
+  "fields": {
+    "title": "Test Blog Post",
+    "slug": "test-blog-post",
+    "author": [
+      "admin"
+    ],
+    "category": null,
+    "excerpt": "This is a short test post created to check the publishing system and formatting options.",
+    "content": "This is a sample blog post written for testing purposes. The goal is to verify that the blog creation and publishing workflow is functioning correctly.\r\n\r\nKey points included in this test post:\r\n\r\nEnsuring the title, excerpt, and content fields display properly.\r\n\r\nChecking how text formatting appears once published.\r\n\r\nConfirming that featured images, categories, and tags can be added later.\r\n\r\nThis post does not contain any real content—it is purely for testing. Once confirmed, you can delete it or replace it with actual blog material.",
+    "featured_image": "blogs/project_structure.png",
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-library/sample/BigBuckBunny.mp4",
+    "video": "",
+    "status": "PUBLISHED",
+    "is_featured": false,
+    "views": 31,
+    "created_at": "2026-08-08T15:37:58.230Z",
+    "updated_at": "2026-08-10T08:18:26.385Z",
+    "published_at": "2026-08-08T15:54:01.319Z",
+    "tags": []
+  }
+},
+{
+  "model": "blogs.blog",
+  "pk": 2,
+  "fields": {
+    "title": "Post Title: Test Blog Post  Category: General",
+    "slug": "post-title-test-blog-post-category-general",
+    "author": [
+      "admin"
+    ],
+    "category": null,
+    "excerpt": "This is a short test post created to check the publishing system and formatting options",
+    "content": "This is a sample blog post written for testing purposes. The goal is to verify that the blog creation and publishing workflow is functioning correctly.\r\n\r\nKey points included in this test post:\r\n\r\nEnsuring the title, excerpt, and content fields display properly.\r\n\r\nChecking how text formatting appears once published.\r\n\r\nConfirming that featured images, categories, and tags can be added later.\r\n\r\nThis post does not contain any real content—it is purely for testing. Once confirmed, you can delete it or replace it with actual blog material.",
+    "featured_image": "blogs/backendSchema.png",
+    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-library/sample/BigBuckBunny.mp4",
+    "video": "",
+    "status": "PUBLISHED",
+    "is_featured": false,
+    "views": 17,
+    "created_at": "2026-08-08T15:48:12.830Z",
+    "updated_at": "2026-08-10T08:18:26.378Z",
+    "published_at": "2026-08-09T21:47:01.034Z",
+    "tags": []
+  }
+},
+{
+  "model": "blogs.blog",
+  "pk": 10,
+  "fields": {
+    "title": "Create New Post Start writing your new blog post  Post Title * Enter a compelling title… Category — No Category — Featured Image (max 5MB)No file chosen Video (optional, max 50MB)No file chosen Excerp",
+    "slug": "create-new-post-start-writing-your-new-blog-post-post-title-enter-a-compelling-title-category-no-category-featured-image-max-5mbno-file-chosen-video-optional-max-50mbno-file-chosen-excerp",
+    "author": [
+      "admin"
+    ],
+    "category": null,
+    "excerpt": "Create New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen",
+    "content": "Create New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen\r\nVideo (optional, max 50MB)No file chosen\r\nExcerpt (short summary shown in listings)\r\nShort summary shown in listings (max 300 chars)…\r\n\r\n0 / 300\r\nContent *\r\nWrite your blog post here…\r\n\r\nSupports plain text. HTML will be escaped.\r\n0 words\r\nTags\r\nNo tags yet — add them via the admin panel.\r\n\r\nCreate New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen\r\nVideo (optional, max 50MB)No file chosen\r\nExcerpt (short summary shown in listings)\r\nShort summary shown in listings (max 300 chars)…\r\n\r\n0 / 300\r\nContent *\r\nWrite your blog post here…\r\n\r\nSupports plain text. HTML will be escaped.\r\n0 words\r\nTags\r\nNo tags yet — add them via the admin panel.\r\n\r\nCreate New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen\r\nVideo (optional, max 50MB)No file chosen\r\nExcerpt (short summary shown in listings)\r\nShort summary shown in listings (max 300 chars)…\r\n\r\n0 / 300\r\nContent *\r\nWrite your blog post here…\r\n\r\nSupports plain text. HTML will be escaped.\r\n0 words\r\nTags\r\nNo tags yet — add them via the admin panel.\r\n\r\nCreate New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen\r\nVideo (optional, max 50MB)No file chosen\r\nExcerpt (short summary shown in listings)\r\nShort summary shown in listings (max 300 chars)…\r\n\r\n0 / 300\r\nContent *\r\nWrite your blog post here…\r\n\r\nSupports plain text. HTML will be escaped.\r\n0 words\r\nTags\r\nNo tags yet — add them via the admin panel.\r\n\r\nCreate New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen\r\nVideo (optional, max 50MB)No file chosen\r\nExcerpt (short summary shown in listings)\r\nShort summary shown in listings (max 300 chars)…\r\n\r\n0 / 300\r\nContent *\r\nWrite your blog post here…\r\n\r\nSupports plain text. HTML will be escaped.\r\n0 words\r\nTags\r\nNo tags yet — add them via the admin panel.\r\n\r\nCreate New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen\r\nVideo (optional, max 50MB)No file chosen\r\nExcerpt (short summary shown in listings)\r\nShort summary shown in listings (max 300 chars)…\r\n\r\n0 / 300\r\nContent *\r\nWrite your blog post here…\r\n\r\nSupports plain text. HTML will be escaped.\r\n0 words\r\nTags\r\nNo tags yet — add them via the admin panel.\r\n\r\nCreate New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen\r\nVideo (optional, max 50MB)No file chosen\r\nExcerpt (short summary shown in listings)\r\nShort summary shown in listings (max 300 chars)…\r\n\r\n0 / 300\r\nContent *\r\nWrite your blog post here…\r\n\r\nSupports plain text. HTML will be escaped.\r\n0 words\r\nTags\r\nNo tags yet — add them via the admin panel.",
+    "featured_image": "",
+    "video_url": null,
+    "video": "",
+    "status": "REJECTED",
+    "is_featured": true,
+    "views": 6,
+    "created_at": "2026-08-10T09:04:48.401Z",
+    "updated_at": "2026-08-10T11:23:24.076Z",
+    "published_at": "2026-08-10T11:15:43.221Z",
+    "tags": []
+  }
+},
+{
+  "model": "blogs.blog",
+  "pk": 11,
+  "fields": {
+    "title": "Create New Post Start writing your new blog post  Post Title * Enter a compelling title… Category — No Category — Featured Image (max 5MB)No file chosen Video (optional, max 50MB)No file chosen Excerp",
+    "slug": "create-new-post-start-writing-your-new-blog-post-post-title-enter-a-compelling-title-category-no-category-featured-image-max-5mbno-file-chosen-video-optional-max-50mbno-file-chosen-excerp-1",
+    "author": [
+      "admin"
+    ],
+    "category": null,
+    "excerpt": "Create New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen\r\nVideo (optional, max 50MB)No file chosen\r\nExcerpt (short summary shown in listings)\r\nShort summary shown in listings (max 3",
+    "content": "Create New Post\r\nStart writing your new blog post\r\n\r\nPost Title *\r\nEnter a compelling title…\r\nCategory\r\n— No Category —\r\nFeatured Image (max 5MB)No file chosen\r\nVideo (optional, max 50MB)No file chosen\r\nExcerpt (short summary shown in listings)\r\nShort summary shown in listings (max 300 chars)…\r\n\r\n0 / 300\r\nContent *\r\nWrite your blog post here…\r\n\r\nSupports plain text. HTML will be escaped.\r\n0 words\r\nTags\r\nNo tags yet — add them via the admin panel.",
+    "featured_image": "blogs/WhatsApp_Image_2026-02-21_at_8.18.41_PM.jpeg",
+    "video_url": null,
+    "video": "blogs/videos/Starting.mp4",
+    "status": "REJECTED",
+    "is_featured": false,
+    "views": 2,
+    "created_at": "2026-08-10T09:08:37.131Z",
+    "updated_at": "2026-08-10T11:23:24.068Z",
+    "published_at": "2026-08-10T11:14:21.919Z",
+    "tags": []
+  }
+},
+{
+  "model": "blogs.blogreview",
+  "pk": 1,
+  "fields": {
+    "blog": 1,
+    "editor": null,
+    "decision": "APPROVED",
+    "feedback": "",
+    "created_at": "2026-08-08T15:54:01.310Z"
+  }
+},
+{
+  "model": "blogs.blogreview",
+  "pk": 2,
+  "fields": {
+    "blog": 2,
+    "editor": null,
+    "decision": "APPROVED",
+    "feedback": "",
+    "created_at": "2026-08-09T21:47:01.024Z"
+  }
+},
+{
+  "model": "blogs.blogreview",
+  "pk": 7,
+  "fields": {
+    "blog": 11,
+    "editor": null,
+    "decision": "APPROVED",
+    "feedback": "",
+    "created_at": "2026-08-10T11:14:21.903Z"
+  }
+},
+{
+  "model": "blogs.blogreview",
+  "pk": 10,
+  "fields": {
+    "blog": 10,
+    "editor": null,
+    "decision": "APPROVED",
+    "feedback": "",
+    "created_at": "2026-08-10T11:15:43.208Z"
+  }
+},
+{
+  "model": "comments.comment",
+  "pk": 3,
+  "fields": {
+    "blog": 1,
+    "user": [
+      "admin"
+    ],
+    "parent": null,
+    "content": "hello",
+    "is_approved": true,
+    "created_at": "2026-08-10T05:29:48.962Z",
+    "updated_at": "2026-08-10T05:29:48.962Z"
+  }
+},
+{
+  "model": "comments.comment",
+  "pk": 4,
+  "fields": {
+    "blog": 1,
+    "user": [
+      "admin"
+    ],
+    "parent": 3,
+    "content": "hello",
+    "is_approved": true,
+    "created_at": "2026-08-10T05:30:01.069Z",
+    "updated_at": "2026-08-10T05:30:01.069Z"
+  }
+},
+{
+  "model": "comments.comment",
+  "pk": 5,
+  "fields": {
+    "blog": 1,
+    "user": [
+      "admin"
+    ],
+    "parent": 3,
+    "content": "hello",
+    "is_approved": true,
+    "created_at": "2026-08-10T05:30:17.608Z",
+    "updated_at": "2026-08-10T05:30:17.608Z"
+  }
+},
+{
+  "model": "comments.comment",
+  "pk": 6,
+  "fields": {
+    "blog": 1,
+    "user": [
+      "admin"
+    ],
+    "parent": null,
+    "content": "hi",
+    "is_approved": true,
+    "created_at": "2026-08-10T05:30:31.961Z",
+    "updated_at": "2026-08-10T05:30:31.961Z"
+  }
+},
+{
+  "model": "interactions.like",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "blog": 1,
+    "created_at": "2026-08-10T05:23:23.296Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-08-10T11:23:24.073Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "blog"
+    ],
+    "object_id": "11",
+    "object_repr": "Create New Post Start writing your new blog post  Post Title * Enter a compelling title… Category — No Category — Featured Image (max 5MB)No file chosen Video (optional, max 50MB)No file chosen Excerp",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-08-10T11:23:24.079Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "blog"
+    ],
+    "object_id": "10",
+    "object_repr": "Create New Post Start writing your new blog post  Post Title * Enter a compelling title… Category — No Category — Featured Image (max 5MB)No file chosen Video (optional, max 50MB)No file chosen Excerp",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-08-10T11:23:24.080Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "blog"
+    ],
+    "object_id": "9",
+    "object_repr": ".,knlkbnlkb",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-08-10T11:23:24.082Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "blog"
+    ],
+    "object_id": "8",
+    "object_repr": "Post Title: Test Blog Post Category: General",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-08-10T11:23:24.084Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "blog"
+    ],
+    "object_id": "7",
+    "object_repr": "Beyond the Home Office: How Remote Work is Reshaping Global Talent and Company Culture in 2026",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-08-10T11:23:24.085Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "blog"
+    ],
+    "object_id": "6",
+    "object_repr": "Beyond the Home Office: How Remote Work is Reshaping Global Talent and Company Culture in 2026",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-08-10T11:23:24.086Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "blog"
+    ],
+    "object_id": "3",
+    "object_repr": "The Hidden Power of Everyday Algorithms",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Is featured\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2026-08-10T11:27:25.979Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "1",
+    "object_repr": "Wireless Headphones",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2026-08-10T11:27:35.728Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "1",
+    "object_repr": "Wireless Headphones",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2026-08-10T11:27:55.991Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "2",
+    "object_repr": "smart Home Devices",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2026-08-10T11:28:11.298Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "3",
+    "object_repr": "Organic Skincare",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2026-08-10T11:28:31.641Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "4",
+    "object_repr": "Artificial Intelligence",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2026-08-10T11:28:40.061Z",
+    "user": [
+      "admin"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "5",
+    "object_repr": "Sustainable Living",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+}
+]

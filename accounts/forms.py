@@ -110,13 +110,48 @@ class ProfileUpdateForm(forms.ModelForm):
         })
 
 
+from django.contrib.auth import authenticate
+
 class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control',
-        'placeholder': 'Username',
+        'placeholder': 'Username or Email',
         'autofocus': True
     }))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control',
         'placeholder': 'Password'
     }))
+
+    def clean(self):
+        username_or_email = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+
+        if username_or_email and password:
+            # Try to find user by email if input contains @
+            user = None
+            if '@' in username_or_email:
+                try:
+                    from django.contrib.auth.models import User
+                    user_obj = User.objects.get(email=username_or_email)
+                    user = authenticate(self.request, username=user_obj.username, password=password)
+                except User.DoesNotExist:
+                    pass
+            
+            # If not found by email or input is username, try username directly
+            if user is None:
+                user = authenticate(self.request, username=username_or_email, password=password)
+
+            if user is None:
+                raise forms.ValidationError(
+                    self.error_messages['invalid_login'],
+                    code='invalid_login',
+                    params={'username': self.username_field.verbose_name}
+                )
+            else:
+                self.user_cache = user
+        else:
+            # This will raise the default validation error
+            super().clean()
+
+        return self.cleaned_data

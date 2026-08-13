@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 # Configure allowed hosts for production and development
 if os.environ.get('DJANGO_ALLOWED_HOSTS'):
@@ -208,3 +208,28 @@ EMAIL_VERIFICATION_AFTER_CHANGE = True
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Production Security Settings
+if not DEBUG:
+    # CSRF and Session Security
+    CSRF_TRUSTED_ORIGINS = [
+        'https://*.vercel.app',
+    ]
+    # Add custom domain if specified
+    if custom_domain := os.environ.get('CUSTOM_DOMAIN'):
+        CSRF_TRUSTED_ORIGINS.append(f'https://{custom_domain}')
+    
+    # Cookie Security
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # HSTS (uncomment after domain is confirmed working)
+    # SECURE_HSTS_SECONDS = 31536000  # 1 year
+    # SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # SECURE_HSTS_PRELOAD = True
+    
+    # Redirect HTTP to HTTPS
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
