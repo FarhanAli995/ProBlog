@@ -29,15 +29,39 @@
     labelColor: "#000000",
   };
 
-  const TUNNEL_WIDTH = 2;
-  const TUNNEL_HEIGHT = 1.8;
+  // Base tunnel dimensions
+  let TUNNEL_WIDTH = 2;
+  let TUNNEL_HEIGHT = 1.8;
   const SEGMENT_DEPTH = 1;
   const NUM_SEGMENTS = 15;
   const LINE_RADIUS = 0.003;
   const SCROLL_TO_Z = 0.05;
   const CAMERA_CHASE = 0.1;
   const FADE_IN = 1;
-  const FOG_FAR = NUM_SEGMENTS * SEGMENT_DEPTH * 0.95;
+  let FOG_FAR = NUM_SEGMENTS * SEGMENT_DEPTH * 0.95;
+
+  // Mobile detection and responsive scaling
+  const isMobileDevice = () => {
+    return window.matchMedia('(max-width: 768px)').matches ||
+           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
+
+  const getResponsiveConfig = (containerWidth, containerHeight) => {
+    const isMobile = isMobileDevice();
+    const aspectRatio = containerWidth / containerHeight;
+    
+    return {
+      isMobile,
+      // Adjust FOV based on viewport aspect ratio and size
+      fov: isMobile ? Math.max(45, Math.min(75, 60 / aspectRatio)) : 45,
+      // Scale tunnel to fit viewport better
+      tunnelScale: isMobile ? Math.min(1.2, containerHeight / 600) : 1,
+      // Adjust grid complexity for mobile
+      gridScale: isMobile ? 0.85 : 1,
+      // Speed adjustments for mobile smoothness
+      speedMultiplier: isMobile ? 0.95 : 1,
+    };
+  };
 
   class GalleryTunnel {
     constructor(containerSelector, config = {}) {
@@ -57,6 +81,17 @@
       this.scene = new THREE.Scene();
       this.scene.background = new THREE.Color(this.config.background);
 
+      // Get responsive configuration
+      const containerWidth = this.container.clientWidth || window.innerWidth;
+      const containerHeight = this.container.clientHeight || window.innerHeight;
+      this.responsiveConfig = getResponsiveConfig(containerWidth, containerHeight);
+
+      // Apply responsive scaling
+      const scale = this.responsiveConfig.tunnelScale;
+      TUNNEL_WIDTH *= scale;
+      TUNNEL_HEIGHT *= scale;
+      FOG_FAR = NUM_SEGMENTS * SEGMENT_DEPTH * 0.95;
+
       const fogNear = Math.min(
         FOG_FAR * (1 - Math.min(100, Math.max(0, this.config.fade)) / 100),
         FOG_FAR - 0.01
@@ -67,22 +102,25 @@
         FOG_FAR
       );
 
-      // Camera
-      this.camera = new THREE.PerspectiveCamera(45, 1, 1, 1000);
+      // Camera with responsive FOV
+      this.camera = new THREE.PerspectiveCamera(this.responsiveConfig.fov, 1, 1, 1000);
       this.camera.position.set(0, 0, 0);
 
       // Canvas setup
       this.canvas = document.createElement('canvas');
       this.container.appendChild(this.canvas);
 
-      // Renderer
+      // Renderer with mobile optimizations
+      const isMobile = this.responsiveConfig.isMobile;
       this.renderer = new THREE.WebGLRenderer({
         canvas: this.canvas,
-        antialias: true,
+        antialias: !isMobile, // Disable antialiasing on mobile for performance
         alpha: false,
-        powerPreference: "high-performance",
+        powerPreference: isMobile ? "low-power" : "high-performance",
       });
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      // Lower pixel ratio on mobile for better performance
+      const pixelRatio = isMobile ? Math.min(1.5, window.devicePixelRatio || 1) : Math.min(window.devicePixelRatio || 1, 2);
+      this.renderer.setPixelRatio(pixelRatio);
 
       // Setup materials and geometries
       this.setupMaterials();
@@ -94,6 +132,13 @@
       // ResizeObserver
       this.resizeObserver = new ResizeObserver(() => this.resize());
       this.resizeObserver.observe(this.container);
+
+      // Handle device orientation changes on mobile
+      if (this.responsiveConfig.isMobile) {
+        window.addEventListener('orientationchange', () => {
+          setTimeout(() => this.resize(), 100);
+        });
+      }
     }
 
     setupMaterials() {
@@ -139,8 +184,10 @@
     }
 
     setupGeometries() {
-      const cols = Math.max(1, Math.round(this.config.grid));
-      const rows = Math.max(1, Math.round(this.config.grid));
+      // Adjust grid complexity based on device
+      const gridScale = this.responsiveConfig.gridScale;
+      const cols = Math.max(1, Math.round(this.config.grid * gridScale));
+      const rows = Math.max(1, Math.round(this.config.grid * gridScale));
 
       this.geoFloor = new THREE.PlaneGeometry(TUNNEL_WIDTH / cols, SEGMENT_DEPTH);
       this.geoWall = new THREE.PlaneGeometry(SEGMENT_DEPTH, TUNNEL_HEIGHT / rows);
@@ -230,8 +277,9 @@
     createSegment(z) {
       const hw = TUNNEL_WIDTH / 2;
       const hh = TUNNEL_HEIGHT / 2;
-      const cols = Math.max(1, Math.round(this.config.grid));
-      const rows = Math.max(1, Math.round(this.config.grid));
+      const gridScale = this.responsiveConfig.gridScale;
+      const cols = Math.max(1, Math.round(this.config.grid * gridScale));
+      const rows = Math.max(1, Math.round(this.config.grid * gridScale));
       const colW = TUNNEL_WIDTH / cols;
       const rowH = TUNNEL_HEIGHT / rows;
 
@@ -301,7 +349,8 @@
     setupEventListeners() {
       this.scrollPos = 0;
       this.pressed = false;
-      this.cfgRef = { speed: this.config.speed / 100, boost: this.config.boost / 10 };
+      const speedMultiplier = this.responsiveConfig.speedMultiplier;
+      this.cfgRef = { speed: (this.config.speed / 100) * speedMultiplier, boost: (this.config.boost / 10) * speedMultiplier };
 
       // Create custom cursor
       if (this.config.label) {
@@ -378,6 +427,13 @@
       const w = Math.max(1, this.container.clientWidth);
       const h = Math.max(1, this.container.clientHeight);
       this.camera.aspect = w / h;
+      
+      // Update FOV on resize for mobile orientation change
+      const newConfig = getResponsiveConfig(w, h);
+      if (newConfig.isMobile && Math.abs(this.camera.fov - newConfig.fov) > 1) {
+        this.camera.fov = newConfig.fov;
+      }
+      
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(w, h, false);
     }
