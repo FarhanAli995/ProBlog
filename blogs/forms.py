@@ -1,5 +1,11 @@
 from django import forms
 from .models import Blog, Category, Tag
+import os
+try:
+    import magic
+except ImportError:
+    magic = None
+    import puremagic
 
 
 class BlogForm(forms.ModelForm):
@@ -59,8 +65,31 @@ class BlogForm(forms.ModelForm):
         if video and hasattr(video, 'size'):
             if video.size > 50 * 1024 * 1024:
                 raise forms.ValidationError('Video must be smaller than 50 MB.')
-            if video.content_type not in ['video/mp4', 'video/webm']:
-                raise forms.ValidationError('Only MP4 and WebM video formats are supported.')
+            
+            # Validate file extension
+            ext = os.path.splitext(video.name)[1].lower()
+            if ext not in ['.mp4', '.webm']:
+                raise forms.ValidationError('Only .mp4 and .webm files are allowed.')
+            
+            # Validate actual file content (magic number)
+            try:
+                video.seek(0)
+                video_data = video.read(1024)
+                video.seek(0)
+                
+                if magic is not None:
+                    # Use python-magic if available
+                    mime = magic.from_buffer(video_data, mime=True)
+                else:
+                    # Fallback to puremagic
+                    mime = puremagic.from_stream(video, 1024)
+                    if isinstance(mime, list):
+                        mime = mime[0].mime_type if mime else None
+                
+                if mime not in ['video/mp4', 'video/webm']:
+                    raise forms.ValidationError('Invalid video file content.')
+            except Exception:
+                raise forms.ValidationError('Unable to validate video file content.')
         return video
 
 

@@ -2,7 +2,7 @@ services:
   web:
     build: .
     container_name: problog_web
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn --bind 0.0.0.0:8000 --workers 4 --timeout 60 --access-logfile - --error-logfile - problog.wsgi:application
     volumes:
       - .:/app
     ports:

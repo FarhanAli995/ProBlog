@@ -34,10 +34,11 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 # Configure allowed hosts for production and development
-if os.environ.get('DJANGO_ALLOWED_HOSTS'):
+allowed_hosts_env = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+if allowed_hosts_env:
     ALLOWED_HOSTS = [
         host.strip()
-        for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
+        for host in allowed_hosts_env.split(',')
         if host.strip()
     ]
 else:
@@ -52,6 +53,10 @@ else:
     # Add custom domain if specified
     if custom_domain := os.environ.get('CUSTOM_DOMAIN'):
         ALLOWED_HOSTS.append(custom_domain)
+
+# Ensure ALLOWED_HOSTS is never empty (prevents 400 errors in production)
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition

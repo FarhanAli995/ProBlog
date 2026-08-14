@@ -14,6 +14,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponseRedirect
+from django.utils.http import url_has_allowed_host_and_scheme
+from django_ratelimit.decorators import ratelimit
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, CustomLoginForm
 from .models import Profile, EmailVerificationToken
 from .utils import send_verification_email, send_password_reset_email
@@ -27,9 +29,13 @@ class CustomLoginView(LoginView):
 
     def get_success_url(self):
         next_url = self.request.GET.get('next')
-        if next_url:
+        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts=None):
             return next_url
         return reverse_lazy('accounts:profile', kwargs={'username': self.request.user.username})
+
+    @ratelimit(key='ip', rate='5/m', method='POST', block=True)
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         user = form.get_user()
@@ -38,7 +44,7 @@ class CustomLoginView(LoginView):
         if not user.profile.is_email_verified:
             messages.error(
                 self.request,
-                'Please verify your email address before logging in. Check your inbox for the verification link.'
+                'Invalid credentials.'
             )
             return HttpResponseRedirect(reverse_lazy('accounts:login'))
         
@@ -121,6 +127,7 @@ def verify_email(request, token):
         return redirect('accounts:login')
 
 
+@ratelimit(key='ip', rate='3/m', method='POST')
 def resend_verification(request):
     """Resend verification email"""
     if request.method == 'POST':
@@ -128,7 +135,7 @@ def resend_verification(request):
         try:
             user = User.objects.get(email=email)
             if user.profile.is_email_verified:
-                messages.info(request, 'This email is already verified. You can log in.')
+                messages.success(request, 'If an account exists with this email, a verification link has been sent.')
                 return redirect('accounts:login')
             
             # Delete old token and create new one
@@ -137,12 +144,12 @@ def resend_verification(request):
             
             email_sent = send_verification_email(request, user, token.token)
             if email_sent:
-                messages.success(request, 'Verification email has been resent. Please check your inbox.')
+                messages.success(request, 'If an account exists with this email, a verification link has been sent.')
             else:
                 messages.error(request, 'Failed to send verification email. Please try again later.')
             
         except User.DoesNotExist:
-            messages.error(request, 'No account found with this email address.')
+            messages.success(request, 'If an account exists with this email, a verification link has been sent.')
         
         return redirect('accounts:login')
     
@@ -236,21 +243,7 @@ class CustomPasswordResetView(PasswordResetView):
         })
         return form
     
-    def form_valid(self, form):
-        email = form.cleaned_data['email']
-        try:
-            user = User.objects.get(email=email)
-            # Check if email is verified before allowing password reset
-            if not user.profile.is_email_verified:
-                messages.error(
-                    self.request,
-                    'Please verify your email address first. Check your inbox for the verification link.'
-                )
-                return redirect('accounts:password_reset')
-        except User.DoesNotExist:
-            pass  # Don't reveal if user exists or not for security
-        
-        return super().form_valid(form)
+    # Removed custom form_valid to prevent user enumeration - Django's built-in already handles this securely
 
 
 class CustomPasswordResetDoneView(PasswordResetDoneView):
@@ -275,9 +268,13 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
 @login_required
 def delete_account(request):
     if request.method == 'POST':
-        user = request.user
-        logout(request)
-        user.delete()
-        messages.success(request, 'Your account has been deleted.')
-        return redirect('accounts:login')
+        password = request.POST.get('password')
+        user = authenticate(username=request.user.username, password=password)
+        if user is not None:
+            logout(request)
+            user.delete()
+            messages.success(request, 'Your account has been deleted.')
+            return redirect('accounts:login')
+        else:
+            messages.error(request, 'Incorrect password. Account not deleted.')
     return render(request, 'accounts/delete_account.html')

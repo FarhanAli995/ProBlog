@@ -5,6 +5,9 @@ from django.conf import settings
 from django.views.decorators.http import require_http_methods
 from blogs.models import Blog
 from django.contrib.auth.models import User
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def about(request):
@@ -68,9 +71,9 @@ def contact(request):
             )
             messages.success(request, 'Thank you! Your message has been sent successfully. We will get back to you soon.')
         except Exception as e:
-            # Log the error for debugging (remove in production)
-            print(f"Email error: {str(e)}")
-            messages.error(request, f'There was an error sending your message: {str(e)}')
+            # Log internally for debugging
+            logger.error(f"Contact form email error: {str(e)}")
+            messages.error(request, 'There was an error sending your message. Please try again later.')
         
         # Redirect to prevent duplicate form submission on page refresh (PRG pattern)
         return redirect('pages:contact')
