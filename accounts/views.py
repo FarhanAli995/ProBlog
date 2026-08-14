@@ -16,18 +16,27 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponseRedirect
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.decorators import method_decorator
-from django_ratelimit.decorators import ratelimit
+from django_ratelimit.core import is_ratelimited
+from django.core.exceptions import PermissionDenied
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, CustomLoginForm
 from .models import Profile, EmailVerificationToken
 from .utils import send_verification_email, send_password_reset_email
 import uuid
 
 
-@method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True), name='dispatch')
 class CustomLoginView(LoginView):
     template_name = 'accounts/login.html'
     authentication_form = CustomLoginForm
     redirect_authenticated_user = True
+
+    def dispatch(self, request, *args, **kwargs):
+        # Apply rate limiting for POST requests
+        if request.method == 'POST':
+            if is_ratelimited(request, group='login', fn='login', key='ip', rate='5/m', method='POST', increment=True):
+                messages.error(request, 'Too many login attempts. Please try again later.')
+                raise PermissionDenied("Rate limit exceeded. Too many login attempts.")
+        
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         next_url = self.request.GET.get('next')
@@ -125,10 +134,14 @@ def verify_email(request, token):
         return redirect('accounts:login')
 
 
-@ratelimit(key='ip', rate='3/m', method='POST')
 def resend_verification(request):
     """Resend verification email"""
     if request.method == 'POST':
+        # Apply rate limiting for POST requests
+        if is_ratelimited(request, group='resend_verification', fn='resend_verification', key='ip', rate='3/m', method='POST', increment=True):
+            messages.error(request, 'Too many requests. Please try again later.')
+            return render(request, 'accounts/resend_verification.html')
+        
         email = request.POST.get('email')
         try:
             user = User.objects.get(email=email)
