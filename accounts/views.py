@@ -15,6 +15,7 @@ from django.utils import timezone
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponseRedirect
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.decorators import method_decorator
 from django_ratelimit.decorators import ratelimit
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, CustomLoginForm
 from .models import Profile, EmailVerificationToken
@@ -33,9 +34,9 @@ class CustomLoginView(LoginView):
             return next_url
         return reverse_lazy('accounts:profile', kwargs={'username': self.request.user.username})
 
-    @ratelimit(key='ip', rate='5/m', method='POST', block=True)
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+    @method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         user = form.get_user()
