@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput --noinput && python manage.py migrate --noinput",
+  "buildCommand": "bash vercel-build.sh",
   "outputDirectory": "static_root",
   "framework": "django",
   "env": {

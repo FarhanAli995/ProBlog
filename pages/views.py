@@ -5,9 +5,30 @@ from django.conf import settings
 from django.views.decorators.http import require_http_methods
 from blogs.models import Blog
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def health_check(request):
+    """Simple health check endpoint to debug deployment issues."""
+    try:
+        # Check database connection
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            db_ok = True
+    except Exception as e:
+        db_ok = False
+        db_error = str(e)
+    
+    return JsonResponse({
+        "status": "ok" if db_ok else "error",
+        "database": "connected" if db_ok else f"error: {db_error}",
+        "debug": settings.DEBUG,
+        "allowed_hosts": settings.ALLOWED_HOSTS,
+    })
 
 
 def about(request):
