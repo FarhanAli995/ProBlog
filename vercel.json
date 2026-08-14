@@ -1,5 +1,5 @@
 {
-  "buildCommand": "apt-get update && apt-get install -y libmagic1 && pip install -r requirements.txt && python manage.py collectstatic --noinput --noinput && python manage.py migrate --noinput",
+  "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput --noinput && python manage.py migrate --noinput",
   "outputDirectory": "static_root",
   "framework": "django",
   "env": {
