@@ -23,6 +23,7 @@ from .utils import send_verification_email, send_password_reset_email
 import uuid
 
 
+@method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True), name='dispatch')
 class CustomLoginView(LoginView):
     template_name = 'accounts/login.html'
     authentication_form = CustomLoginForm
@@ -33,10 +34,6 @@ class CustomLoginView(LoginView):
         if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts=None):
             return next_url
         return reverse_lazy('accounts:profile', kwargs={'username': self.request.user.username})
-
-    @method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True))
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         user = form.get_user()
