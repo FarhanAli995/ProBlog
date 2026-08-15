@@ -45,7 +45,7 @@ Go to Vercel Project → Settings → Environment Variables
 | `EMAIL_HOST_USER` | Your Gmail | `alyyfarhan4@gmail.com` |
 | `EMAIL_HOST_PASSWORD` | Gmail App Password | (your app password) |
 | `DEFAULT_FROM_EMAIL` | Your Gmail | `alyyfarhan4@gmail.com` |
-| `PROD_SUPERUSER_USERNAME` | Admin username | `farhanbabu` |
+| `PROD_SUPERUSER_USERNAME` | Admin username | `FarhanAli` |
 | `PROD_SUPERUSER_EMAIL` | Admin email | `alyyfarhan4@gmail.com` |
 | `PROD_SUPERUSER_PASSWORD` | Admin password | (secure password) |
 | `CUSTOM_DOMAIN` | Your domain (optional) | `problog.com` |
